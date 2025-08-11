@@ -1,4 +1,8 @@
-
-
 # Program
 webserv
+
+# binaries
+obj
+
+# Mac OS X thing
+.DS_Store
