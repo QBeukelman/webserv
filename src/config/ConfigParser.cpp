@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/18 15:07:15 by dkolodze      ########   odam.nl         */
+/*   Updated: 2025/08/18 19:49:53 by dkolodze      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,4 +18,12 @@
 ConfigParser::ConfigParser()
 {
 	Logger::debug("Created Parser");
+}
+
+Config ConfigParser::parse(std::string path)
+{
+	(void)(path);
+	Config config;
+	config.port = 4242;
+	return config;
 }
