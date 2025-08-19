@@ -1,22 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serve.cpp                                          :+:      :+:    :+:   */
+/*   HttpResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/18 19:43:45 by dkolodze          #+#    #+#             */
-/*   Updated: 2025/08/19 13:38:33 by qbeukelm         ###   ########.fr       */
+/*   Created: 2025/08/19 13:09:45 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/08/19 13:41:42 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef HTTPRESPONSE_HPP
+#define HTTPRESPONSE_HPP
+
+#include <map>
 #include <string>
 
-#include "log/Logger.hpp"
-#include "serve/serve.hpp"
-
-void serve(const Config &config)
+struct HttpResponse
 {
-	Logger::info(std::string("Starting a server on port ") + std::to_string(config.port) + "...");
-	Logger::info("just kiddding, I'm too dummy for now");
-}
+	int status;
+	std::map<std::string, std::string> headers;
+	std::string body;
+};
+
+// TODO: Add serialize method to send raw to client
+
+#endif
