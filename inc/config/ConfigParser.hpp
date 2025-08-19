@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/18 19:49:01 by dkolodze      ########   odam.nl         */
+/*   Updated: 2025/08/19 12:04:23 by dkolodze      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class ConfigParser
 {
   public:
 	ConfigParser();
-	Config parse(std::string path);
+	Config parse(const std::string &path);
 };
 
 #endif // CONFIGPARSER_HPP
