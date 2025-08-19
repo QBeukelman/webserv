@@ -1,27 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ConfigParser.hpp                                   :+:    :+:            */
+/*   Config.hpp                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/19 12:04:23 by dkolodze      ########   odam.nl         */
+/*   Created: 2025/08/18 19:25:34 by dkolodze      #+#    #+#                 */
+/*   Updated: 2025/08/18 19:26:43 by dkolodze      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIGPARSER_HPP
-#define CONFIGPARSER_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
-#include <string>
-
-#include "config/Config.hpp"
-
-class ConfigParser
+class Config
 {
   public:
-	ConfigParser();
-	Config parse(const std::string &path);
+	int port;
 };
 
-#endif // CONFIGPARSER_HPP
+#endif // CONFIG_HPP

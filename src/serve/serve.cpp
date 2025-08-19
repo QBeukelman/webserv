@@ -1,27 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ConfigParser.hpp                                   :+:    :+:            */
+/*   serve.cpp                                          :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/19 12:04:23 by dkolodze      ########   odam.nl         */
+/*   Created: 2025/08/18 19:43:45 by dkolodze      #+#    #+#                 */
+/*   Updated: 2025/08/18 19:47:40 by dkolodze      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIGPARSER_HPP
-#define CONFIGPARSER_HPP
-
 #include <string>
 
-#include "config/Config.hpp"
+#include "log/Logger.hpp"
+#include "serve/serve.hpp"
 
-class ConfigParser
+void serve(const Config &config)
 {
-  public:
-	ConfigParser();
-	Config parse(const std::string &path);
-};
-
-#endif // CONFIGPARSER_HPP
+	Logger::info(std::string("Starting a server on port ") + std::to_string(config.port) + "...");
+	Logger::info("just kiddding, I'm too dummy for now");
+}
