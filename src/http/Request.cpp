@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/08/19 13:35:11 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Request.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/08/24 10:14:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,41 @@ Hello World
 
 #include "http/Request.hpp"
 
-// bool	Request::parse(const std::string &raw) {
-	
-// }
+// PRIVATE
+// ____________________________________________________________________________
+// TODO: parse request
+bool	Request::parse(const std::string &raw) {
+	std::cout << "Parse called with: " << raw << std::endl;
+	return (true);
+}
 
 
-// HttpResponse	Request::execute() const {
-	
-// 	// 1. Parse
-	
-	
-// }
+// CONSTRUCTORS
+// ____________________________________________________________________________
+Request::Request(std::string raw) {
+	std::cout << "Request constructor called with: " << raw << std::endl;
+}
 
+HttpRequest		Request::getRequest(void) const {
+	return (this->request);
+}
+
+void			Request::setRequest(HttpRequest newRequest) {
+	this->request = newRequest;
+}
+
+
+// EXECUTE
+// ____________________________________________________________________________
+HttpResponse	Request::execute() const {
+	HttpResponse response = HttpResponse();
+	return (response);	
+}
+
+
+// OVERLOAD
+// ____________________________________________________________________________
+std::ostream&	operator<<(std::ostream& out, const Request& request) {
+	out << request.getRequest().path;
+	return (out);
+}
