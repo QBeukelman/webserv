@@ -3,6 +3,10 @@ webserv
 
 # binaries
 obj
+unit_tests
 
 # Mac OS X thing
 .DS_Store
+
+# VS Code
+.vscode
