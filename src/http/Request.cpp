@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/24 11:20:20 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/24 11:36:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,14 @@ Hello World
 */
 
 #include "http/Request.hpp"
+#include "log/Logger.hpp"
 
 // PRIVATE
 // ____________________________________________________________________________
 // TODO: parse request
 bool Request::parse(const std::string &raw)
 {
-	std::cout << "Parse called with: " << raw << std::endl;
+	Logger::info("Parse called with: " + raw);
 	return (true);
 }
 
@@ -67,7 +68,7 @@ bool Request::parse(const std::string &raw)
 // ____________________________________________________________________________
 Request::Request(std::string raw)
 {
-	std::cout << "Request constructor called with: " << raw << std::endl;
+	Logger::info("Request constructor called with: " + raw);
 }
 
 HttpRequest Request::getRequest(void) const
