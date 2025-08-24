@@ -21,5 +21,11 @@
 This project uses [doctest](https://github.com/doctest/doctest) for unit testing. The tests are located under the `tests/` directory and can be built/run using the Makefile.
 
 ### Build and run the unit tests
+
 ```bash
 make test
+```
+
+---
+
+<br/>
