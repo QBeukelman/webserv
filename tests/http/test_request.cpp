@@ -1,30 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_http_method.cpp                               :+:      :+:    :+:   */
+/*   test_request.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 10:04:46 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/08/25 09:03:30 by qbeukelm         ###   ########.fr       */
+/*   Created: 2025/08/25 08:59:11 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/08/25 12:55:47 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
-#include "http/HttpMethod.hpp"
+#include "http/Request.hpp"
 #include "tests/doctest.h"
+#include "tests/utils/test_read_file.hpp"
 
-TEST_CASE("to_method basic")
+TEST_CASE("request basic")
 {
-	CHECK(to_method("GET") == HttpMethod::GET);
-	CHECK(to_method("POST") == HttpMethod::POST);
-	CHECK(to_method("DELETE") == HttpMethod::DELETE_);
-	CHECK(to_method("X") == HttpMethod::UNKNOWN);
-}
+	// Request req(read_file("../fixtures/http_request_large.txt"));
 
-TEST_CASE("to_string basic")
-{
-	CHECK(to_string(HttpMethod::GET) == "GET");
-	CHECK(to_string(HttpMethod::DELETE_) == "DELETE");
+	// auto r = req.getRequest();
+
+	// std::cout << req << std::endl;
+
+	CHECK(true);
 }

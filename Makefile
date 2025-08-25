@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
-#                                                    +#+                       #
-#    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/08/24 10:39:26 by quentinbeuk   ########   odam.nl          #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/08/11 09:30:12 by qbeukelm          #+#    #+#              #
+#    Updated: 2025/08/25 09:02:23 by qbeukelm         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,7 +62,7 @@ $(NAME): $(OBJECTS)
 
 # Build + run unit tests
 test: $(TEST_BIN)
-	./$(TEST_BIN)
+	@./$(TEST_BIN)
 
 $(TEST_BIN): $(LIB_OBJECTS) $(TEST_OBJECTS)
 	@echo "$(BLUE)\nLinking $(TEST_BIN)...$(RESET)"

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Request.cpp                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/24 11:36:01 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Request.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/08/25 10:43:30 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,15 @@ Hello World
 
 // PRIVATE
 // ____________________________________________________________________________
-// TODO: parse request
-bool Request::parse(const std::string &raw)
+RequestParseStatus Request::parse(const std::string &raw)
 {
 	Logger::info("Parse called with: " + raw);
-	return (true);
+
+	RequestParser parser(RequestLimits{});
+
+	const HttpRequest req = parser.parse(raw);
+
+	return (req.status);
 }
 
 // CONSTRUCTORS
@@ -93,6 +97,17 @@ HttpResponse Request::execute() const
 // ____________________________________________________________________________
 std::ostream &operator<<(std::ostream &out, const Request &request)
 {
-	out << request.getRequest().path;
+	HttpRequest req = request.getRequest();
+	out << "======== Request ========\n"
+		<< "parse: " << to_string(req.status) << "\n"
+		<< "------- HEADER -------\n"
+		<< to_string(req.method) << "\n"
+		<< req.target << "\n"
+		<< req.path << "\n"
+		<< req.query << "\n"
+		<< req.version << "\n"
+		<< "------- BODY -------\n"
+		<< req.body << "\n"
+		<< std::endl;
 	return (out);
 }
