@@ -1,47 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Request.hpp                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/24 11:04:57 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Request.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 12:25:32 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/08/25 10:09:04 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
-#include <string>
-
 #include "HttpMethod.hpp"
+#include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
+#include "RequestParseStatus.hpp"
+#include "RequestParser.hpp"
 
 #include <iostream>
+#include <string>
 
 // ? Connection to port -> Does not know where it is?
 // TODO: Try to use enum(class) for method
-
-/*
-	HttpResponse: Immutable once parced
-*/
-struct HttpRequest
-{
-	HttpMethod method;	 // "GET", "POST", "DELETE"
-	std::string target;	 // "/path?query=..."
-	std::string path;	 // "/path"
-	std::string query;	 // "a=1&b=2"
-	std::string version; // "HTTP/1.1"
-	std::string body;
-	/*Parse status*/
-};
 
 class Request
 {
   private:
 	HttpRequest request;
-	bool parse(const std::string &raw);
+	RequestParseStatus parse(const std::string &raw);
 
   public:
 	// No copying needed
