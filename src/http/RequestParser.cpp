@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 12:05:30 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/26 14:35:31 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ bool RequestParser::splitSections(const std::string &raw, std::string &startLine
 	// 1. Empty input
 	if (raw.empty())
 	{
-		// TODO: Test
 		status = PARSE_INCOMPLETE;
 		Logger::error("RequestParser::splitSections() -> Empty raw");
 		return (false);
@@ -100,14 +99,12 @@ bool RequestParser::splitSections(const std::string &raw, std::string &startLine
 	std::string::size_type ptr_sl = raw.find(CRLF);
 	if (ptr_sl == std::string::npos)
 	{
-		// TODO: Test no CRLF
 		status = PARSE_INCOMPLETE;
 		Logger::error("RequestParser::splitSections() -> Did not find CRLF");
 		return (false);
 	}
 	if (ptr_sl > limits.max_start_line)
 	{
-		// TODO: Test limits
 		status = PARSE_EXCEED_LIMIT;
 		Logger::error("RequestParser::splitSections() -> Start-line exceeds limit");
 		return (false);
@@ -121,7 +118,6 @@ bool RequestParser::splitSections(const std::string &raw, std::string &startLine
 	std::string::size_type ptr_hdr_end = raw.find(HDR_END, search_from);
 	if (ptr_hdr_end == std::string::npos)
 	{
-		// TODO: Test headers not terminated yet
 		status = PARSE_INCOMPLETE;
 		Logger::error("RequestParser::splitSections() -> Did not find HDR_END");
 		return (false);
@@ -131,10 +127,33 @@ bool RequestParser::splitSections(const std::string &raw, std::string &startLine
 	const std::string::size_type hdr_len = ptr_hdr_end - hdr_begin;
 	if (hdr_len > limits.max_header_size)
 	{
-		// TODO: Test header limits
 		Logger::error("RequestParser::splitSections() -> Header block exceeds limit");
 		status = PARSE_EXCEED_LIMIT;
 		return (false);
+	}
+
+	// Enforce per-header-line limit
+	{
+		std::string::size_type line_start = hdr_begin;
+		while (line_start < ptr_hdr_end)
+		{
+			std::string::size_type eol = raw.find(CRLF, line_start);
+			if (eol == std::string::npos || eol > ptr_hdr_end)
+			{
+				// Malformed / incomplete header line
+				status = PARSE_INCOMPLETE;
+				Logger::error("RequestParser::splitSections() -> Header line not terminated");
+				return false;
+			}
+			const std::string::size_type line_len = eol - line_start;
+			if (line_len > limits.max_header_line)
+			{
+				status = PARSE_EXCEED_LIMIT;
+				Logger::error("RequestParser::splitSections() -> Header line exceeds limit");
+				return false;
+			}
+			line_start = eol + CRLF.size();
+		}
 	}
 	headerBlock.assign(raw, hdr_begin, hdr_len);
 
@@ -151,7 +170,6 @@ bool RequestParser::splitSections(const std::string &raw, std::string &startLine
 	}
 	if (limits.max_body_size && body.size() > limits.max_body_size)
 	{
-		// TODO: Test body limits
 		status = PARSE_EXCEED_LIMIT;
 		Logger::error("RequestParser::splitSections() -> Body exceeds limit");
 		return (false);

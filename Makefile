@@ -6,7 +6,7 @@
 #    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/08/26 08:24:27 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/08/26 14:08:20 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,9 +52,9 @@ TEST_SOURCES := $(sort $(shell find $(TEST_DIRS) -type f -name 'test_*.cpp'))
 TEST_OBJECTS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_SOURCES))
 TEST_DEPENDS := $(TEST_OBJECTS:.o=.d)
 
-TEST_HELPERS := $(sort $(shell find $(TEST_DIRS) -type f -name '*.cpp' -not -name 'test_*.cpp'))
-TEST_HELPER_OBJECTS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_HELPERS))
-TEST_HELPER_DEPENDS := $(TEST_HELPER_OBJECTS:.o=.d)
+# TEST_HELPERS := $(sort $(shell find $(TEST_DIRS) -type f -name '*.cpp' -not -name 'test_*.cpp'))
+# TEST_HELPER_OBJECTS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_HELPERS))
+# TEST_HELPER_DEPENDS := $(TEST_HELPER_OBJECTS:.o=.d)
 
 # ---------------- Rules -------------------
 all: $(NAME)
@@ -68,7 +68,7 @@ $(NAME): $(OBJECTS)
 test: $(TEST_BIN)
 	@./$(TEST_BIN)
 
-$(TEST_BIN): $(LIB_OBJECTS) $(TEST_OBJECTS) $(TEST_HELPER_OBJECTS)
+$(TEST_BIN): $(LIB_OBJECTS) $(TEST_OBJECTS)
 	@echo "$(BLUE)\nLinking $(TEST_BIN)...$(RESET)"
 	@$(CXX) $^ $(LDFLAGS) -o $@
 	@echo "$(GREEN)\nUnit tests ready\n$(RESET)"
@@ -88,6 +88,6 @@ fclean: clean
 
 re: fclean all
 
--include $(DEPENDS) $(TEST_DEPENDS) $(TEST_HELPER_DEPENDS)
+-include $(DEPENDS) $(TEST_DEPENDS)
 
 .PHONY: all clean fclean re test

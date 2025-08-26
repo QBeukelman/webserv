@@ -6,19 +6,17 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 08:59:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 11:54:05 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/26 14:06:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/Request.hpp"
 #include "tests/doctest.h"
-#include "tests/utils/test_read_file.hpp"
+#include "tests/fixtures/test_http_request_data.hpp"
 
 TEST_CASE("Parser: simple GET without body")
 {
-
-	const std::string raw = "GET / HTTP/1.1\r\nHost: a\r\n\r\n";
-	Request request(raw);
+	Request request(HTTP_REQUEST_GET);
 	HttpRequest requestObject = request.getRequest();
 
 	CHECK(requestObject.status == PARSE_OK);
