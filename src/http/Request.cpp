@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/08/25 10:43:30 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Request.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/08/26 10:25:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,12 @@ Hello World
 // ____________________________________________________________________________
 RequestParseStatus Request::parse(const std::string &raw)
 {
-	Logger::info("Parse called with: " + raw);
+	Logger::info("Parse called");
 
 	RequestParser parser(RequestLimits{});
 
 	const HttpRequest req = parser.parse(raw);
+	this->setRequest(req);
 
 	return (req.status);
 }
@@ -72,7 +73,8 @@ RequestParseStatus Request::parse(const std::string &raw)
 // ____________________________________________________________________________
 Request::Request(std::string raw)
 {
-	Logger::info("Request constructor called with: " + raw);
+	Logger::info("Request constructor called");
+	parse(raw);
 }
 
 HttpRequest Request::getRequest(void) const

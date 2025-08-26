@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestParser.hpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/25 09:33:08 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/08/25 10:09:28 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestParser.hpp                                  :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/08/26 11:40:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,22 @@ class RequestParser
   private:
 	RequestLimits limits;
 
-  public:
-	explicit RequestParser(RequestLimits limits);
-
 	// Only consturct with Limits
 	RequestParser(const RequestParser &) = delete;
 	RequestParser &operator=(const RequestParser &) = delete;
 	RequestParser(RequestParser &&) = delete;
 	RequestParser &operator=(RequestParser &&) = delete;
+
+#ifdef UNIT_TEST
+  public:
+#else
+  private:
+#endif
+	bool splitSections(const std::string &raw, std::string &startLine, std::string &headerBlock, std::string &body,
+					   RequestParseStatus &status) const;
+
+  public:
+	explicit RequestParser(RequestLimits limits);
 
 	RequestLimits getLimits(void);
 	HttpRequest parse(std::string);

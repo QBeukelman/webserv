@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestParseStatus.cpp                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/25 09:20:19 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/08/25 09:20:55 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestParseStatus.cpp                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/25 09:20:19 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/08/26 09:56:39 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ std::string to_string(RequestParseStatus status)
 		return "Invalid version";
 	case PARSE_MALFORMED_REQUEST:
 		return "Malformed request";
+	case PARSE_EXCEED_LIMIT:
+		return "Request exceeds limit";
 	case PARSE_INCOMPLETE:
 		return "Incomplete request";
 	default:
