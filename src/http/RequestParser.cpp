@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 14:35:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/26 17:25:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,12 @@ HttpRequest RequestParser::parse(std::string requestString)
 	RequestParseStatus status = PARSE_INCOMPLETE;
 
 	if (!splitSections(requestString, startLine, headerBlock, bodySrc, status))
+	{
+		request.status = status;
+		return (request);
+	}
+
+	if (!parseStartLine(startLine, request, status))
 	{
 		request.status = status;
 		return (request);
@@ -176,5 +182,41 @@ bool RequestParser::splitSections(const std::string &raw, std::string &startLine
 	}
 
 	// SUCCCESS – leave st unchanged; caller will set PARSE_OK after downstream parsing
+	return (true);
+}
+
+/*
+	1. Validate that the line is well-formed according to HTTP/1.1.
+	2. Extract the three required parts:
+		Method (GET, POST, DELETE, ...)
+		Request target (the path and optional query, e.g. /path?query=1)
+		HTTP version (e.g. HTTP/1.1)
+	3. Store them in the HttpRequest& out structure.
+	4. Set the RequestParseStatus& st to indicate success or a specific error.
+*/
+bool RequestParser::parseStartLine(const std::string &startLine, HttpRequest &out, RequestParseStatus &status) const
+{
+	std::istringstream iss(startLine);
+	std::vector<std::string> tokens;
+	std::string word;
+
+	while (iss >> word)
+	{
+		tokens.push_back(word);
+	}
+	if (tokens.size() != 3)
+	{
+		status = PARSE_MALFORMED_REQUEST;
+		Logger::error("RequestParser::parseStartLine() -> Token count does not equal 3");
+		return (false);
+	}
+
+	// for (auto t : tokens)
+	// {
+	// 	std::cout << t << std::endl;
+	// }
+
+	out.method = to_method(tokens[0]);
+
 	return (true);
 }

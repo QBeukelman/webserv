@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 11:40:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/26 17:05:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@
 
 #include <cstddef>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <vector>
 
 struct RequestLimits
 {
@@ -45,6 +47,8 @@ class RequestParser
 #endif
 	bool splitSections(const std::string &raw, std::string &startLine, std::string &headerBlock, std::string &body,
 					   RequestParseStatus &status) const;
+
+	bool parseStartLine(const std::string &startLine, HttpRequest &out, RequestParseStatus &status) const;
 
   public:
 	explicit RequestParser(RequestLimits limits);

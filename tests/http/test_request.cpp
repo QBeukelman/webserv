@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 08:59:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 14:06:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/26 17:25:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 #include "tests/doctest.h"
 #include "tests/fixtures/test_http_request_data.hpp"
 
-TEST_CASE("Parser: simple GET without body")
+TEST_CASE("Parser: Simple GET without body")
 {
 	Request request(HTTP_REQUEST_GET);
 	HttpRequest requestObject = request.getRequest();
 
 	CHECK(requestObject.status == PARSE_OK);
-	// CHECK(requestObject.method == HttpMethod::GET);
+	CHECK(requestObject.method == HttpMethod::GET);
 	// CHECK(request.path == "/");
 	// CHECK(request.version == "HTTP/1.1");
 	// CHECK(request.headers.find("host")->second == "a");

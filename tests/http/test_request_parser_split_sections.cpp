@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 11:35:30 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/26 14:28:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/26 17:15:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static std::string make_request(const std::string &start_line, const std::string
 	return req;
 }
 
-TEST_CASE("Parser: SplitSections() simple GET without body")
+TEST_CASE("RequestParser: SplitSections() simple GET without body")
 {
 	RequestParser p(RequestLimits{});
 	std::string sl, hb, b;
@@ -37,7 +37,7 @@ TEST_CASE("Parser: SplitSections() simple GET without body")
 	CHECK(st == PARSE_INCOMPLETE);
 }
 
-TEST_CASE("Parser: SplitSections() POST with body")
+TEST_CASE("RequestParser: SplitSections() POST with body")
 {
 	RequestParser p(RequestLimits{});
 	std::string sl, hb, b;
@@ -51,7 +51,7 @@ TEST_CASE("Parser: SplitSections() POST with body")
 	CHECK(st == PARSE_INCOMPLETE);
 }
 
-TEST_CASE("Parser: SplitSections() POST no CRLF")
+TEST_CASE("RequestParser: SplitSections() POST no CRLF")
 {
 	RequestParser p(RequestLimits{});
 	std::string sl, hb, b;
@@ -61,7 +61,7 @@ TEST_CASE("Parser: SplitSections() POST no CRLF")
 	CHECK(st == PARSE_INCOMPLETE);
 }
 
-TEST_CASE("Limits: start-line too long")
+TEST_CASE("RequestParser: Limits, start-line too long")
 {
 	// Very small limit to force a failure
 	RequestLimits lim;
@@ -84,7 +84,7 @@ TEST_CASE("Limits: start-line too long")
 	CHECK(st == PARSE_EXCEED_LIMIT);
 }
 
-TEST_CASE("Limits: single header line too long")
+TEST_CASE("RequestParser: Limits, single header line too long")
 {
 	RequestLimits lim;
 	lim.max_start_line = 8 * 1024;
@@ -107,7 +107,7 @@ TEST_CASE("Limits: single header line too long")
 	CHECK(st == PARSE_EXCEED_LIMIT);
 }
 
-TEST_CASE("Limits: total header block too large")
+TEST_CASE("RequestParser: Limits, total header block too large")
 {
 	RequestLimits lim;
 	lim.max_start_line = 8 * 1024;
@@ -131,7 +131,7 @@ TEST_CASE("Limits: total header block too large")
 	CHECK(st == PARSE_EXCEED_LIMIT);
 }
 
-TEST_CASE("Limits: body too large (by Content-Length)")
+TEST_CASE("RequestParser: Limits, body too large (by Content-Length)")
 {
 	RequestLimits lim;
 	lim.max_start_line = 8 * 1024;
