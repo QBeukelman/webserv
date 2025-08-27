@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 10:25:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/27 10:50:26 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,9 @@ std::ostream &operator<<(std::ostream &out, const Request &request)
 {
 	HttpRequest req = request.getRequest();
 	out << "======== Request ========\n"
-		<< "parse: " << to_string(req.status) << "\n"
+		<< "parse: " << toStringStatus(req.status) << "\n"
 		<< "------- HEADER -------\n"
-		<< to_string(req.method) << "\n"
+		<< toStringMethod(req.method) << "\n"
 		<< req.target << "\n"
 		<< req.path << "\n"
 		<< req.query << "\n"

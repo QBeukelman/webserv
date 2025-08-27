@@ -6,13 +6,13 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:20:19 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 09:56:39 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/27 10:49:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestParseStatus.hpp"
 
-std::string to_string(RequestParseStatus status)
+std::string toStringStatus(RequestParseStatus status)
 {
 	switch (status)
 	{

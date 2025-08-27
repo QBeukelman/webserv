@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 17:05:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/27 16:34:17 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,18 @@
 #define REQUESTPARSER_HPP
 
 #include "http/HttpRequest.hpp"
+#include "log/Logger.hpp"
 
 #include <cstddef>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
+
+// Delimiters (HTTP/1.x requires CRLF)
+const std::string CRLF("\r\n");
+const std::string HDR_END("\r\n\r\n");
 
 struct RequestLimits
 {
@@ -49,6 +55,9 @@ class RequestParser
 					   RequestParseStatus &status) const;
 
 	bool parseStartLine(const std::string &startLine, HttpRequest &out, RequestParseStatus &status) const;
+
+	bool parseHeaders(const std::string &headerBlock, std::map<std::string, std::string> &headers,
+					  RequestParseStatus &status) const;
 
   public:
 	explicit RequestParser(RequestLimits limits);

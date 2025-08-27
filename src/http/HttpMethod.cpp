@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 10:28:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/24 11:36:10 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/27 16:18:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,28 @@ const std::unordered_map<std::string, HttpMethod> kStringToMethod = {
 	{"GET", HttpMethod::GET}, {"POST", HttpMethod::POST}, {"DELETE", HttpMethod::DELETE_}};
 } // namespace
 
-std::string to_string(HttpMethod m)
+std::string toStringMethod(HttpMethod m)
 {
 	auto it = kMethodToString.find(m);
 	if (it != kMethodToString.end())
 		return it->second;
-	return "UNKNOWN";
+	return ("UNKNOWN");
 }
 
-HttpMethod to_method(const std::string &s)
+HttpMethod toMethod(const std::string &s)
 {
 	auto it = kStringToMethod.find(s);
 	if (it != kStringToMethod.end())
 		return it->second;
-	return HttpMethod::UNKNOWN;
+	return (HttpMethod::UNKNOWN);
+}
+
+bool isSupported(const std::string &s)
+{
+	return (kStringToMethod.find(s) != kStringToMethod.end());
 }
 
 std::ostream &operator<<(std::ostream &out, HttpMethod m)
 {
-	return out << to_string(m);
+	return (out << toStringMethod(m));
 }

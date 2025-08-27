@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:19:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 09:56:09 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/27 10:49:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,6 @@ enum RequestParseStatus
 	PARSE_INCOMPLETE
 };
 
-std::string to_string(RequestParseStatus status);
+std::string toStringStatus(RequestParseStatus status);
 
 #endif

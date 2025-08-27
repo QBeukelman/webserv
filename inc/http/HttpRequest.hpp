@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpRequest.hpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/25 10:07:27 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/08/25 10:42:32 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpRequest.hpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/25 10:07:27 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/08/27 16:47:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 #include "http/HttpMethod.hpp"
 #include "http/RequestParseStatus.hpp"
 
+#include <map>
 #include <string>
-#include <unordered_map>
 
 /*
 	HttpResponse: Immutable once parced
@@ -30,7 +30,7 @@ struct HttpRequest
 	std::string query;	 // "a=1&b=2"
 	std::string version; // "HTTP/1.1"
 	std::string body;
-	std::unordered_map<std::string, std::string> headers;
+	std::map<std::string, std::string> headers;
 	RequestParseStatus status = RequestParseStatus::PARSE_INCOMPLETE;
 };
 

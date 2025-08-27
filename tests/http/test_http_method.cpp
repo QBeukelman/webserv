@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 10:04:46 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/26 17:16:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/27 10:49:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 #include "http/HttpMethod.hpp"
 #include "tests/doctest.h"
 
-TEST_CASE("HttpMethod: to_method basic")
+TEST_CASE("HttpMethod: toMethod() basic")
 {
-	CHECK(to_method("GET") == HttpMethod::GET);
-	CHECK(to_method("POST") == HttpMethod::POST);
-	CHECK(to_method("DELETE") == HttpMethod::DELETE_);
-	CHECK(to_method("X") == HttpMethod::UNKNOWN);
+	CHECK(toMethod("GET") == HttpMethod::GET);
+	CHECK(toMethod("POST") == HttpMethod::POST);
+	CHECK(toMethod("DELETE") == HttpMethod::DELETE_);
+	CHECK(toMethod("X") == HttpMethod::UNKNOWN);
 }
 
-TEST_CASE("HttpMethod: to_string basic")
+TEST_CASE("HttpMethod: toString() basic")
 {
-	CHECK(to_string(HttpMethod::GET) == "GET");
-	CHECK(to_string(HttpMethod::DELETE_) == "DELETE");
+	CHECK(toStringMethod(HttpMethod::GET) == "GET");
+	CHECK(toStringMethod(HttpMethod::DELETE_) == "DELETE");
 }
