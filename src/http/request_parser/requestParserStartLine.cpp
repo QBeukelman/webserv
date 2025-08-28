@@ -6,13 +6,13 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/27 08:43:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/27 16:28:17 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/28 08:33:33 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestParser.hpp"
 
-bool isValidPath(const std::string &s)
+bool isValidTarget(const std::string &s)
 {
 	if (s.empty())
 		return (false);
@@ -91,7 +91,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 
 	// Request target
 	const std::string &target = tokens[1];
-	if (isValidPath(tokens[1]) == false)
+	if (isValidTarget(tokens[1]) == false)
 	{
 		oss << "RequestParser::parseStartLine() -> Unsupported chars in request target " << target;
 		Logger::error(oss.str());
@@ -114,24 +114,27 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	return (true);
 }
 
-/*
-	e.g. POST /submit-form?debug=true HTTP/1.1\r\n
+void splitTarget(const std::string &target, std::string &path, std::string &query)
+{
+	const std::string::size_type q = target.find("?");
+	if (q == std::string::npos)
+	{
+		path = target;
+		query.clear();
+	}
+	else
+	{
+		path = target.substr(0, q);
+		query = target.substr(q + 1);
+	}
+}
 
-	1. Validate that the line is well-formed according to HTTP/1.1.
-	2. Extract the three required parts:
-		Method (GET, POST, DELETE, ...)
-		Request target (the path and optional query, e.g. /path?query=1)
-		HTTP version (e.g. HTTP/1.1)
-	3. Store them in the HttpRequest& out structure.
-	4. Set the RequestParseStatus& st to indicate success or a specific error.
-*/
 bool RequestParser::parseStartLine(const std::string &startLine, HttpRequest &out, RequestParseStatus &status) const
 {
 	std::istringstream iss(startLine);
 	std::vector<std::string> tokens;
 	std::string word;
 
-	// Tokenize
 	while (iss >> word)
 	{
 		tokens.push_back(word);
@@ -145,8 +148,10 @@ bool RequestParser::parseStartLine(const std::string &startLine, HttpRequest &ou
 	}
 
 	out.method = toMethod(tokens[0]);
-	out.path = tokens[1];
+	out.target = tokens[1];
 	out.version = tokens[2];
+
+	splitTarget(out.target, out.path, out.query);
 
 	return (true);
 }
