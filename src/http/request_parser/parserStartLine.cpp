@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   requestParserStartLine.cpp                         :+:    :+:            */
+/*   parserStartLine.cpp                                :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/27 08:43:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/28 08:33:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/28 22:15:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 

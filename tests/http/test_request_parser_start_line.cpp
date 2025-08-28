@@ -6,19 +6,20 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 17:01:33 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/27 16:27:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/28 21:54:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define UNIT_TEST
 
+#include "http/HttpRequestLimits.hpp"
 #include "http/RequestParser.hpp"
 #include "tests/doctest.h"
 #include "tests/fixtures/test_http_request_data.hpp"
 
 TEST_CASE("RequestParser: parseStartLine() Success simple")
 {
-	RequestParser p(RequestLimits{});
+	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
 	HttpRequest request;
@@ -32,7 +33,7 @@ TEST_CASE("RequestParser: parseStartLine() Success simple")
 
 TEST_CASE("RequestParser: parseStartLine() Success with path")
 {
-	RequestParser p(RequestLimits{});
+	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
 	HttpRequest request;
@@ -46,7 +47,7 @@ TEST_CASE("RequestParser: parseStartLine() Success with path")
 
 TEST_CASE("RequestParser: parseStartLine() Invalid method")
 {
-	RequestParser p(RequestLimits{});
+	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
 	HttpRequest request;
@@ -58,7 +59,7 @@ TEST_CASE("RequestParser: parseStartLine() Invalid method")
 
 TEST_CASE("RequestParser: parseStartLine() Invalid path")
 {
-	RequestParser p(RequestLimits{});
+	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
 	HttpRequest request;
@@ -71,7 +72,7 @@ TEST_CASE("RequestParser: parseStartLine() Invalid path")
 
 TEST_CASE("RequestParser: parseStartLine() Invalid version")
 {
-	RequestParser p(RequestLimits{});
+	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
 	HttpRequest request;

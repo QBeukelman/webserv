@@ -6,52 +6,60 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/27 16:47:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/28 22:06:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestParser.hpp"
 
-RequestParser::RequestParser(RequestLimits limits)
+RequestParser::RequestParser(HttpRequestLimits limits)
 {
 	this->limits = limits;
 }
 
-// PUBLIC
-// ____________________________________________________________________________
-RequestLimits RequestParser::getLimits(void)
+HttpRequestLimits RequestParser::getLimits(void) const
 {
 	return (this->limits);
 }
 
-HttpRequest RequestParser::parse(std::string requestString)
+std::string RequestParser::searchHeader(const std::map<std::string, std::string> &h, const std::string &key) const
 {
-	HttpRequest request;
-	request.status = PARSE_INCOMPLETE;
+	std::string key_l = toLower(key);
 
-	std::string startLine, headerBlock, bodySrc;
-	RequestParseStatus status = PARSE_INCOMPLETE;
-
-	if (splitSections(requestString, startLine, headerBlock, bodySrc, status) == false)
+	for (std::map<std::string, std::string>::const_iterator it = h.begin(); it != h.end(); ++it)
 	{
-		request.status = status;
-		return (request);
+		if (toLower(it->first) == key_l)
+		{
+			return (it->second);
+		}
 	}
+	return ("");
+}
 
-	if (parseStartLine(startLine, request, status) == false)
+ParseStep RequestParser::step(ParseContext &ctx, const char *data, size_t len) const
+{
+	switch (ctx.phase)
 	{
-		request.status = status;
-		return (request);
+	case READ_START_LINE:
+	case READ_HEADERS:
+		return (handleStartLineAndHeaders(ctx, data, len));
+
+	case READ_BODY_CONTENT_LENGTH:
+		// return (handleBodyContentLength(ctx, data, len));
+
+	case READ_CHUNK_SIZE:
+		// return (handleChunkSize(ctx, data, len));
+
+	case READ_CHUNK_DATA:
+		// return (handleChunkData(ctx, data, len));
+
+	case COMPLETE:
+		// return (handleComplete(ctx));
+
+	case ERROR_STATE:
+	default:
+		return (ParseStep());
 	}
-
-	if (parseHeaders(headerBlock, request.headers, status) == false)
-	{
-		request.status = status;
-		return (request);
-	}
-
-	// Caller sets parse status
-	request.status = PARSE_OK;
-
-	return (request);
+	// TODO: Fill ParseStep
+	return (ParseStep());
 }
