@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 09:13:39 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/27 10:49:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:18:33 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <ostream>
 #include <string>
-#include <unordered_map>
 
 enum class HttpMethod
 {

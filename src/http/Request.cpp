@@ -6,14 +6,14 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/28 22:12:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:06:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
 	*Parsing checklist (must-haves)
 
-		- Split headers/body at first \r\n\r\n. Reject if headers exceed sane limits.
+		- Split headers/body at first \r\n\r\n. Reject if headers exceed limits.
 
 	*Start line: METHOD SP TARGET SP HTTP/1.1\r\n
 
@@ -42,48 +42,49 @@
 		- 501 method not implemented.
 */
 
-// ! Example
-/*
-POST /upload HTTP/1.1\r\n
-Host: localhost:8080\r\n
-Content-Type: text/plain\r\n
-Content-Length: 11\r\n
-\r\n
-Hello World
-*/
-
 #include "http/Request.hpp"
+#include "http/RequestParser.hpp"
 #include "log/Logger.hpp"
 
 // PRIVATE
 // ____________________________________________________________________________
-RequestParseStatus Request::parse(const std::string &raw)
+RequestParseStatus Request::parse(const char *data)
 {
-	std::ostringstream oss;
-	oss << "Parse called" << raw;
-	Logger::info(oss.str());
+	Logger::info("Parse called");
+	RequestParser p(HttpRequestLimits{});
 
-	// TODO: Use RequestParser::step()
-
+	this->step = p.step(context, data, p.strLen(data));
 	return (RequestParseStatus());
 }
 
 // CONSTRUCTORS
 // ____________________________________________________________________________
-Request::Request(std::string raw)
+Request::Request(const char *data)
 {
 	Logger::info("Request constructor called");
-	parse(raw);
+	this->step = ParseStep();
+	this->context = ParseContext();
+	parse(data);
 }
 
-HttpRequest Request::getRequest(void) const
+ParseStep Request::getParserStep(void) const
 {
-	return (this->request);
+	return (this->step);
 }
 
-void Request::setRequest(HttpRequest newRequest)
+void Request::setParserStep(ParseStep newStep)
 {
-	this->request = newRequest;
+	this->step = newStep;
+}
+
+ParseContext Request::getParseContext(void) const
+{
+	return (this->context);
+}
+
+void Request::setParserContext(ParseContext newContext)
+{
+	this->context = newContext;
 }
 
 // EXECUTE
@@ -92,23 +93,4 @@ HttpResponse Request::execute() const
 {
 	HttpResponse response = HttpResponse();
 	return (response);
-}
-
-// OVERLOAD
-// ____________________________________________________________________________
-std::ostream &operator<<(std::ostream &out, const Request &request)
-{
-	HttpRequest req = request.getRequest();
-	out << "======== Request ========\n"
-		<< "parse: " << toStringStatus(req.status) << "\n"
-		<< "------- HEADER -------\n"
-		<< toStringMethod(req.method) << "\n"
-		<< req.target << "\n"
-		<< req.path << "\n"
-		<< req.query << "\n"
-		<< req.version << "\n"
-		<< "------- BODY -------\n"
-		<< req.body << "\n"
-		<< std::endl;
-	return (out);
 }

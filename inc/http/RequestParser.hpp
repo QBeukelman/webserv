@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/28 22:08:58 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 09:35:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ class RequestParser
 
 	std::string searchHeader(const std::map<std::string, std::string> &h, const std::string &key) const;
 	HttpRequestLimits getLimits(void) const;
+	size_t strLen(const char *data) const;
 
 	// Incremental state-machine entry point (for chunked & non-chunked)
 	ParseStep step(ParseContext &ctx, const char *data, size_t len) const;

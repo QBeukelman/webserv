@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 13:59:07 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/26 14:19:55 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:37:58 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static const char HTTP_REQUEST_POST[] = "POST /submit-form?debug=true HTTP/1.1\r
 										"User-Agent: curl/7.68.0\r\n"
 										"Content-Type: application/x-www-form-urlencoded\r\n"
 										"Content-Length: 26\r\n"
+										"Content-Encoding: none\r\n"
 										"\r\n"
 										"name=Alice&age=30&city=AMS";
 

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/28 22:06:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:00:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,51 +64,54 @@ static bool check_single_header_limit(const char *data, size_t header_end, size_
 	return (true);
 }
 
-ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &context, const char *data, size_t len) const
+static ParseStep returnFailure(ParseContext &ctx, ParseStep &step, RequestParseStatus status, std::string msg)
+{
+	std::ostringstream oss;
+	oss << "RequestParser::handleStartLineAndHeaders()" << toStringStatus(status) << " " << msg;
+	Logger::error(oss.str());
+
+	ctx.phase = ERROR_STATE;
+	ctx.request.status = status;
+	step.status = status;
+
+	return (step);
+}
+
+ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char *data, size_t len) const
 {
 	ParseStep step;
 
 	// 1. Find end of header
 	size_t header_end = 0;
 	if (find_header_end(data, len, header_end) == false)
-	{
-		// TODO: Did not find header end
-	}
+		return (returnFailure(ctx, step, PARSE_MALFORMED_REQUEST, "Did not find header end"));
 
 	// 2. Check header block size
-	if ((header_end + 4) > context.limits.max_header_size)
-	{
-		// TODO: Header length exceeded
-	}
+	if ((header_end + 4) > ctx.limits.max_header_size)
+		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Header length exceeded"));
 
 	// 3. Find end of start-line
 	size_t sl_end = (size_t)-1;
 	if (find_start_line_end(data, header_end, sl_end) == false)
-	{
-		// TODO: No end start-line
-	}
+		return (returnFailure(ctx, step, PARSE_MALFORMED_REQUEST, "No end start-line"));
 
 	// Check start-line size
-	if (sl_end > context.limits.max_start_line)
-	{
-		// TODO: Start-line exceeds limits
-	}
+	if (sl_end > ctx.limits.max_start_line)
+		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Start-line exceeds limits"));
 
 	// 4. Enforce single line header line limit
-	if (check_single_header_limit(data, header_end, sl_end, context.limits.max_header_line) == false)
-	{
-		// TODO: Single header line exceeds limits
-	}
+	if (check_single_header_limit(data, header_end, sl_end, ctx.limits.max_header_line) == false)
+		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Single header line exceeds limits"));
 
 	// 5. Parse Start-Line and Headers
 	std::string startLine(data, data + sl_end);
 	std::string headerBlock(data + sl_end + 2, data + header_end);
 	RequestParseStatus st = PARSE_INCOMPLETE;
-	if (parseStartLine(startLine, context.request, st) == false)
+	if (parseStartLine(startLine, ctx.request, st) == false)
 	{
 		// TODO: Start-line error
 	}
-	if (parseHeaders(headerBlock, context.request.headers, st) == false)
+	if (parseHeaders(headerBlock, ctx.request.headers, st) == false)
 	{
 		// TODO: Header error
 	}

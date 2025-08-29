@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 10:07:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/27 16:47:16 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:20:33 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "http/HttpMethod.hpp"
 #include "http/RequestParseStatus.hpp"
 
+#include <iostream>
 #include <map>
 #include <string>
 
@@ -33,5 +34,7 @@ struct HttpRequest
 	std::map<std::string, std::string> headers;
 	RequestParseStatus status = RequestParseStatus::PARSE_INCOMPLETE;
 };
+
+std::ostream &operator<<(std::ostream &out, const HttpRequest &req);
 
 #endif

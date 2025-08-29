@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 11:14:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/28 22:15:27 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 08:51:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,12 @@ std::string RequestParser::trim(const std::string &s) const
 		return ("");
 	std::string::size_type end = s.find_last_not_of(" \t\r\n");
 	return (s.substr(start, end - start + 1));
+}
+
+size_t RequestParser::strLen(const char *data) const
+{
+	size_t i = 0;
+	while (data[i])
+		i++;
+	return (i);
 }

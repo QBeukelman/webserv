@@ -6,16 +6,15 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 14:56:11 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/28 20:34:14 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:07:08 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSECONTEXT_HPP
 #define PARSECONTEXT_HPP
 
-#include "http/HttpRequestLimits.hpp"
-#include "http/Request.hpp"
-#include "http/RequestParser.hpp"
+#include "HttpRequest.hpp"
+#include "HttpRequestLimits.hpp"
 
 enum ParserPhase
 {
@@ -56,8 +55,8 @@ struct ParseContext
 	RequestParseStatus last_status;
 
 	ParseContext()
-		: phase(READ_START_LINE), content_length_remaining(0), chunk_bytes_remaining(0), saw_final_zero(false),
-		  total_body_bytes(0), last_status(PARSE_INCOMPLETE)
+		: phase(READ_START_LINE), limits(HttpRequestLimits{}), content_length_remaining(0), chunk_bytes_remaining(0),
+		  saw_final_zero(false), total_body_bytes(0), last_status(PARSE_INCOMPLETE)
 	{
 	}
 };

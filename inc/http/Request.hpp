@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/27 08:49:18 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/08/29 10:06:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,32 +22,26 @@
 #include <iostream>
 #include <string>
 
-// ? Connection to port -> Does not know where it is?
-// TODO: Try to use enum(class) for method
-
 class Request
 {
   private:
-	HttpRequest request;
-	RequestParseStatus parse(const std::string &raw);
+	ParseStep step;
+	ParseContext context;
+
+	RequestParseStatus parse(const char *);
 
   public:
-	// No copying needed
-	Request() = delete;
-	Request(const Request &other) = delete;
-	Request &operator=(const Request &other) = delete;
-
 	// Init
-	explicit Request(std::string); // -> Better not to throw in `hot path`
+	explicit Request(const char *);
 
-	// Read & Update
-	HttpRequest getRequest(void) const;
-	void setRequest(const HttpRequest newRequest);
+	// Getters & Setters
+	ParseStep getParserStep(void) const;
+	void setParserStep(ParseStep);
+	ParseContext getParseContext(void) const;
+	void setParserContext(ParseContext);
 
 	// Use
 	HttpResponse execute(/* ServerConfig */) const;
 };
-
-std::ostream &operator<<(std::ostream &out, const Request &request);
 
 #endif
