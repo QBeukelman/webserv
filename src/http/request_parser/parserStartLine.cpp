@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/27 08:43:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/28 22:15:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/01 20:11:08 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ bool isValidTarget(const std::string &s)
 	{
 		unsigned char c = s[i];
 
-		// disallow CTL and space
+		// Disallow CTL and space
 		if (c <= 0x1F || c == 0x7F || c == ' ')
 			return false;
 
-		// percent-encoding check
-		// e.g. GET /docs/My%20File.pdf HTTP/1.1
+		// Percent-encoding check
+		// e.g. `GET /docs/My%20File.pdf HTTP/1.1`
 		if (c == '%')
 		{
 			if (i + 2 >= s.size())
@@ -75,7 +75,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 
 	if (tokens.size() != 3)
 	{
-		oss << "RequestParser::parseStartLine() -> Invalid token count: " << tokens.size();
+		oss << "RequestParser::parseStartLine() → Invalid token count: " << tokens.size();
 		Logger::error(oss.str());
 		return (false);
 	}
@@ -84,7 +84,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	const std::string &method = tokens[0];
 	if (isSupported(method) == false)
 	{
-		oss << "RequestParser::parseStartLine() -> Unsupported method: " << method;
+		oss << "RequestParser::parseStartLine() → Unsupported method: " << method;
 		Logger::error(oss.str());
 		return (false);
 	}
@@ -93,13 +93,13 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	const std::string &target = tokens[1];
 	if (isValidTarget(tokens[1]) == false)
 	{
-		oss << "RequestParser::parseStartLine() -> Unsupported chars in request target " << target;
+		oss << "RequestParser::parseStartLine() → Unsupported chars in request target " << target;
 		Logger::error(oss.str());
 		return (false);
 	}
 	if (target[0] != '/')
 	{
-		Logger::error("RequestParser::parseStartLine() -> Request target must start with '/'");
+		Logger::error("RequestParser::parseStartLine() → Request target must start with '/'");
 		return (false);
 	}
 
@@ -107,7 +107,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	const std::string &version = tokens[2];
 	if (version != "HTTP/1.1")
 	{
-		oss << "RequestParser::parseStartLine() -> Unsupported HTTP version (HTTP/1.1) " << version;
+		oss << "RequestParser::parseStartLine() → Unsupported HTTP version (HTTP/1.1) " << version;
 		Logger::error(oss.str());
 		return (false);
 	}

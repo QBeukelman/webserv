@@ -1,26 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   HttpResponse.hpp                                   :+:    :+:            */
+/*   test_handleBodyContentLength.cpp                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/19 13:09:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/01 20:26:46 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/09/01 13:01:00 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/01 20:25:25 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPRESPONSE_HPP
-#define HTTPRESPONSE_HPP
-
-#include <map>
-#include <string>
-
-struct HttpResponse
-{
-	int status;
-	std::map<std::string, std::string> headers;
-	std::string body;
-};
-
-#endif
+// TODO: test_handleBodyContentLength()

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/29 09:35:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/01 17:30:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #include <vector>
 
 // Delimiters for request
-const std::string CRLF("\r\n");
+const std::string CRLF("\r\n"); // Carriage Return + Line Feed
 const std::string HDR_END("\r\n\r\n");
 
 struct ParseStep
@@ -38,6 +38,8 @@ struct ParseStep
 	{
 	}
 };
+
+std::ostream &operator<<(std::ostream &out, ParseStep &step);
 
 class RequestParser
 {

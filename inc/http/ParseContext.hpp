@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 14:56:11 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/29 10:07:08 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/01 15:38:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ enum ParserPhase
 	ERROR_STATE
 };
 
+std::string toStringPhase(ParserPhase);
+
 /*
  * This structure represents the *current parsing state* of a single client
  * connection. It is owned by the event loop and passed to the RequestParser.
@@ -46,19 +48,30 @@ struct ParseContext
 	HttpRequest request;
 	HttpRequestLimits limits;
 
-	size_t content_length_remaining;
-
+	// Chunk
+	bool is_chunked;
 	size_t chunk_bytes_remaining;
+	std::string chunk_line_buf; // accumulates "<size>[;ext]\r\n"
+	size_t trailer_crlfs;
+
+	// Read
+	size_t read_offset; // bytes consumed from the current input window
+	size_t content_length_remaining;
+	size_t total_body_bytes;
+
 	bool saw_final_zero;
 
-	size_t total_body_bytes;
+	// TODO: ctx and step duplicate status
 	RequestParseStatus last_status;
 
 	ParseContext()
-		: phase(READ_START_LINE), limits(HttpRequestLimits{}), content_length_remaining(0), chunk_bytes_remaining(0),
-		  saw_final_zero(false), total_body_bytes(0), last_status(PARSE_INCOMPLETE)
+		: phase(READ_START_LINE), limits(HttpRequestLimits{}), is_chunked(false), chunk_bytes_remaining(0),
+		  trailer_crlfs(0), read_offset(0), content_length_remaining(0), total_body_bytes(0), saw_final_zero(false),
+		  last_status(PARSE_INCOMPLETE)
 	{
 	}
 };
+
+std::ostream &operator<<(std::ostream &out, ParseContext ctx);
 
 #endif

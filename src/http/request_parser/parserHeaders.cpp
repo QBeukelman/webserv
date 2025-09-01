@@ -6,16 +6,22 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/27 16:37:38 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/28 22:14:49 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/01 20:13:12 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestParser.hpp"
 
+/*
+ * Parse raw header block into key/value map.
+ *
+ * Notes:
+ * 	- Will update status on error.
+ */
 bool RequestParser::parseHeaders(const std::string &headerBlock, std::map<std::string, std::string> &headers,
 								 RequestParseStatus &status) const
 {
-	// 1. Split into raw lines on CRLF
+	// 1) Split into raw lines on CRLF
 	std::vector<std::string> lines;
 	lines.reserve(16);
 
@@ -35,7 +41,7 @@ bool RequestParser::parseHeaders(const std::string &headerBlock, std::map<std::s
 	if (lines.empty())
 		return (true);
 
-	// 2. Parse Name : Value
+	// 2) Parse Name : Value
 	for (size_t i = 0; i < lines.size(); ++i)
 	{
 		const std::string &line = lines[i];

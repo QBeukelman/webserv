@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 11:35:30 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/29 10:48:47 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/01 20:25:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,9 @@ TEST_CASE("RequestParser: handleStartLineAndHeaders()")
 	CHECK(context.request.version == "HTTP/1.1");
 
 	// Headers
-	CHECK(p.searchHeader(context.request.headers, "content-encoding") == "none");
+	CHECK(p.searchHeader(context.request.headers, "transfer-encoding") == "none");
 	CHECK(p.searchHeader(context.request.headers, "content-length") == "26");
 	CHECK(p.searchHeader(context.request.headers, "content-type") == "application/x-www-form-urlencoded");
 	CHECK(p.searchHeader(context.request.headers, "host") == "www.example.com");
 	CHECK(p.searchHeader(context.request.headers, "user-agent") == "curl/7.68.0");
-
-	// TODO: Body
 }
