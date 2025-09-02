@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   HttpResponse.hpp                                   :+:    :+:            */
+/*   RequestParseStatus.hpp                             :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/19 13:09:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/01 20:26:46 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/08/25 09:19:11 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/08/27 10:49:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPRESPONSE_HPP
-#define HTTPRESPONSE_HPP
+#ifndef REQUESTPARSESTATUS_HPP
+#define REQUESTPARSESTATUS_HPP
 
-#include <map>
 #include <string>
 
-struct HttpResponse
+enum RequestParseStatus
 {
-	int status;
-	std::map<std::string, std::string> headers;
-	std::string body;
+	PARSE_OK,
+	PARSE_INVALID_METHOD,
+	PARSE_INVALID_VERSION,
+	PARSE_MALFORMED_REQUEST,
+	PARSE_EXCEED_LIMIT,
+	PARSE_INCOMPLETE
 };
+
+std::string toStringStatus(RequestParseStatus status);
 
 #endif

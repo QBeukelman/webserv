@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   HttpMethod.hpp                                     :+:    :+:            */
+/*   HttpRequestLimits.hpp                              :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/24 09:13:39 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/29 10:18:33 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/08/28 17:38:37 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/08/28 22:03:55 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPMETHOD_HPP
-#define HTTPMETHOD_HPP
+#ifndef HTTPREQUESTLIMITS_HPP
+#define HTTPREQUESTLIMITS_HPP
 
-#include <ostream>
-#include <string>
+#include <cstddef>
 
-enum class HttpMethod
+struct HttpRequestLimits
 {
-	GET,
-	POST,
-	DELETE_,
-	UNKNOWN
+	size_t max_start_line = 8 * 1024;
+	size_t max_header_line = 8 * 1024;
+	size_t max_header_size = 64 * 1024; // sum of header lines
+	size_t max_body_size = 8 * 1024 * 1024;
 };
-
-std::string toStringMethod(HttpMethod);
-HttpMethod toMethod(const std::string &);
-bool isSupported(const std::string &s);
-std::ostream &operator<<(std::ostream &, HttpMethod);
 
 #endif

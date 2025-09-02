@@ -23,7 +23,17 @@ This project uses [doctest](https://github.com/doctest/doctest) for unit testing
 ### Build and run the unit tests
 
 ```bash
+# Make test executable `unit_tests`
 make test
+
+# List available tests
+./unit_tests --list-test-cases
+
+# Run by substring match
+./unit_tests -tc=" <Substring of test name> "
+
+# Run single test
+./unit_tests --test-case=" <Full name of test> "
 ```
 
 ---

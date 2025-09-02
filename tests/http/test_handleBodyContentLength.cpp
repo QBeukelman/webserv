@@ -1,32 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   HttpMethod.hpp                                     :+:    :+:            */
+/*   test_handleBodyContentLength.cpp                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/24 09:13:39 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/29 10:18:33 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/09/01 13:01:00 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/01 20:25:25 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPMETHOD_HPP
-#define HTTPMETHOD_HPP
-
-#include <ostream>
-#include <string>
-
-enum class HttpMethod
-{
-	GET,
-	POST,
-	DELETE_,
-	UNKNOWN
-};
-
-std::string toStringMethod(HttpMethod);
-HttpMethod toMethod(const std::string &);
-bool isSupported(const std::string &s);
-std::ostream &operator<<(std::ostream &, HttpMethod);
-
-#endif
+// TODO: test_handleBodyContentLength()
