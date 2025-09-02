@@ -6,11 +6,11 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 10:28:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/27 16:18:37 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/02 13:54:31 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "http/HttpMethod.hpp"
+#include "http/models/HttpMethod.hpp"
 #include <string>
 #include <unordered_map>
 

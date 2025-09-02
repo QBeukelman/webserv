@@ -1,47 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Request.hpp                                        :+:    :+:            */
+/*   HttpRequest.hpp                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/29 10:06:05 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/08/25 10:07:27 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/02 13:43:51 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REQUEST_HPP
-#define REQUEST_HPP
+#ifndef HTTPREQUEST_HPP
+#define HTTPREQUEST_HPP
 
 #include "HttpMethod.hpp"
-#include "HttpRequest.hpp"
-#include "HttpResponse.hpp"
 #include "RequestParseStatus.hpp"
-#include "RequestParser.hpp"
 
 #include <iostream>
+#include <map>
 #include <string>
 
-class Request
+/*
+	HttpResponse: Immutable once parced
+*/
+struct HttpRequest
 {
-  private:
-	ParseStep step;
-	ParseContext context;
-
-	RequestParseStatus parse(const char *);
-
-  public:
-	// Init
-	explicit Request(const char *);
-
-	// Getters & Setters
-	ParseStep getParserStep(void) const;
-	void setParserStep(ParseStep);
-	ParseContext getParseContext(void) const;
-	void setParserContext(ParseContext);
-
-	// Use
-	HttpResponse execute(/* ServerConfig */) const;
+	HttpMethod method;	 // "GET", "POST", "DELETE"
+	std::string target;	 // "/path?query=..."
+	std::string path;	 // "/path"
+	std::string query;	 // "a=1&b=2"
+	std::string version; // "HTTP/1.1"
+	std::string body;
+	std::map<std::string, std::string> headers;
+	RequestParseStatus status = RequestParseStatus::PARSE_INCOMPLETE;
 };
+
+std::ostream &operator<<(std::ostream &out, const HttpRequest &req);
 
 #endif

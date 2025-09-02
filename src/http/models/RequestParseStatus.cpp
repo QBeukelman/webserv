@@ -6,11 +6,11 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:20:19 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/27 10:49:16 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/02 13:55:31 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "http/RequestParseStatus.hpp"
+#include "http/models/RequestParseStatus.hpp"
 
 std::string toStringStatus(RequestParseStatus status)
 {

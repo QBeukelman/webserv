@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Config.hpp                                         :+:    :+:            */
+/*   ServerConfig.hpp                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/18 19:25:34 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/08/18 19:26:43 by dkolodze      ########   odam.nl         */
+/*   Updated: 2025/09/02 13:33:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-class Config
+class ServerConfig
 {
   public:
 	int port;

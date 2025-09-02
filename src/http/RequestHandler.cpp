@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ConfigParser.cpp                                   :+:    :+:            */
+/*   RequestHandler.cpp                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 13:47:19 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/02 13:52:59 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/ConfigParser.hpp"
+#include "http/RequestHandler.hpp"
 #include "log/Logger.hpp"
 
-#include <iostream>
-
-ConfigParser::ConfigParser()
+// INIT
+// ____________________________________________________________________________
+RequestHandler::RequestHandler(const ServerConfig &newServerConfig) : serverConfig(newServerConfig)
 {
-	Logger::debug("Created Parser");
 }
 
-ServerConfig ConfigParser::parse(const std::string &path)
+// EXECUTE
+// ____________________________________________________________________________
+HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
-	(void)(path);
-	ServerConfig config;
-	config.port = 4242;
-	return config;
+	std::cout << request;
+	return (HttpResponse());
 }

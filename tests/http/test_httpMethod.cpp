@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   test_http_method.cpp                               :+:    :+:            */
+/*   test_httpMethod.cpp                                :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 10:04:46 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/27 10:49:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/02 13:57:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-#include "http/HttpMethod.hpp"
+#include "http/models/HttpMethod.hpp"
 #include "tests/doctest.h"
 
 TEST_CASE("HttpMethod: toMethod() basic")
