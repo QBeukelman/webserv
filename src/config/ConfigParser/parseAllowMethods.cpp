@@ -1,22 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   serve.cpp                                          :+:    :+:            */
+/*   parseAllowMethods.cpp                              :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/18 19:43:45 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/08/25 21:02:59 by hein          ########   odam.nl         */
+/*   Created: 2025/08/29 12:20:21 by hein          #+#    #+#                 */
+/*   Updated: 2025/08/29 12:22:17 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string>
-
+#include "config/Config.hpp"
+#include "config/ConfigParser/ConfigParser.hpp"
 #include "log/Logger.hpp"
-#include "serve/serve.hpp"
 
-void serve(const Config &config)
+void	ConfigParser::parseAllowMethod(Config &config, tokenCursor &cursor)
 {
-	Logger::info(std::string("Starting a server on port ") + std::to_string(config.listen.port) + "...");
-	Logger::info("just kiddding, I'm too dummy for now");
+	Logger::debug("Parsing Allowed Method");
 }

@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ConfigParser.cpp                                   :+:    :+:            */
+/*   parseMaxBody.cpp                                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/19 12:05:14 by dkolodze      ########   odam.nl         */
+/*   Created: 2025/08/29 12:23:45 by hein          #+#    #+#                 */
+/*   Updated: 2025/08/29 12:24:02 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/ConfigParser.hpp"
+#include "config/Config.hpp"
+#include "config/ConfigParser/ConfigParser.hpp"
 #include "log/Logger.hpp"
 
-#include <iostream>
-
-ConfigParser::ConfigParser()
+void	ConfigParser::parseMaxBody(Config &config, tokenCursor &cursor)
 {
-	Logger::debug("Created Parser");
-}
-
-Config ConfigParser::parse(const std::string &path)
-{
-	(void)(path);
-	Config config;
-	config.port = 4242;
-	return config;
+	Logger::debug("Parsing Max Body Size");
 }
