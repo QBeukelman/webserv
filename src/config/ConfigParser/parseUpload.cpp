@@ -1,17 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ParseLocation.hpp                                  :+:    :+:            */
+/*   parseUpload.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/25 23:54:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/08/25 23:55:17 by hein          ########   odam.nl         */
+/*   Created: 2025/08/29 12:25:07 by hein          #+#    #+#                 */
+/*   Updated: 2025/08/29 12:25:53 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSELOCATION_HPP
-#define PARSELOCATION_HPP
+#include "config/Config.hpp"
+#include "config/ConfigParser/ConfigParser.hpp"
+#include "log/Logger.hpp"
 
-
-#endif
+void	ConfigParser::parseUpload(Config &config, tokenCursor &cursor)
+{
+	Logger::debug("Parsing Upload Store");
+}

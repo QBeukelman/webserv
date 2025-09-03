@@ -6,11 +6,12 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/26 14:26:57 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/02 06:55:18 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/ConfigParser.hpp"
+#include "config/Config.hpp"
+#include "config/ConfigParser/ConfigParser.hpp"
 #include "log/Logger.hpp"
 
 #include <iostream>
@@ -70,10 +71,52 @@ bool	nextValidLine(std::ifstream &file, std::string &line)
 	}
 }
 
-void	parseGlobal(std::ifstream &file, std::string &line)
+void	ConfigParser::parseGlobal(Config &config, tokenCursor &cursor)
 {
-	static constexpr std::array<const std::string_view, 1> allowed[] = {"server"};
+	static constexpr std::array allowed = {	std::string_view("server")};
+
+	static constexpr std::array handler = {	&ConfigParser::parseServer,\
+											&ConfigParser::throwParsingError};
 }
+
+void	ConfigParser::parseServer(Config &config, tokenCursor &cursor)
+{
+	static constexpr std::array allowed = {	"listen",\
+											"server_name",\
+											"root",\
+											"client_max_body_size",\
+											"index",\
+											"error_page",\
+											"location"};
+	static constexpr std::array handler = {	&ConfigParser::parseListen,\
+											&ConfigParser::parseName,\
+											&ConfigParser::parseRoot,\
+											&ConfigParser::parseMaxBody,\
+											&ConfigParser::parseIndex,\
+											&ConfigParser::parseErrorPage,\
+											&ConfigParser::parseLocation,\
+											&ConfigParser::throwParsingError};
+}
+
+void	ConfigParser::parseLocation(Config &config, tokenCursor &cursor)
+{
+	static constexpr std::array allowed = {	"allowed_methods",\
+											"root",\
+											"client_max_body_size",\
+											"autoindex",\
+											"error_page",\
+											"return",\
+											"upload_store"};
+	static constexpr std::array handler = {	&ConfigParser::parseAllowMethod,\
+											&ConfigParser::parseRoot,\
+											&ConfigParser::parseMaxBody,\
+											&ConfigParser::parseAutoIndex,\
+											&ConfigParser::parseErrorPage,\
+											&ConfigParser::parseReturn,\
+											&ConfigParser::parseUpload,\
+											&ConfigParser::throwParsingError};
+}
+
 
 
 Config ConfigParser::parse(const std::string &path)

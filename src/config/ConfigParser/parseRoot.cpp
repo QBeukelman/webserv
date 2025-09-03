@@ -1,27 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ConfigParser.hpp                                   :+:    :+:            */
+/*   parseRoot.cpp                                      :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/25 11:41:46 by hein          ########   odam.nl         */
+/*   Created: 2025/08/29 12:24:43 by hein          #+#    #+#                 */
+/*   Updated: 2025/08/29 12:25:04 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIGPARSER_HPP
-#define CONFIGPARSER_HPP
-
-#include <string>
-
 #include "config/Config.hpp"
+#include "config/ConfigParser/ConfigParser.hpp"
+#include "log/Logger.hpp"
 
-class ConfigParser
+void	ConfigParser::parseRoot(Config &config, tokenCursor &cursor)
 {
-  public:
-	ConfigParser();
-	Config parse(const std::string &path);
-};
-
-#endif // CONFIGPARSER_HPP
+	Logger::debug("Parsing Root");
+}
