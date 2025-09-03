@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 13:54:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 15:17:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ HttpRequestLimits RequestParser::getLimits(void) const
 }
 
 /*
- * Non case-insensitive header lookup
+ * Case-insensitive header lookup
  *
  * Return:
  * 	- `Value` or "" if not found.

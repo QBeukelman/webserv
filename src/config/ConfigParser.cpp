@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 13:47:19 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 14:36:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,6 @@ ServerConfig ConfigParser::parse(const std::string &path)
 {
 	(void)(path);
 	ServerConfig config;
-	config.port = 4242;
-	return config;
+	config.setPort(4242);
+	return (config);
 }

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 15:41:02 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 13:14:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,25 @@ RequestHandler::RequestHandler(const ServerConfig &newServerConfig) : serverConf
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
-	std::cout << request;
+	const Location *location = serverConfig.findLocation(request.path);
 
-	return (HttpResponse());
+	switch (request.method)
+	{
+	case HttpMethod::GET:
+		return (handleGet(request, *location));
+	case HttpMethod::POST:
+		return (handlePost(request, *location));
+	case HttpMethod::DELETE:
+		return (handlePost(request, *location));
+	default:
+		return (makeError(HttpStatus::STATUS_BAD_REQUEST, "HttpMethod not found"));
+	}
+	return (makeError(HttpStatus::STATUS_BAD_REQUEST, "HttpMethod not found"));
 }
 
 // PRIVATE
 // ____________________________________________________________________________
-HttpResponse RequestHandler::makeError(int status, std::string &detail) const
+HttpResponse RequestHandler::makeError(int status, std::string detail) const
 {
 	std::ostringstream oss;
 	oss << status << ": " << detail;

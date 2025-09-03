@@ -6,15 +6,16 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 17:01:33 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/02 13:57:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 14:08:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define UNIT_TEST
 
+#include "tests/doctest.h"
+
 #include "http/RequestParser.hpp"
 #include "http/models/HttpRequestLimits.hpp"
-#include "tests/doctest.h"
 #include "tests/fixtures/test_http_request_data.hpp"
 
 TEST_CASE("RequestParser: parseStartLine() Success simple")

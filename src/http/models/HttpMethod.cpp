@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 10:28:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/02 13:54:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 11:43:17 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@ namespace
 {
 const std::unordered_map<HttpMethod, std::string> kMethodToString = {{HttpMethod::GET, "GET"},
 																	 {HttpMethod::POST, "POST"},
-																	 {HttpMethod::DELETE_, "DELETE"},
+																	 {HttpMethod::DELETE, "DELETE"},
 																	 {HttpMethod::UNKNOWN, "UNKNOWN"}};
 
 const std::unordered_map<std::string, HttpMethod> kStringToMethod = {
-	{"GET", HttpMethod::GET}, {"POST", HttpMethod::POST}, {"DELETE", HttpMethod::DELETE_}};
+	{"GET", HttpMethod::GET}, {"POST", HttpMethod::POST}, {"DELETE", HttpMethod::DELETE}};
 } // namespace
 
 std::string toStringMethod(HttpMethod m)

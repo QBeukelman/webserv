@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/02 15:52:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 14:19:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,19 @@
 #include <set>
 #include <string>
 
+/*
+ * Configuration block that defines how a certain URL path (or prefix) should be handled.
+ * ServerConfig owns vector of Locations.
+ * Each Location corresponds to a route (path prefix + allowed methods + maybe CGI config, root, etc.
+ */
 class Location
 {
   public:
 	Location();
+	Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods);
 
-	std::string path;
-	std::string root;
+	std::string path_prefix; // e.g. "/static/" or "/upload"
+	std::string root;		 // e.g. "/var/www/site"
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
 
