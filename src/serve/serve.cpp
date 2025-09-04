@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/18 19:43:45 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/09/04 08:00:05 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/04 08:02:21 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,13 @@ void serve(const ServerConfig &config)
 {
 	int server_socket;
 	int status;
+	int port = config.getPort();
 
 	// To monitor client sockets:
 	std::vector<pollfd> poll_fds(1); // vector of socket file descriptors
 
 	// Create server listening socket
-	server_socket = create_server_socket(config.port);
+	server_socket = create_server_socket(port);
 	if (server_socket == -1)
 	{
 		Logger::error("Error creating server socket");
@@ -46,7 +47,7 @@ void serve(const ServerConfig &config)
 	}
 
 	// Listen to port via socket
-	Logger::info("[Server] Listening on port " + std::to_string(config.port));
+	Logger::info("[Server] Listening on port " + std::to_string(port));
 	status = listen(server_socket, 10);
 	if (status != 0)
 	{
