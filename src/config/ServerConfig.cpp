@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 13:38:14 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 14:42:04 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/04 09:56:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,16 @@ std::vector<Location> ServerConfig::getLocations(void) const
 void ServerConfig::setLocations(std::vector<Location> newLocations)
 {
 	this->locations = newLocations;
+}
+
+std::vector<ListenEndpoint> ServerConfig::getListens(void) const
+{
+	return (this->listens);
+}
+
+void ServerConfig::setListens(std::vector<ListenEndpoint> newListens)
+{
+	this->listens = newListens;
 }
 
 int ServerConfig::getPort(void) const
