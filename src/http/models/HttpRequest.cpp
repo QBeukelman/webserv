@@ -6,11 +6,11 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 10:20:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/29 10:38:46 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/02 13:54:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "http/HttpRequest.hpp"
+#include "http/models/HttpRequest.hpp"
 
 static void printHeaders(std::ostream &out, const HttpRequest &req)
 {

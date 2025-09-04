@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/24 09:13:39 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/08/29 10:18:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 11:43:02 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ enum class HttpMethod
 {
 	GET,
 	POST,
-	DELETE_,
+	DELETE,
 	UNKNOWN
 };
 

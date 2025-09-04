@@ -6,11 +6,11 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 15:34:19 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/01 16:23:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/02 13:55:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "http/ParseContext.hpp"
+#include "http/models/ParseContext.hpp"
 
 std::string toStringPhase(ParserPhase phase)
 {

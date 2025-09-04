@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/18 19:48:36 by dkolodze      ########   odam.nl         */
+/*   Updated: 2025/09/02 13:56:23 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	try
 	{
 		ConfigParser parser;
-		Config config = parser.parse(pathToConfig);
+		ServerConfig config = parser.parse(pathToConfig);
 		serve(config);
 	}
 	catch (const std::exception &ex)

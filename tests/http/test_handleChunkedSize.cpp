@@ -6,14 +6,15 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 13:00:44 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/01 16:29:35 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/03 14:08:15 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define UNIT_TEST
 
-#include "http/RequestParser.hpp"
 #include "tests/doctest.h"
+
+#include "http/RequestParser.hpp"
 #include "tests/fixtures/test_http_request_data.hpp"
 
 TEST_CASE("RequestParser: handleChunkedSize()")
