@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 08:59:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/03 14:08:35 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/05 15:11:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,53 @@
 #include "http/RequestHandler.hpp"
 #include "tests/fixtures/test_http_request_data.hpp"
 
-// TODO: test_handle()
-
-TEST_CASE("RequestHandler: handle()")
+TEST_CASE("RequestHandler: step() content length")
 {
-	// Request request(HTTP_REQUEST_GET);
-	// HttpRequest r = request.getRequest();
+	// Given
+	RequestParser p(HttpRequestLimits{});
+	ParseStep step;
+	ParseContext context;
 
-	// CHECK(r.status == PARSE_OK);
-	// CHECK(r.method == HttpMethod::GET);
-	// CHECK(r.target == "/");
-	// CHECK(r.path == "/");
-	// CHECK(r.query == "");
-	// CHECK(r.version == "HTTP/1.1");
-	// CHECK(r.headers.find("host")->second == "a");
-	// CHECK(r.body == "");
+	const char *raw = HTTP_REQUEST_POST_CONTENT_LEN;
+	size_t total_len = 185;
+	size_t offset = 0;
+
+	// When
+	while (offset < total_len && context.request.status != PARSE_OK)
+	{
+		step = p.step(context, raw, total_len);
+		offset += step.consumed;
+	}
+
+	// Then
+	CHECK(step.request_complete == true);
+	CHECK(step.status == PARSE_OK);
+	CHECK(context.phase == COMPLETE);
+	CHECK(context.request.body == "name=Alice&age=30&city=AMS");
+	CHECK(offset == (total_len - 1));
+}
+
+TEST_CASE("RequestHandler: step() chunked")
+{
+	// Given
+	RequestParser p(HttpRequestLimits{});
+	ParseContext context;
+	ParseStep step;
+
+	const char *raw = HTTP_REQUEST_POST_CHUNKED;
+	size_t total_len = 210;
+	size_t offset = 0;
+
+	// When
+	while (offset < total_len && context.request.status != PARSE_OK)
+	{
+		step = p.step(context, raw, total_len);
+		offset += step.consumed;
+	}
+
+	CHECK(step.request_complete == true);
+	CHECK(step.status == PARSE_OK);
+	CHECK(context.phase == COMPLETE);
+	CHECK(context.request.body == "MozillaDeveloperNetwork");
+	CHECK(offset == (total_len - 1));
 }
