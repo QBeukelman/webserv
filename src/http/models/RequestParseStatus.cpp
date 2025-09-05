@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:20:19 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 13:55:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/05 14:51:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ std::string toStringStatus(RequestParseStatus status)
 	case PARSE_EXCEED_LIMIT:
 		return "Request exceeds limit";
 	case PARSE_INCOMPLETE:
-		return "Incomplete request";
+		return "Parse incomplete";
 	default:
 		return "Unknown parse status";
 	}
