@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   test_findLocation.cpp                              :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/03 14:05:59 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 15:17:55 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   test_findLocation.cpp                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/03 14:05:59 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 09:30:45 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,13 @@ TEST_CASE("ServerConfig: findLocation() basic matching")
 	const Location *rootLoc = server.findLocation("/");
 	const Location *imgLoc = server.findLocation("/images/cat.png");
 	const Location *apiLoc = server.findLocation("/api/users");
-	// const Location *unknown = server.findLocation("/doesnotexist");
+	const Location *unknown = server.findLocation("/doesnotexist");
 
 	// Then
 	CHECK(rootLoc != NULL);
 	CHECK(imgLoc != NULL);
 	CHECK(apiLoc != NULL);
-
-	// TODO: ServerConfig::findLocation() should return NULL
-	// CHECK(unknown == NULL);
+	CHECK(unknown == NULL);
 
 	CHECK(rootLoc->path_prefix == "/");
 	CHECK(imgLoc->path_prefix == "/images");

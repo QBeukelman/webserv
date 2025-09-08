@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   test_requestHandler.cpp                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/25 08:59:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/05 15:11:50 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   test_requestParserStep.cpp                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/25 08:59:11 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/08 09:13:35 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "http/RequestHandler.hpp"
 #include "tests/fixtures/test_http_request_data.hpp"
 
-TEST_CASE("RequestHandler: step() content length")
+TEST_CASE("RequestParser: step() content length")
 {
 	// Given
 	RequestParser p(HttpRequestLimits{});
@@ -41,7 +41,7 @@ TEST_CASE("RequestHandler: step() content length")
 	CHECK(offset == (total_len - 1));
 }
 
-TEST_CASE("RequestHandler: step() chunked")
+TEST_CASE("RequestParser: step() chunked")
 {
 	// Given
 	RequestParser p(HttpRequestLimits{});
