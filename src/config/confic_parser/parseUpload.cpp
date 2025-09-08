@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   parseReturn.cpp                                    :+:    :+:            */
+/*   parseUpload.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/29 12:24:24 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/08 14:29:15 by hein          ########   odam.nl         */
+/*   Created: 2025/08/29 12:25:07 by hein          #+#    #+#                 */
+/*   Updated: 2025/09/08 14:48:54 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/ServerConfig.hpp"
-#include "config/configparser/ConfigParser.hpp"
-#include "config/configparser/TokenStream.hpp"
+#include "config/config_parser/ConfigParser.hpp"
+#include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
-void	ConfigParser::parseReturn(ServerConfig &config, TokenStream &token)
+void	ConfigParser::parseUpload(ServerConfig &config, TokenStream &token)
 {
-	Logger::debug("Parsing Return");
+	Logger::debug("Parsing Upload Store");
 }

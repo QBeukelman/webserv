@@ -6,13 +6,13 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/08 14:28:04 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/08 14:48:54 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/ServerConfig.hpp"
-#include "config/configparser/ConfigParser.hpp"
-#include "config/configparser/TokenStream.hpp"
+#include "config/config_parser/ConfigParser.hpp"
+#include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
 #include <iostream>

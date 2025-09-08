@@ -6,11 +6,11 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 23:05:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/05 00:24:33 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/08 14:48:54 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/configparser/TokenStream.hpp"
+#include "config/config_parser/TokenStream.hpp"
 
 #include <sstream>
 #include <fstream>
