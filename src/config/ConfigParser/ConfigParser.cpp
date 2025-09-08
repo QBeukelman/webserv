@@ -6,11 +6,11 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/08 13:30:00 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/08 14:28:04 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/Config.hpp"
+#include "config/ServerConfig.hpp"
 #include "config/configparser/ConfigParser.hpp"
 #include "config/configparser/TokenStream.hpp"
 #include "log/Logger.hpp"
@@ -27,12 +27,12 @@ ConfigParser::ConfigParser()
 	Logger::debug("Created Parser");
 }
 
-void	ConfigParser::throwParsingError(Config &config, TokenStream &token)
+void	ConfigParser::throwParsingError(ServerConfig &config, TokenStream &token)
 {
 	throw std::runtime_error("Error on line " + token.getLineCount() + ". Unknown directive [ " + token.getCurrentToken() + " ]");
 }
 
-void	ConfigParser::parseGlobal(Config &config, TokenStream &token)
+void	ConfigParser::parseGlobal(ServerConfig &config, TokenStream &token)
 {
 	static const std::array<std::string_view, 1> allowed = {"server"};
 
@@ -50,7 +50,7 @@ void	ConfigParser::parseGlobal(Config &config, TokenStream &token)
 
 }
 
-void	ConfigParser::parseServer(Config &config, TokenStream &token)
+void	ConfigParser::parseServer(ServerConfig &config, TokenStream &token)
 {
 	static const std::array<std::string_view, 7>allowed = {	"listen",\
 															"server_name",\
@@ -84,7 +84,7 @@ void	ConfigParser::parseServer(Config &config, TokenStream &token)
 	// validate server block //
 }
 
-void	ConfigParser::parseLocation(Config &config, TokenStream &token)
+void	ConfigParser::parseLocation(ServerConfig &config, TokenStream &token)
 {
 	static const std::array<std::string_view, 7> allowed = {"allowed_methods",\
 															"root",\
@@ -109,9 +109,9 @@ void	ConfigParser::parseLocation(Config &config, TokenStream &token)
 
 
 
-Config ConfigParser::parse(const std::string &path)
+ServerConfig ConfigParser::parse(const std::string &path)
 {
-	Config			config;
+	ServerConfig			config;
 	TokenStream		token;
 
 	token.openFile(path);
@@ -131,5 +131,5 @@ Config ConfigParser::parse(const std::string &path)
 
 	// validate config
 		
-	return config;
+	return (config);
 }

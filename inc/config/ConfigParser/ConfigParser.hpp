@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/04 22:48:07 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/08 14:25:03 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include "config/Config.hpp"
+#include "config/ServerConfig.hpp"
 #include "config/configparser/TokenStream.hpp"
 
 class ConfigParser
@@ -26,37 +26,37 @@ class ConfigParser
 	template<std::size_t N>
 	int		findHandlerIndex(const std::array<std::string_view, N>& allowed, const std::string &currentToken);
 
-	void	parseGlobal(Config &config, TokenStream &token);
-	void	parseServer(Config &config, TokenStream &token);
-	void	parseLocation(Config &config, TokenStream &token);
-	void	throwParsingError(Config &config, TokenStream &token);
+	void	parseGlobal(ServerConfig &config, TokenStream &token);
+	void	parseServer(ServerConfig &config, TokenStream &token);
+	void	parseLocation(ServerConfig &config, TokenStream &token);
+	void	throwParsingError(ServerConfig &config, TokenStream &token);
 
 	// Server Directives //
 
-	void	parseListen(Config &config, TokenStream &token);
-	void	parseName(Config &config, TokenStream &token);
-	void	parseIndex(Config &config, TokenStream &token);
+	void	parseListen(ServerConfig &config, TokenStream &token);
+	void	parseName(ServerConfig &config, TokenStream &token);
+	void	parseIndex(ServerConfig &config, TokenStream &token);
 	
 	// Location Directives //
 
-	void	parseAllowMethod(Config &config, TokenStream &token);
-	void	parseAutoIndex(Config &config, TokenStream &token);
-	void	parseReturn(Config &config, TokenStream &token);
-	void	parseUpload(Config &config, TokenStream &token);
+	void	parseAllowMethod(ServerConfig &config, TokenStream &token);
+	void	parseAutoIndex(ServerConfig &config, TokenStream &token);
+	void	parseReturn(ServerConfig &config, TokenStream &token);
+	void	parseUpload(ServerConfig &config, TokenStream &token);
 	
 	// General Directives //
 	
-	void	parseRoot(Config &config, TokenStream &token);
-	void	parseErrorPage(Config &config, TokenStream &token);
-	void	parseMaxBody(Config &config, TokenStream &token);
+	void	parseRoot(ServerConfig &config, TokenStream &token);
+	void	parseErrorPage(ServerConfig &config, TokenStream &token);
+	void	parseMaxBody(ServerConfig &config, TokenStream &token);
 
   public:
 
 	ConfigParser();
-	Config parse(const std::string &path);
+	ServerConfig parse(const std::string &path);
 };
 
-typedef void (ConfigParser::*Handlers)(Config &, TokenStream &);
+typedef void (ConfigParser::*Handlers)(ServerConfig &, TokenStream &);
 
 template<std::size_t N>
 int	ConfigParser::findHandlerIndex(const std::array<std::string_view, N>& allowed, const std::string &currentToken)
