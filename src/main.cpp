@@ -6,13 +6,13 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/04 14:00:02 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/08 14:00:23 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/configparser/ConfigParser.hpp"
 #include "log/Logger.hpp"
-#include "serve/serve.hpp"
+#include "serve/Listener.hpp"
 
 int main(int argc, char **argv)
 {
@@ -38,12 +38,23 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Parsing config and running the server
+	// Parse config and run server
 	try
 	{
 		ConfigParser parser;
-		Config config = parser.parse(pathToConfig);
-		serve(config);
+		ServerConfig config = parser.parse(pathToConfig);
+
+		// 1) Create one Listener per host:port from config
+		Listener listener(config.getListens()[0].port);
+
+		// 2) TODO: add all listeners to poll()/select()/epoll/kqueue set
+		// 3) TODO: implement event loop
+		//    - Accept new clients when listener is readable
+		//    - Track client sockets and their ParseContext
+		//    - Read requests and feed into RequestParser
+		//    - Dispatch to RequestHandler to build response
+		//    - Write response back to client
+		// 4) TODO: clean up closed/disconnected sockets
 	}
 	catch (const std::exception &ex)
 	{
