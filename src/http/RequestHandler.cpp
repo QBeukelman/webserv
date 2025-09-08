@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestHandler.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/08 10:41:22 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestHandler.cpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/08 15:05:27 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ RequestHandler::RequestHandler(const ServerConfig &newServerConfig) : serverConf
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
-	const Location *location = serverConfig.findLocation(request.path);
+	const Location *location = serverConfig.getServers()[0].findLocation(request.path);
 
 	switch (request.method)
 	{
