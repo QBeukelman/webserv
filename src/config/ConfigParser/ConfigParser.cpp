@@ -6,12 +6,13 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 06:55:18 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/08 13:30:00 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/Config.hpp"
-#include "config/ConfigParser/ConfigParser.hpp"
+#include "config/configparser/ConfigParser.hpp"
+#include "config/configparser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
 #include <iostream>
@@ -26,95 +27,84 @@ ConfigParser::ConfigParser()
 	Logger::debug("Created Parser");
 }
 
-void	trimWhitespace(std::string &line)
+void	ConfigParser::throwParsingError(Config &config, TokenStream &token)
 {
-	size_t	start = line.find_first_not_of(" \t\r\n");
-	
-	if (start == std::string::npos)
-	{
-		line.clear();
-		return ;
-	}
-	
-	if (start > 0)
-	{
-		line.erase(0, start);
-	}
-
-	size_t	end = line.find_last_not_of(" \t\r\n");
-
-	if (end < (line.length()))
-	{
-		line.erase(end + 1);
-	}
+	throw std::runtime_error("Error on line " + token.getLineCount() + ". Unknown directive [ " + token.getCurrentToken() + " ]");
 }
 
-bool	nextValidLine(std::ifstream &file, std::string &line)
+void	ConfigParser::parseGlobal(Config &config, TokenStream &token)
 {
+	static const std::array<std::string_view, 1> allowed = {"server"};
+
+	static const std::array<Handlers, 2> handler = {		&ConfigParser::parseServer,\
+															&ConfigParser::throwParsingError};
+
 	while (true)
 	{
-		if (!std::getline(file, line))
-		{
-			if (file.eof())
-				return false;
-			else
-				throw std::runtime_error("An error occured during reading of the file.");
-		}
-
-		trimWhitespace(line);
+		std::string currentToken = token.next();
 		
-		if (line.empty() || line[0] == '#')
-		{
-			continue ;
-		}
-		return true;
+		int index = findHandlerIndex(allowed, currentToken);
+
+		(this->*handler[index])(config, token);
 	}
+
 }
 
-void	ConfigParser::parseGlobal(Config &config, tokenCursor &cursor)
+void	ConfigParser::parseServer(Config &config, TokenStream &token)
 {
-	static constexpr std::array allowed = {	std::string_view("server")};
+	static const std::array<std::string_view, 7>allowed = {	"listen",\
+															"server_name",\
+															"root",\
+															"client_max_body_size",\
+															"index",\
+															"error_page",\
+															"location"};
+	static const std::array<Handlers, 8> handler = {		&ConfigParser::parseListen,\
+															&ConfigParser::parseName,\
+															&ConfigParser::parseRoot,\
+															&ConfigParser::parseMaxBody,\
+															&ConfigParser::parseIndex,\
+															&ConfigParser::parseErrorPage,\
+															&ConfigParser::parseLocation,\
+															&ConfigParser::throwParsingError};
 
-	static constexpr std::array handler = {	&ConfigParser::parseServer,\
-											&ConfigParser::throwParsingError};
+	token.expectOpenBracket(token.next());
+
+	std::string currentToken = token.next();
+	
+	while (!token.awaitClosingBracket(currentToken))
+	{
+		int index = findHandlerIndex(allowed, currentToken);
+
+		(this->*handler[index])(config, token);
+
+		currentToken = token.next();
+	}
+
+	// validate server block //
 }
 
-void	ConfigParser::parseServer(Config &config, tokenCursor &cursor)
+void	ConfigParser::parseLocation(Config &config, TokenStream &token)
 {
-	static constexpr std::array allowed = {	"listen",\
-											"server_name",\
-											"root",\
-											"client_max_body_size",\
-											"index",\
-											"error_page",\
-											"location"};
-	static constexpr std::array handler = {	&ConfigParser::parseListen,\
-											&ConfigParser::parseName,\
-											&ConfigParser::parseRoot,\
-											&ConfigParser::parseMaxBody,\
-											&ConfigParser::parseIndex,\
-											&ConfigParser::parseErrorPage,\
-											&ConfigParser::parseLocation,\
-											&ConfigParser::throwParsingError};
-}
+	static const std::array<std::string_view, 7> allowed = {"allowed_methods",\
+															"root",\
+															"client_max_body_size",\
+															"autoindex",\
+															"error_page",\
+															"return",\
+															"upload_store"};
+	static const std::array<Handlers, 8> handler = {		&ConfigParser::parseAllowMethod,\
+															&ConfigParser::parseRoot,\
+															&ConfigParser::parseMaxBody,\
+															&ConfigParser::parseAutoIndex,\
+															&ConfigParser::parseErrorPage,\
+															&ConfigParser::parseReturn,\
+															&ConfigParser::parseUpload,\
+															&ConfigParser::throwParsingError};
 
-void	ConfigParser::parseLocation(Config &config, tokenCursor &cursor)
-{
-	static constexpr std::array allowed = {	"allowed_methods",\
-											"root",\
-											"client_max_body_size",\
-											"autoindex",\
-											"error_page",\
-											"return",\
-											"upload_store"};
-	static constexpr std::array handler = {	&ConfigParser::parseAllowMethod,\
-											&ConfigParser::parseRoot,\
-											&ConfigParser::parseMaxBody,\
-											&ConfigParser::parseAutoIndex,\
-											&ConfigParser::parseErrorPage,\
-											&ConfigParser::parseReturn,\
-											&ConfigParser::parseUpload,\
-											&ConfigParser::throwParsingError};
+	token.expectOpenBracket(token.next());
+	
+	
 }
 
 
@@ -122,21 +112,24 @@ void	ConfigParser::parseLocation(Config &config, tokenCursor &cursor)
 Config ConfigParser::parse(const std::string &path)
 {
 	Config			config;
-	std::string		line;
+	TokenStream		token;
 
-	std::ifstream	file(path.c_str());
-	if (!file.is_open())
+	token.openFile(path);
+
+	try
 	{
-		throw std::runtime_error("Failed to open config file: " + path);
+		parseGlobal(config, token);
 	}
-	while (nextValidLine(file, line))
+	catch (const EndOfFileException& e)
 	{
-		std::cout << line << std::endl;
+		exit(1);
 	}
-	
-	config.listen.port = 4242;
+	catch (const std::exception& e)
+	{
+		throw;
+	}
 
-
-	
+	// validate config
+		
 	return config;
 }

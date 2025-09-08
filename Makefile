@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/08/11 09:30:12 by qbeukelm          #+#    #+#              #
-#    Updated: 2025/08/19 13:39:46 by qbeukelm         ###   ########.fr        #
+#                                                         ::::::::             #
+#    Makefile                                           :+:    :+:             #
+#                                                      +:+                     #
+#    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
+#                                                    +#+                       #
+#    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
+#    Updated: 2025/09/04 21:40:32 by hein          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ RESET				:= \033[0m
 
 # Compiler
 CXX 			:= c++
-CXXFLAGS		:= -std=c++17 -Wall -Werror -Wextra -MMD -MP -Iinc
+CXXFLAGS		:= -std=c++17 -MMD -MP -Iinc
 
 # Targets
 NAME				:= webserv

@@ -6,11 +6,11 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/08/18 19:48:36 by dkolodze      ########   odam.nl         */
+/*   Updated: 2025/09/04 14:00:02 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/ConfigParser.hpp"
+#include "config/configparser/ConfigParser.hpp"
 #include "log/Logger.hpp"
 #include "serve/serve.hpp"
 
