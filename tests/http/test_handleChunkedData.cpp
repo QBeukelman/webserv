@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 16:29:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 14:08:09 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/05 13:53:34 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@ TEST_CASE("RequestParser: handleChunkedData()")
 	ParseContext context;
 
 	// Phase: READ_HEADERS
-	step = p.step(context, HTTP_REQUEST_POST_WITH_BODY, 210);
+	step = p.step(context, HTTP_REQUEST_POST_CHUNKED, 210);
 
 	// Phase: READ_CHUNK_SIZE
-	step = p.step(context, HTTP_REQUEST_POST_WITH_BODY, 210);
+	step = p.step(context, HTTP_REQUEST_POST_CHUNKED, 210);
 
 	// Phase: READ_CHUNK_DATA
-	step = p.step(context, HTTP_REQUEST_POST_WITH_BODY, 210);
+	step = p.step(context, HTTP_REQUEST_POST_CHUNKED, 210);
 
 	CHECK(context.is_chunked == true);
 	CHECK(context.request.body == "Mozilla");
@@ -45,7 +45,7 @@ TEST_CASE("RequestParser: handleChunkedData() with loop")
 	ParseStep step;
 
 	// A fixed raw request (chunked). Normally from recv()
-	const char *raw = HTTP_REQUEST_POST_WITH_BODY;
+	const char *raw = HTTP_REQUEST_POST_CHUNKED;
 	size_t total_len = 210;
 	size_t offset = 0;
 

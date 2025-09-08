@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/01 20:19:45 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/05 15:04:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ static ParseStep applyTransferEncoding(ParseContext &ctx, std::string te, size_t
 
 	step.status = PARSE_INCOMPLETE;
 	step.request_complete = false;
+	step.consumed = consumed_headers;
 	// If there are bytes after headers, dispatcher can immediately call handleChunkSize()
 	step.need_more = (avail == 0);
 	return (step);
@@ -156,6 +157,7 @@ static ParseStep applyContentLength(ParseContext &ctx, std::string cl, size_t co
 	ctx.phase = READ_BODY_CONTENT_LENGTH;
 	step.status = PARSE_INCOMPLETE;
 	step.request_complete = false;
+	step.consumed = consumed_headers;
 	// If there are body bytes in the same buffer, next handler can consume immediately
 	step.need_more = (avail == 0);
 	return (step);

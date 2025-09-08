@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 13:00:44 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 14:08:15 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/05 13:51:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ TEST_CASE("RequestParser: handleChunkedSize()")
 	ParseContext context;
 
 	// Phase: READ_HEADERS
-	step = p.step(context, HTTP_REQUEST_POST_WITH_BODY, 227);
+	step = p.step(context, HTTP_REQUEST_POST_CHUNKED, 227);
 
 	// Phase: READ_CHUNK_SIZE
-	step = p.step(context, HTTP_REQUEST_POST_WITH_BODY, 227);
+	step = p.step(context, HTTP_REQUEST_POST_CHUNKED, 227);
 
 	CHECK(context.is_chunked == true);
 	CHECK(context.chunk_bytes_remaining == 7);
