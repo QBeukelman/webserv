@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   RequestHandler.hpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/03 12:03:43 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   RequestHandler.hpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 12:25:32 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/08 10:22:20 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class RequestHandler
 	HttpResponse handleGet(const HttpRequest &, const Location &) const;
 	HttpResponse handlePost(const HttpRequest &, const Location &) const;
 	HttpResponse handleDelete(const HttpRequest &, const Location &) const;
-	HttpResponse makeError(int status, std::string detail) const;
+	HttpResponse makeError(HttpStatus status, std::string detail) const;
 
   public:
 	const ServerConfig serverConfig;

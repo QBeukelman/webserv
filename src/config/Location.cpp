@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Location.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 14:46:25 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Location.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:42:13 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 10:11:06 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ static void printAllowedMethods(const std::set<HttpMethod> allowed_methods)
 
 std::ostream &operator<<(std::ostream &out, const Location &location)
 {
-	out << "\n==== Location ====\n"
-		<< "\nPath: " << location.path_prefix << "\nRoot: " << location.root
+	out << "\n=== Location ===\n"
+		<< "Path: " << location.path_prefix << "\nRoot: " << location.root
 		<< "\nHas redirect: " << location.has_redirects << "\nAllowed methods: ";
 	printAllowedMethods(location.allowed_methods);
 	std::cout << std::endl;

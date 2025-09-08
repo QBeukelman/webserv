@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   findLocation.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 14:53:37 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   findLocation.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/03 14:04:15 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 09:30:28 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static bool has_segment_boundry_match(const std::string &path, const std::string
 		return (false);
 
 	// Ensure that we do not match `/adm` for `/admin`
-	if (prefix[prefix.size() - 1] == '/')
+	if (prefix[path.size() - 1] == '/')
 		return (true);
 
 	// Either exact length match, or next char in path is a '/'
