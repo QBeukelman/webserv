@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.cpp                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/04 17:25:42 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/11 09:26:29 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/08 12:43:56 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/ConfigParser.hpp"
 #include "log/Logger.hpp"
-#include "serve/Listener.hpp"
+#include "serve/WebServer.hpp"
 
 int main(int argc, char **argv)
 {
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 		ServerConfig config = parser.parse(pathToConfig);
 
 		// 1) Create one Listener per host:port from config
-		Listener listener(config.getListens()[0].port);
+		WebServer webServer(config);
 
 		// 2) TODO: add all listeners to poll()/select()/epoll/kqueue set
 		// 3) TODO: implement event loop
