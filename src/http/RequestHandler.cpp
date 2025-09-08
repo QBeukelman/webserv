@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   RequestHandler.cpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/03 13:14:24 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   RequestHandler.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/08 10:41:22 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,39 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 
 // PRIVATE
 // ____________________________________________________________________________
-HttpResponse RequestHandler::makeError(int status, std::string detail) const
+static bool isMethodAllowed(const HttpRequest &request, const Location &location)
 {
-	std::ostringstream oss;
-	oss << status << ": " << detail;
-	Logger::error(oss.str());
+	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
+}
 
-	// TODO: Define Response
-	return (HttpResponse());
+HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
+{
+	// Log error
+	{
+		std::ostringstream oss;
+		oss << status << ": " << detail;
+		Logger::error(oss.str());
+	}
+
+	// Create error response
+	HttpResponse response;
+	response.httpStatus = status;
+
+	// TODO: HttpResponse set `content-type` header
+	response.headers["Content-Type"] = "text/html; charset=UTF-8";
+
+	// TODO: HttpResponse html body
+	response.body = "<html>\r\n";
+
+	response.headers["Content-Length"] = std::to_string(response.body.size());
+
+	return (response);
 }
 
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
-
-	std::cout << request;
-	std::cout << location;
+	if (isMethodAllowed(request, location) == false)
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet"));
 
 	// TODO: Define Response
 	return (HttpResponse());
@@ -82,9 +100,8 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 
 HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
 {
-
-	std::cout << request;
-	std::cout << location;
+	if (isMethodAllowed(request, location) == false)
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost"));
 
 	// TODO: Define Response
 	return (HttpResponse());
@@ -92,9 +109,8 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 
 HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Location &location) const
 {
-
-	std::cout << request;
-	std::cout << location;
+	if (isMethodAllowed(request, location) == false)
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete"));
 
 	// TODO: Define Response
 	return (HttpResponse());

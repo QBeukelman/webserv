@@ -1,33 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HttpResponse.hpp                                   :+:      :+:    :+:   */
+/*   printUtils.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 13:09:45 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/08 10:36:38 by qbeukelm         ###   ########.fr       */
+/*   Created: 2025/09/08 09:59:14 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/08 10:01:03 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPRESPONSE_HPP
-#define HTTPRESPONSE_HPP
-
-#include "http/models/HttpStatus.hpp"
+#ifndef PRINTUTILS_HPP
+#define PRINTUTILS_HPP
 
 #include <map>
 #include <ostream>
-#include <string>
 
-struct HttpResponse
-{
-	HttpStatus httpStatus;
-	std::map<std::string, std::string> headers;
-	std::string body;
-};
-
-std::string serializeResponse(const HttpResponse &response);
-
-std::ostream &operator<<(std::ostream &out, const HttpResponse &response);
+void printHeaders(std::ostream &out, std::map<std::string, std::string> headers);
 
 #endif

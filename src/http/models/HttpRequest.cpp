@@ -1,31 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpRequest.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/29 10:20:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/02 13:54:54 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/29 10:20:05 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 10:11:44 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/models/HttpRequest.hpp"
-
-static void printHeaders(std::ostream &out, const HttpRequest &req)
-{
-	// Print headers
-	for (std::map<std::string, std::string>::const_iterator it = req.headers.begin(); it != req.headers.end(); ++it)
-	{
-		out << it->first << ": " << it->second << "\n";
-	}
-}
+#include "log/printUtils.hpp"
 
 std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 {
 	out << "\n======== Request ========\n"
 		<< "Status: " << toStringStatus(req.status) << "\n"
-		<< "\n------- START -------\n"
 		<< "Method: " << toStringMethod(req.method) << "\n"
 		<< "Target: " << req.target << "\n"
 		<< "Path: " << req.path << "\n"
@@ -33,7 +24,7 @@ std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 		<< "Version: " << req.version << "\n"
 		<< "\n------- HEADERS -------\n";
 
-	printHeaders(out, req);
+	printHeaders(out, req.headers);
 
 	out << "\n------- BODY -------\n"
 		<< "Body: " << req.body << "\n"
