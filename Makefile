@@ -6,7 +6,7 @@
 #    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/08/27 08:14:04 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/09/08 14:27:23 by hein          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ RESET				:= \033[0m
 
 # ---------------- Compiler ----------------
 CXX       := c++
-CXXFLAGS  := -std=c++17 -Wall -Wextra -Werror -MMD -MP -Iinc -Itests
+CXXFLAGS  := -std=c++17 -MMD -MP -Iinc -Itests
 # Uncomment for sanitizers while testing:
 # SANFLAGS  := -fsanitize=address,undefined -fno-omit-frame-pointer
 # CXXFLAGS += $(SANFLAGS)
