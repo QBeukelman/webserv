@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   findLocation.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/03 14:04:15 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/08 09:30:28 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   findLocation.cpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/08 15:03:22 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static bool has_segment_boundry_match(const std::string &path, const std::string
  * Notes:
  * 		- May return `NULL` → caller must handle fallback.
  */
-const Location *ServerConfig::findLocation(std::string requestPath) const
+const Location *Server::findLocation(std::string requestPath) const
 {
 	const Location *best = NULL;
 	size_t best_len = 0;

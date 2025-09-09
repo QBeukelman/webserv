@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 09:26:29 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/08 12:43:56 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.cpp                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/09 09:22:35 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/ConfigParser.hpp"
+#include "config/config_parser/ConfigParser.hpp"
 #include "log/Logger.hpp"
 #include "serve/WebServer.hpp"
 

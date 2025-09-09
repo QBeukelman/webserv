@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 13:38:14 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/04 09:56:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/08 15:05:21 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,54 +14,19 @@
 
 // CONSTRUCTORS
 // ____________________________________________________________________________
-ServerConfig::ServerConfig() : locations(std::vector<Location>()), port(0)
+ServerConfig::ServerConfig() : servers(std::vector<Server>()) {}
+
+std::vector<Server> ServerConfig::getServers(void) const
 {
+	return (this->servers);
 }
 
-// GETTER / SETTER
+// MEMBERS
 // ____________________________________________________________________________
-std::vector<Location> ServerConfig::getLocations(void) const
+/*
+ * TODO: Add a new server to list
+*/
+void	addServer(const Server &server)
 {
-	return (this->locations);
-}
-
-void ServerConfig::setLocations(std::vector<Location> newLocations)
-{
-	this->locations = newLocations;
-}
-
-std::vector<ListenEndpoint> ServerConfig::getListens(void) const
-{
-	return (this->listens);
-}
-
-void ServerConfig::setListens(std::vector<ListenEndpoint> newListens)
-{
-	this->listens = newListens;
-}
-
-int ServerConfig::getPort(void) const
-{
-	return (this->port);
-}
-
-void ServerConfig::setPort(int newPort)
-{
-	this->port = newPort;
-}
-
-// OVERLOAD
-// ____________________________________________________________________________
-std::ostream &operator<<(std::ostream &out, const ServerConfig &server)
-{
-	out << "\n=== ServerConfig ===\n"
-		<< "\nPort: " << server.getPort() << "\n";
-
-	std::vector<Location> locations = server.getLocations();
-	for (const auto &l : locations)
-	{
-		out << l;
-	}
-
-	return (out);
+	std::cout << server.getPort() << std::endl;
 }
