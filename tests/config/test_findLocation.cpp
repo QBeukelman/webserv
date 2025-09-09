@@ -37,7 +37,7 @@ TEST_CASE("ServerConfig: findLocation() basic matching")
 	const Location imgLoc = serverConfig.getServers()[0].findLocation("/images/cat.png");
 	const Location apiLoc = serverConfig.getServers()[0].findLocation("/api/users");
 
-		// Than
+	// Than
 	CHECK(rootLoc.path_prefix == "/");
 	CHECK(imgLoc.path_prefix == "/images");
 	CHECK(apiLoc.path_prefix == "/api");

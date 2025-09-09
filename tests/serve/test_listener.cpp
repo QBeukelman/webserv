@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   test_listener.cpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 17:07:00 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/08 12:50:52 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   test_listener.cpp                                  :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/04 17:07:00 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/09 17:24:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,35 +18,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <vector>
-
-/*
-	TODO: List
-
-	1) Register listeners in event loop
-		- Collect all the Listener objects (one per ip:port from config).
-		- Add their fd() to your pollfd (or select/epoll/kqueue) set.
-		- Monitor them for readable events → new connections waiting.
-
-	2) Accept new clients: When poll() says a Listener fd is readable:
-		- Call accept() (non-blocking).
-		- That gives you a new client socket fd.
-		- Set it non-blocking too (fcntl).
-		- Add it to your poll set.
-
-	3) Track per-client state: Create a Client or Connection struct/class:
-		- Create a Client or Connection struct/class:
-		- fd (client socket fd)
-		- ParseContext (your HTTP request parser state)
-		- Each client lives in a map: std::map<int, Client> keyed by fd.
-
-	4) Read requests: When poll() signals a client fd as readable:
-		- recv() data into a buffer.
-		- Pass buffer into your RequestParser::step(ctx, data, len).
-		- If a full request is parsed, hand it to your RequestHandler.
-
-	5) Handle request
-
-*/
 
 // Check that a socket is bound to the expected port
 static unsigned short get_bound_port(int fd)
@@ -72,10 +43,10 @@ TEST_CASE("Listener::Listener: bind and listen on ports")
 	{
 		// TODO: test_listener -> Add IP support
 		REQUIRE_NOTHROW(listeners.push_back(new Listener("0.0", ports[i])));
-		CHECK(listeners.back()->getFd() >= 0);
+		CHECK(listeners.back()->fd() >= 0);
 
 		// Verify the port is bound
-		CHECK(get_bound_port(listeners.back()->getFd()) == ports[i]);
+		CHECK(get_bound_port(listeners.back()->fd()) == ports[i]);
 	}
 
 	// cleanup

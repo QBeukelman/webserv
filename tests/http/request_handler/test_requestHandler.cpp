@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 09:37:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/09 09:51:38 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/09 11:45:35 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,5 @@ TEST_CASE("RequestHandler: handle()")
 	// Given
 	HttpResponse response = handler.handle(request);
 
-	std::cout << response;
+	// std::cout << response;
 }

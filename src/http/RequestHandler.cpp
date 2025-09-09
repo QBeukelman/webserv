@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/09 11:38:19 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/09 13:59:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static bool isMethodAllowed(const HttpRequest &request, const Location &location
 HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
 {
 	// Log error
-	Logger::error(Logger::join(reasonPhrase(status), detail));
+	Logger::error("RequestHandler::" + detail + " → [" + std::to_string(status) + "] " + reasonPhrase(status));
 
 	// Create error response
 	HttpResponse response;
@@ -97,7 +97,7 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet"));
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet()"));
 
 	// TODO: Define Response
 	return (HttpResponse());
@@ -106,7 +106,7 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost"));
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
 
 	// TODO: Define Response
 	return (HttpResponse());
@@ -115,7 +115,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete"));
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete()"));
 
 	// TODO: Define Response
 	return (HttpResponse());
