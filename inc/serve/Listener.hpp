@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Listener.hpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/04 09:13:07 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/04 17:03:56 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Listener.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 09:13:07 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 12:45:34 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,12 @@
 
 #include "config/ServerConfig.hpp"
 
+#include <cstring>
+#include <sstream>
 #include <stdexcept>
 
 // POSIX / sockets
+#include <arpa/inet.h>	// inet_pton, inet_ntop
 #include <fcntl.h>		// fcntl(), O_NONBLOCK
 #include <netinet/in.h> // sockaddr_in, htons(), htonl(), INADDR_ANY
 #include <sys/socket.h> // socket(), bind(), listen()
@@ -29,7 +32,7 @@ class Listener
   public:
 	// Construct and start listening on the given TCP port (IPv4).
 	// Binds to 0.0.0.0 (all interfaces).
-	explicit Listener(unsigned short port);
+	explicit Listener(const std::string &ip, unsigned short port);
 
 	~Listener();
 
@@ -41,7 +44,7 @@ class Listener
 
 	void setReuseAddress(); // SO_REUSEADDR
 	void setNonBlocking();	// O_NONBLOCK
-	void bindAndListen(unsigned short port);
+	void bindAndListen(const std::string &ip, unsigned short port);
 };
 
 #endif // LISTENER_HPP

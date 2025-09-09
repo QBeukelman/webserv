@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Listener.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/04 17:22:18 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Listener.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 09:21:09 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 12:45:30 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "serve/Listener.hpp"
 #include "log/Logger.hpp"
 
-#include <cstring>
-
 // CONSTRUCTORS
 // ____________________________________________________________________________
-Listener::Listener(unsigned short port) : fd(-1)
+Listener::Listener(const std::string &ip, unsigned short port) : fd(-1)
 {
 
 	// 1) Create a TCP/IPv4 socket
@@ -35,7 +33,7 @@ Listener::Listener(unsigned short port) : fd(-1)
 	setNonBlocking();
 
 	// 4) Bind & Listen
-	bindAndListen(port);
+	bindAndListen(ip, port);
 }
 
 Listener::~Listener()
@@ -88,7 +86,7 @@ void Listener::setNonBlocking()
  * `bind()` associates the socket with the chosen port (and all local IPs).
  * `listen()` turns it into a listening socket so clients can connect. SOMAXCONN
  */
-void Listener::bindAndListen(unsigned short port)
+void Listener::bindAndListen(const std::string &ip, unsigned short port)
 {
 	struct sockaddr_in addr;
 	std::memset(&addr, 0, sizeof(addr));
@@ -96,6 +94,11 @@ void Listener::bindAndListen(unsigned short port)
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY); // 0.0.0.0, all interfaces
 	addr.sin_port = htons(port);			  // convert to network byte order
+
+	// TODO: How to use ip?
+	std::ostringstream oss;
+	oss << "Listener created for IP: " << ip << " PORT: " << port;
+	Logger::info(oss.str());
 
 	if (::bind(fd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0)
 	{

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   test_listener.cpp                                  :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/04 17:07:00 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/04 17:19:59 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   test_listener.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 17:07:00 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/08 12:50:52 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ TEST_CASE("Listener::Listener: bind and listen on ports")
 
 	for (size_t i = 0; i < ports.size(); ++i)
 	{
-		REQUIRE_NOTHROW(listeners.push_back(new Listener(ports[i])));
+		// TODO: test_listener -> Add IP support
+		REQUIRE_NOTHROW(listeners.push_back(new Listener("0.0", ports[i])));
 		CHECK(listeners.back()->getFd() >= 0);
 
 		// Verify the port is bound
