@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/08 15:03:22 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/09 11:14:18 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,21 +43,25 @@ static bool has_segment_boundry_match(const std::string &path, const std::string
  * Notes:
  * 		- May return `NULL` → caller must handle fallback.
  */
-const Location *Server::findLocation(std::string requestPath) const
+Location Server::findLocation(const std::string &requestPath) const
 {
 	const Location *best = NULL;
 	size_t best_len = 0;
 
-	for (const auto &l : locations)
+	std::vector<Location>::const_iterator it = locations.begin();
+	while (it != locations.end())
 	{
-		if (has_segment_boundry_match(requestPath, l.path_prefix))
+		if (has_segment_boundry_match(requestPath, it->path_prefix))
 		{
-			if (l.path_prefix.size() > best_len)
+			if (it->path_prefix.size() > best_len)
 			{
-				best = &l;
-				best_len = l.path_prefix.size();
+				best = &(*it);
+				best_len = it->path_prefix.size();
 			}
 		}
+		it++;
 	}
-	return (best);
+	if (best)
+		return (*best);
+	throw LocationNotFoundException();
 }

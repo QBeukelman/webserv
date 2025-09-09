@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/08 14:56:56 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/09 11:11:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,38 @@ struct ListenEndpoint
 
 class Server
 {
-	private:
-		std::vector<Location> locations;
+  private:
+	std::string name;
+	std::vector<Location> locations;
 	std::vector<ListenEndpoint> listens;
 	int port;
-	
-	public:
-		Server();
 
-		// Methods
-		const Location *findLocation(std::string requestPath) const;
+  public:
+	Server();
+	Server(std::string name);
 
-		// Getters / Setters
-		std::vector<Location> getLocations(void) const;
-		void setLocations(std::vector<Location>);
+	// Methods
+	Location findLocation(const std::string &requestPath) const;
 
-		std::vector<ListenEndpoint> getListens(void) const;
-		void setListens(std::vector<ListenEndpoint>);
+	// Getters / Setters
+	std::string getName(void) const;
+	void setName(std::string newName);
 
-		int getPort(void) const;
-		void setPort(int);
+	std::vector<Location> getLocations(void) const;
+	void setLocations(const std::vector<Location> &);
+	void addLocation(const Location &location);
+
+	std::vector<ListenEndpoint> getListens(void) const;
+	void setListens(std::vector<ListenEndpoint>);
+
+	int getPort(void) const;
+	void setPort(int);
+
+	class LocationNotFoundException : public std::exception
+	{
+	  public:
+		virtual const char *what() const throw();
+	};
 };
 
 #endif

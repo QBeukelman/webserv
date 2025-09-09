@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/08 15:05:27 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/09 11:38:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,25 @@ RequestHandler::RequestHandler(const ServerConfig &newServerConfig) : serverConf
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
-	const Location *location = serverConfig.getServers()[0].findLocation(request.path);
+	Location location;
+	try
+	{
+		location = serverConfig.getServers()[0].findLocation(request.path);
+	}
+	catch (Server::LocationNotFoundException &e)
+	{
+		Logger::error(Logger::join("RequestHandler::handle → ", e.what()));
+		return (makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found"));
+	}
 
 	switch (request.method)
 	{
 	case HttpMethod::GET:
-		return (handleGet(request, *location));
+		return (handleGet(request, location));
 	case HttpMethod::POST:
-		return (handlePost(request, *location));
+		return (handlePost(request, location));
 	case HttpMethod::DELETE:
-		return (handlePost(request, *location));
+		return (handlePost(request, location));
 	default:
 		return (makeError(HttpStatus::STATUS_BAD_REQUEST, "HttpMethod not found"));
 	}
@@ -68,11 +77,7 @@ static bool isMethodAllowed(const HttpRequest &request, const Location &location
 HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
 {
 	// Log error
-	{
-		std::ostringstream oss;
-		oss << status << ": " << detail;
-		Logger::error(oss.str());
-	}
+	Logger::error(Logger::join(reasonPhrase(status), detail));
 
 	// Create error response
 	HttpResponse response;

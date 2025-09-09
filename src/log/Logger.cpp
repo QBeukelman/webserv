@@ -67,3 +67,10 @@ void Logger::debug(const std::string &msg)
 	if (Logger::_level >= LOG_LEVEL_DEBUG)
 		std::cerr << "DEBUG: " << msg << std::endl;
 }
+
+std::string Logger::join(const std::string &s1, const std::string &s2)
+{
+	std::ostringstream oss;
+	oss << s1 << s2;
+	return (oss.str());
+}

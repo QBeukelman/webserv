@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   test_requestHandler.cpp                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 09:37:32 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/08 10:39:23 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   test_requestHandler.cpp                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/08 09:37:32 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/09 09:51:38 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ TEST_CASE("RequestHandler: handle()")
 	request.version = "HTTP/1.1";
 
 	// Server
+	Server server("Server");
 	ServerConfig serverConfig;
 
 	std::set<HttpMethod> methods;
@@ -33,7 +34,8 @@ TEST_CASE("RequestHandler: handle()")
 	std::vector<Location> locations;
 	locations.push_back(Location("/", "root/", false, methods));
 	locations.push_back(Location("/submit-form", "submit-form/", false, methods));
-	serverConfig.setLocations(locations);
+	server.setLocations(locations);
+	serverConfig.addServer(server);
 
 	RequestHandler handler(serverConfig);
 
