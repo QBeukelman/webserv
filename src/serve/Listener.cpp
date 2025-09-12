@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Listener.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 09:21:09 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/08 12:45:30 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Listener.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/12 10:32:41 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 
 // CONSTRUCTORS
 // ____________________________________________________________________________
-Listener::Listener(const std::string &ip, unsigned short port) : fd(-1)
+Listener::Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop)
+	: fd_(-1), server(server), loop(loop)
 {
 
 	// 1) Create a TCP/IPv4 socket
-	fd = ::socket(AF_INET, SOCK_STREAM, 0);
-	if (fd < 0)
+	fd_ = ::socket(AF_INET, SOCK_STREAM, 0);
+	if (fd_ < 0)
 	{
 		Logger::error("Listener::Listener: socket() failed");
 		throw std::runtime_error("socket() failed");
@@ -38,19 +39,24 @@ Listener::Listener(const std::string &ip, unsigned short port) : fd(-1)
 
 Listener::~Listener()
 {
-	if (fd >= 0)
+	if (fd_ >= 0)
 	{
-		::close(fd);
-		fd = -1;
+		::close(fd_);
+		fd_ = -1;
 	}
 }
 
-int Listener::getFd() const
+int Listener::fd() const
 {
-	return (this->fd);
+	return (this->fd_);
 }
 
-// MEMBERS
+short Listener::interest() const
+{
+	return (POLLIN);
+}
+
+// PRIVATE
 // ____________________________________________________________________________
 /*
  * Restart server quickly on the same port without waiting
@@ -60,9 +66,9 @@ void Listener::setReuseAddress()
 {
 	int opt = 1;
 
-	if (::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+	if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
 	{
-		::close(fd);
+		::close(fd_);
 		Logger::error("Listener::Listener: setsockopt(SO_REUSEADDR) failed");
 		throw std::runtime_error("setsockopt(SO_REUSEADDR) failed");
 	}
@@ -74,9 +80,9 @@ void Listener::setReuseAddress()
  */
 void Listener::setNonBlocking()
 {
-	if (::fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
+	if (::fcntl(fd_, F_SETFL, O_NONBLOCK) < 0)
 	{
-		::close(fd);
+		::close(fd_);
 		Logger::error("Listener::Listener: fcntl(O_NONBLOCK) failed");
 		throw std::runtime_error("fcntl(O_NONBLOCK) failed");
 	}
@@ -100,17 +106,69 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
 	oss << "Listener created for IP: " << ip << " PORT: " << port;
 	Logger::info(oss.str());
 
-	if (::bind(fd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0)
+	if (::bind(fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0)
 	{
-		::close(fd);
+		::close(fd_);
 		Logger::error("Listener::Listener: bind() failed");
 		throw std::runtime_error("bind() failed");
 	}
 
-	if (::listen(fd, SOMAXCONN) < 0)
+	if (::listen(fd_, SOMAXCONN) < 0)
 	{
-		::close(fd);
+		::close(fd_);
 		Logger::error("Listener::Listener: listen() failed");
 		throw std::runtime_error("listen() failed");
 	}
+}
+
+// PUBLIC
+// ____________________________________________________________________________
+/*
+ * A listening socket is marked as readable by `poll()` when
+ * a new client is waiting to connect.
+ *
+ * `onReadable()` calls `accept()`, get a new client file descriptor
+ * and wrap it in a Connection obj.
+ *
+ * Notes:
+ * Readable = accept a new connection.
+ */
+void Listener::onReadable()
+{
+	// TODO: Listener::onReadable().
+	while (true)
+	{
+		sockaddr_in address;
+		socklen_t adrs_len = sizeof(address);
+
+		int cfd = ::accept(fd_, reinterpret_cast<sockaddr *>(&address), &adrs_len);
+
+		if (cfd < 0)
+		{
+			// Non-blocking accept: nothing more to accept now.
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				break;
+
+			Logger::error("Listener::onReadable() failed → " + std::string(std::strerror(errno)));
+			break;
+		}
+
+		// TODO: Set non blocking for (fd).
+		setNonBlocking();
+
+		// Create a Connection for this client and register it.
+		Connection *connection = new Connection(cfd, server, loop);
+		loop->add(connection);
+	}
+}
+
+// A Listner will not write
+void Listener::onWritable()
+{
+}
+
+void Listener::onHangupOrError(short revents)
+{
+	// TODO: Listener::onHangupOrError().
+	Logger::error("Listener::onHangupOrError → " + std::to_string(revents));
 }

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/08 15:05:27 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/12 14:04:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 // INIT
 // ____________________________________________________________________________
-RequestHandler::RequestHandler(const ServerConfig &newServerConfig) : serverConfig(newServerConfig)
+RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
 {
 }
 
@@ -42,16 +42,25 @@ RequestHandler::RequestHandler(const ServerConfig &newServerConfig) : serverConf
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
-	const Location *location = serverConfig.getServers()[0].findLocation(request.path);
+	Location location;
+	try
+	{
+		location = server.findLocation(request.path);
+	}
+	catch (Server::LocationNotFoundException &e)
+	{
+		Logger::error(Logger::join("RequestHandler::handle → ", e.what()));
+		return (makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found"));
+	}
 
 	switch (request.method)
 	{
 	case HttpMethod::GET:
-		return (handleGet(request, *location));
+		return (handleGet(request, location));
 	case HttpMethod::POST:
-		return (handlePost(request, *location));
+		return (handlePost(request, location));
 	case HttpMethod::DELETE:
-		return (handlePost(request, *location));
+		return (handlePost(request, location));
 	default:
 		return (makeError(HttpStatus::STATUS_BAD_REQUEST, "HttpMethod not found"));
 	}
@@ -68,11 +77,7 @@ static bool isMethodAllowed(const HttpRequest &request, const Location &location
 HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
 {
 	// Log error
-	{
-		std::ostringstream oss;
-		oss << status << ": " << detail;
-		Logger::error(oss.str());
-	}
+	Logger::error("RequestHandler::" + detail + " → [" + std::to_string(status) + "] " + reasonPhrase(status));
 
 	// Create error response
 	HttpResponse response;
@@ -92,7 +97,7 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet"));
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet()"));
 
 	// TODO: Define Response
 	return (HttpResponse());
@@ -101,7 +106,7 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost"));
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
 
 	// TODO: Define Response
 	return (HttpResponse());
@@ -110,7 +115,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete"));
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete()"));
 
 	// TODO: Define Response
 	return (HttpResponse());
