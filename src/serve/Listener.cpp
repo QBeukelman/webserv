@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 17:21:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 10:32:41 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 // CONSTRUCTORS
 // ____________________________________________________________________________
-Listener::Listener(const std::string &ip, unsigned short port) : fd_(-1)
+Listener::Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop)
+	: fd_(-1), server(server), loop(loop)
 {
 
 	// 1) Create a TCP/IPv4 socket
@@ -134,7 +135,31 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
  */
 void Listener::onReadable()
 {
-	// TODO: Listener::onReadable()
+	// TODO: Listener::onReadable().
+	while (true)
+	{
+		sockaddr_in address;
+		socklen_t adrs_len = sizeof(address);
+
+		int cfd = ::accept(fd_, reinterpret_cast<sockaddr *>(&address), &adrs_len);
+
+		if (cfd < 0)
+		{
+			// Non-blocking accept: nothing more to accept now.
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				break;
+
+			Logger::error("Listener::onReadable() failed → " + std::string(std::strerror(errno)));
+			break;
+		}
+
+		// TODO: Set non blocking for (fd).
+		setNonBlocking();
+
+		// Create a Connection for this client and register it.
+		Connection *connection = new Connection(cfd, server, loop);
+		loop->add(connection);
+	}
 }
 
 // A Listner will not write
@@ -144,6 +169,6 @@ void Listener::onWritable()
 
 void Listener::onHangupOrError(short revents)
 {
-	// TODO: Listener::onHangupOrError()
+	// TODO: Listener::onHangupOrError().
 	Logger::error("Listener::onHangupOrError → " + std::to_string(revents));
 }

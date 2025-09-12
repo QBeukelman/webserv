@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/09 11:11:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 10:05:34 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Server
 	std::string name;
 	std::vector<Location> locations;
 	std::vector<ListenEndpoint> listens;
-	int port;
 
   public:
 	Server();
@@ -49,9 +48,6 @@ class Server
 
 	std::vector<ListenEndpoint> getListens(void) const;
 	void setListens(std::vector<ListenEndpoint>);
-
-	int getPort(void) const;
-	void setPort(int);
 
 	class LocationNotFoundException : public std::exception
 	{

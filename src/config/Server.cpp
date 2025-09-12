@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/09 11:11:38 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 10:06:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,6 @@ std::vector<ListenEndpoint> Server::getListens(void) const
 void Server::setListens(std::vector<ListenEndpoint> newListens)
 {
 	this->listens = newListens;
-}
-
-int Server::getPort(void) const
-{
-	return (this->port);
-}
-
-void Server::setPort(int newPort)
-{
-	this->port = newPort;
 }
 
 // GETTER / SETTER

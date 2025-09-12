@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/09 17:21:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 21:56:23 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,23 @@
 #define EVENTLOOP_HPP
 
 #include "log/Logger.hpp"
-#include "serve/Connection.hpp"
+#include "serve/IOPollable.hpp"
 
+#include <map>
 #include <poll.h>
+#include <sys/time.h>
+#include <unistd.h>
+
+class Connection; // Forward
 
 class EventLoop
 {
   private:
 	std::map<int, IOPollable *> handlers; // fd → handler
 	std::vector<pollfd> pfds;
+	std::vector<IOPollable *> pendingClose;
+
+	void willClosePending();
 
   public:
 	EventLoop();
@@ -32,8 +40,12 @@ class EventLoop
 
 	// Registration
 	void add(IOPollable *handler);
-	void addListner(int fd);
+	void update(IOPollable *handler);
 	void remove(int fd);
+	void closeLater(IOPollable *handler);
+
+	// Utils
+	unsigned long nowMs() const;
 
 	// Main loop
 	void run(void);

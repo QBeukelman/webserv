@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 09:37:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/09 11:45:35 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 22:15:59 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ TEST_CASE("RequestHandler: handle()")
 	server.setLocations(locations);
 	serverConfig.addServer(server);
 
-	RequestHandler handler(serverConfig);
+	RequestHandler handler(server);
 
 	// Given
 	HttpResponse response = handler.handle(request);

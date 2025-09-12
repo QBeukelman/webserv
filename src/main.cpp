@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/09 14:10:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 10:35:38 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,7 @@ int main(int argc, char **argv)
 		ConfigParser parser;
 		ServerConfig config = parser.parse(pathToConfig);
 
-		// 1) Create one Listener per host:port from config
 		WebServer webServer(config);
-
-		// 2) TODO: add all listeners to poll()/select()/epoll/kqueue set
-
-		// 3) TODO: implement event loop
-		//    - Accept new clients when listener is readable
-		//    - Track client sockets and their ParseContext
-		//    - Read requests and feed into RequestParser
-		//    - Dispatch to RequestHandler to build response
-		//    - Write response back to client
-
-		// 4) TODO: clean up closed/disconnected sockets
 	}
 	catch (const std::exception &ex)
 	{

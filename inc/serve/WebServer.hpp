@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:18 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/09 14:20:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/11 09:11:58 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class WebServer
 
   public:
 	explicit WebServer(const ServerConfig &config);
+	void run();
 };
 
 #endif

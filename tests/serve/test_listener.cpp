@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 17:07:00 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 17:24:11 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 22:22:41 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,19 @@ TEST_CASE("Listener::Listener: bind and listen on ports")
 	ports.push_back(8081);
 
 	std::vector<Listener *> listeners;
+	const Server server;
+	EventLoop loop;
 
 	for (size_t i = 0; i < ports.size(); ++i)
 	{
-		// TODO: test_listener -> Add IP support
-		REQUIRE_NOTHROW(listeners.push_back(new Listener("0.0", ports[i])));
-		CHECK(listeners.back()->fd() >= 0);
+		const std::string ip = "127.0.0.0";
 
-		// Verify the port is bound
-		CHECK(get_bound_port(listeners.back()->fd()) == ports[i]);
+		Listener *l = NULL;
+		REQUIRE_NOTHROW(l = new Listener(ip, ports[i], &server, &loop));
+		listeners.push_back(l);
+
+		CHECK(l->fd() >= 0);
+		CHECK(get_bound_port(l->fd()) == ports[i]);
 	}
 
 	// cleanup

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:13:07 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 17:15:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/12 10:16:18 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #define LISTENER_HPP
 
 #include "config/ServerConfig.hpp"
+#include "serve/Connection.hpp"
+#include "serve/EventLoop.hpp"
 #include "serve/IOPollable.hpp"
 
 #include <cstring>
@@ -40,14 +42,16 @@
 class Listener : public IOPollable
 {
   private:
-	int fd_; // listening socket fd
+	int fd_;			  // Listening socket fd
+	const Server *server; // Which server this listener serves
+	EventLoop *loop;	  // To register new connections
 
 	void setReuseAddress(); // SO_REUSEADDR
 	void setNonBlocking();	// O_NONBLOCK
 	void bindAndListen(const std::string &ip, unsigned short port);
 
   public:
-	explicit Listener(const std::string &ip, unsigned short port);
+	explicit Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop);
 	~Listener();
 
 	// IOPollable
