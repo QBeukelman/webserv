@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 13:38:14 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/15 19:25:15 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 19:36:09 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ std::vector<Server> ServerConfig::getServers(void) const
  */
 void ServerConfig::addServer(const Server &server)
 {
-	Logger::debug(Logger::join("Adding server to server config: ", server.getName()));
+	Logger::debug("Adding server to server config");
 
 	servers.push_back(server);
 }

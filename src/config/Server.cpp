@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 19:23:09 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 20:25:54 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,11 @@ Server::Server()
 
 // GETTER / SETTER
 // ____________________________________________________________________________
-std::string Server::getName(void) const
-{
-	return (this->name);
-}
-
-void Server::setName(std::string newName)
-{
-	this->name = newName;
-}
+// std::string Server::getName(void) const
+// {
+// 	std::string name = names.begin();
+// 	return (names.begin());
+// }
 
 std::vector<Location> Server::getLocations(void) const
 {
@@ -49,11 +45,11 @@ static bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
 {
 	if (a.port != b.port)
 	{
-		return (true);
+		return (false);
 	}
 	if (a.host == "0.0.0.0" || b.host == "0.0.0.0")
 	{
-		return (false);
+		return (true);
 	}
 	return (a.host == b.host);
 }
@@ -61,7 +57,7 @@ bool Server::setListen(const ListenEndpoint &listen)
 {
 	for (ListenEndpoint &current : listens)
 	{
-		if (!listenConflict(current, listen))
+		if (listenConflict(current, listen))
 		{
 			return (false);
 		}
@@ -94,4 +90,9 @@ void Server::printListens()
 	{
 		std::cout << "Host [ " + i.host + " ] Port [ " + std::to_string(i.port) + " ]" << std::endl;
 	}
+}
+
+const char *Server::LocationNotFoundException::what() const throw()
+{
+	return ("Exception: Server `findLocation()` not found");
 }

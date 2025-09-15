@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 19:21:58 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 20:00:24 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,27 @@ class Server
 	Server();
 
 	// Methods
-	const Location *findLocation(std::string requestPath) const;
+	Location findLocation(const std::string &requestPath) const;
 
 	// Getters / Setters
 	std::vector<Location> getLocations(void) const;
 	void setLocation(const Location &location);
 
 	std::vector<ListenEndpoint> getListens(void) const;
-	void setListens(std::vector<ListenEndpoint>);
-	std::vector<ListenEndpoint> getListens(void) const;
+
 	bool setListen(const ListenEndpoint &listen);
 
 	bool setName(const std::string &name);
+	std::string &getName(void) const;
 
 	void printNames();
 	void printListens();
+
+	class LocationNotFoundException : public std::exception
+	{
+	  public:
+		virtual const char *what() const throw();
+	};
 };
 
 #endif
