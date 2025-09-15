@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestHandler.hpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/08 10:22:20 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestHandler.hpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/12 14:03:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,17 @@
 class RequestHandler
 {
   private:
+	const Server &server;
+
 	HttpResponse handleGet(const HttpRequest &, const Location &) const;
 	HttpResponse handlePost(const HttpRequest &, const Location &) const;
 	HttpResponse handleDelete(const HttpRequest &, const Location &) const;
-	HttpResponse makeError(HttpStatus status, std::string detail) const;
 
   public:
-	const ServerConfig serverConfig;
-
-	explicit RequestHandler(const ServerConfig &);
+	explicit RequestHandler(const Server &);
 	HttpResponse handle(const HttpRequest &request) const;
+
+	HttpResponse makeError(HttpStatus status, std::string detail) const;
 };
 
 #endif

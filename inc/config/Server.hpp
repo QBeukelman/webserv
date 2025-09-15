@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 18:38:12 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 19:21:58 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ class Server
 	std::vector<Location> getLocations(void) const;
 	void setLocation(const Location &location);
 
+	std::vector<ListenEndpoint> getListens(void) const;
+	void setListens(std::vector<ListenEndpoint>);
 	std::vector<ListenEndpoint> getListens(void) const;
 	bool setListen(const ListenEndpoint &listen);
 

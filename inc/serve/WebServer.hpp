@@ -1,34 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   HttpResponse.hpp                                   :+:    :+:            */
+/*   WebServer.hpp                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/19 13:09:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/12 14:20:52 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/09/08 12:14:18 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/11 09:11:58 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPRESPONSE_HPP
-#define HTTPRESPONSE_HPP
+#ifndef WEBSERVER_HPP
+#define WEBSERVER_HPP
 
-#include "http/models/HttpStatus.hpp"
+#include "EventLoop.hpp"
+#include "Listener.hpp"
 
 #include <map>
-#include <ostream>
-#include <string>
 
-class HttpResponse
+class WebServer
 {
+  private:
+	const ServerConfig config;
+	std::vector<Listener> listeners;
+	std::map<int, const Server *> fdToServer;
+	EventLoop loop;
+
+	void initListeners();
+
   public:
-	HttpStatus httpStatus;
-	std::map<std::string, std::string> headers;
-	std::string body;
-
-	std::string serialize(/* this */);
+	explicit WebServer(const ServerConfig &config);
+	void run();
 };
-
-std::ostream &operator<<(std::ostream &out, const HttpResponse &response);
 
 #endif

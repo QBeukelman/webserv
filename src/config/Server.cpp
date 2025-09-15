@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 18:42:11 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 19:23:09 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,16 @@ Server::Server()
 
 // GETTER / SETTER
 // ____________________________________________________________________________
+std::string Server::getName(void) const
+{
+	return (this->name);
+}
+
+void Server::setName(std::string newName)
+{
+	this->name = newName;
+}
+
 std::vector<Location> Server::getLocations(void) const
 {
 	return (this->locations);
