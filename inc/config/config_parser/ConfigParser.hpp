@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/08 14:48:54 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 15:07:20 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <string>
 
+#include "config/Server.hpp"
 #include "config/ServerConfig.hpp"
 #include "config/config_parser/TokenStream.hpp"
 
@@ -22,44 +23,42 @@ class ConfigParser
 {
 
   private:
+	template <std::size_t N>
+	int findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken);
 
-	template<std::size_t N>
-	int		findHandlerIndex(const std::array<std::string_view, N>& allowed, const std::string &currentToken);
-
-	void	parseGlobal(ServerConfig &config, TokenStream &token);
-	void	parseServer(ServerConfig &config, TokenStream &token);
-	void	parseLocation(ServerConfig &config, TokenStream &token);
-	void	throwParsingError(ServerConfig &config, TokenStream &token);
+	void parseGlobal(ServerConfig &config, TokenStream &token);
+	void parseServer(Server &server, TokenStream &token);
+	void parseLocation(Server &server, TokenStream &token);
+	void throwParsingError(Server &server, TokenStream &token);
 
 	// Server Directives //
 
-	void	parseListen(ServerConfig &config, TokenStream &token);
-	void	parseName(ServerConfig &config, TokenStream &token);
-	void	parseIndex(ServerConfig &config, TokenStream &token);
-	
+	void parseListen(Server &server, TokenStream &token);
+	void parseName(Server &server, TokenStream &tokenStream);
+	void parseIndex(Server &server, TokenStream &token);
+
 	// Location Directives //
 
-	void	parseAllowMethod(ServerConfig &config, TokenStream &token);
-	void	parseAutoIndex(ServerConfig &config, TokenStream &token);
-	void	parseReturn(ServerConfig &config, TokenStream &token);
-	void	parseUpload(ServerConfig &config, TokenStream &token);
-	
+	void parseAllowMethod(Server &server, TokenStream &token);
+	void parseAutoIndex(Server &server, TokenStream &token);
+	void parseReturn(Server &server, TokenStream &token);
+	void parseUpload(Server &server, TokenStream &token);
+
 	// General Directives //
-	
-	void	parseRoot(ServerConfig &config, TokenStream &token);
-	void	parseErrorPage(ServerConfig &config, TokenStream &token);
-	void	parseMaxBody(ServerConfig &config, TokenStream &token);
+
+	void parseRoot(Server &server, TokenStream &token);
+	void parseErrorPage(Server &server, TokenStream &token);
+	void parseMaxBody(Server &server, TokenStream &token);
 
   public:
-
 	ConfigParser();
 	ServerConfig parse(const std::string &path);
 };
 
-typedef void (ConfigParser::*Handlers)(ServerConfig &, TokenStream &);
+typedef void (ConfigParser::*Handlers)(Server &, TokenStream &);
 
-template<std::size_t N>
-int	ConfigParser::findHandlerIndex(const std::array<std::string_view, N>& allowed, const std::string &currentToken)
+template <std::size_t N>
+int ConfigParser::findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken)
 {
 	for (std::size_t i = 0; i < N; ++i)
 	{
@@ -68,7 +67,14 @@ int	ConfigParser::findHandlerIndex(const std::array<std::string_view, N>& allowe
 			return i;
 		}
 	}
-	return N;
+	return (N);
 }
+
+// ConfigParserUtils.cpp // Non member free function parsing utilities
+
+bool isalnumString(const std::string &s);
+bool isDigitString(const std::string &s);
+
+void toLower(std::string &s);
 
 #endif // CONFIGPARSER_HPP

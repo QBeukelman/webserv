@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/08 14:56:56 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/15 18:38:12 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,28 +24,36 @@ struct ListenEndpoint
 	unsigned short port; // e.g. 8080
 };
 
+struct ErrorPage
+{
+	unsigned short code;
+	std::string route;
+};
+
 class Server
 {
-	private:
-		std::vector<Location> locations;
+  private:
+	std::vector<std::string> names;
 	std::vector<ListenEndpoint> listens;
-	int port;
-	
-	public:
-		Server();
+	std::vector<Location> locations;
 
-		// Methods
-		const Location *findLocation(std::string requestPath) const;
+  public:
+	Server();
 
-		// Getters / Setters
-		std::vector<Location> getLocations(void) const;
-		void setLocations(std::vector<Location>);
+	// Methods
+	const Location *findLocation(std::string requestPath) const;
 
-		std::vector<ListenEndpoint> getListens(void) const;
-		void setListens(std::vector<ListenEndpoint>);
+	// Getters / Setters
+	std::vector<Location> getLocations(void) const;
+	void setLocation(const Location &location);
 
-		int getPort(void) const;
-		void setPort(int);
+	std::vector<ListenEndpoint> getListens(void) const;
+	bool setListen(const ListenEndpoint &listen);
+
+	bool setName(const std::string &name);
+
+	void printNames();
+	void printListens();
 };
 
 #endif
