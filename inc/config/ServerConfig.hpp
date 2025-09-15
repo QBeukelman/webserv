@@ -6,7 +6,7 @@
 /*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/18 19:25:34 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/09/08 15:04:51 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/09 09:30:10 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 #include "config/Location.hpp"
 #include "config/Server.hpp"
 
-#include <ostream>
 #include <iostream>
+#include <ostream>
 #include <vector>
 
 /*
  * ServerConfig holds vector of Server
-*/
+ */
 class ServerConfig
 {
   private:
@@ -32,7 +32,7 @@ class ServerConfig
 	// Init
 	ServerConfig();
 
-	void	addServer(const Server &server);
+	void addServer(const Server &server);
 	std::vector<Server> getServers(void) const;
 };
 

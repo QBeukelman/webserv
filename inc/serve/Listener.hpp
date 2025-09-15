@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Listener.hpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 09:13:07 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/08 12:45:34 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Listener.hpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/04 09:13:07 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/12 10:16:18 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #define LISTENER_HPP
 
 #include "config/ServerConfig.hpp"
+#include "serve/Connection.hpp"
+#include "serve/EventLoop.hpp"
+#include "serve/IOPollable.hpp"
 
 #include <cstring>
 #include <sstream>
@@ -23,28 +26,40 @@
 #include <arpa/inet.h>	// inet_pton, inet_ntop
 #include <fcntl.h>		// fcntl(), O_NONBLOCK
 #include <netinet/in.h> // sockaddr_in, htons(), htonl(), INADDR_ANY
+#include <sys/poll.h>	// poll()
 #include <sys/socket.h> // socket(), bind(), listen()
 #include <sys/types.h>	// basic system types
 #include <unistd.h>		// close()
 
-class Listener
+/*
+ * A `Listener` is a socket that is bound to an `ip:port`,
+ * and put into `listen()` mode:
+ *
+ * 		- Wait for a new incoming TCP connections.
+ * 		- When `poll()` says a listener fd is readable, we can `accept()`.
+ * 		- After `accept()` we get a new fd. And that fd is crapped in a client `Connection`.
+ */
+class Listener : public IOPollable
 {
-  public:
-	// Construct and start listening on the given TCP port (IPv4).
-	// Binds to 0.0.0.0 (all interfaces).
-	explicit Listener(const std::string &ip, unsigned short port);
-
-	~Listener();
-
-	// The listening file descriptor (ready to add to poll()/select()/kqueue/epoll).
-	int getFd() const;
-
   private:
-	int fd; // listening socket fd
+	int fd_;			  // Listening socket fd
+	const Server *server; // Which server this listener serves
+	EventLoop *loop;	  // To register new connections
 
 	void setReuseAddress(); // SO_REUSEADDR
 	void setNonBlocking();	// O_NONBLOCK
 	void bindAndListen(const std::string &ip, unsigned short port);
+
+  public:
+	explicit Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop);
+	~Listener();
+
+	// IOPollable
+	int fd() const;
+	short interest() const;
+	void onReadable();
+	void onWritable();
+	void onHangupOrError(short revents);
 };
 
 #endif // LISTENER_HPP
