@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   ServerConfig.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/03 13:38:14 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 11:36:50 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   ServerConfig.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/03 13:38:14 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/15 09:54:37 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ ServerConfig::ServerConfig() : servers(std::vector<Server>())
 {
 }
 
-std::vector<Server> ServerConfig::getServers(void) const
+const std::vector<Server> &ServerConfig::getServers(void) const
 {
 	return (this->servers);
 }

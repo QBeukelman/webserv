@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Server.hpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: hein <hein@student.codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/12 10:05:34 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/08 14:52:56 by hein              #+#    #+#             */
+/*   Updated: 2025/09/15 09:43:37 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,13 @@ struct ListenEndpoint
 {
 	std::string host;	 // "" or "*" → any
 	unsigned short port; // e.g. 8080
+
+	ListenEndpoint() : host(""), port(8080)
+	{
+	}
+	ListenEndpoint(const std::string &h, unsigned short p) : host(h), port(p)
+	{
+	}
 };
 
 class Server
@@ -47,7 +54,7 @@ class Server
 	void addLocation(const Location &location);
 
 	std::vector<ListenEndpoint> getListens(void) const;
-	void setListens(std::vector<ListenEndpoint>);
+	void setListens(std::vector<ListenEndpoint> &);
 
 	class LocationNotFoundException : public std::exception
 	{

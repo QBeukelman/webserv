@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Listener.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/12 10:32:41 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Listener.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 09:21:09 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/15 11:58:35 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,25 @@ Listener::Listener(const std::string &ip, unsigned short port, const Server *ser
 	bindAndListen(ip, port);
 }
 
+Listener::Listener(Listener &&other) noexcept : fd_(other.fd_)
+{
+	other.fd_ = -1;
+}
+
+Listener &Listener::operator=(Listener &&other) noexcept
+{
+	if (this != &other)
+	{
+		closeIfValid();
+		fd_ = other.fd_;
+		other.fd_ = -1;
+	}
+	return (*this);
+}
+
 Listener::~Listener()
 {
-	if (fd_ >= 0)
-	{
-		::close(fd_);
-		fd_ = -1;
-	}
+	closeIfValid();
 }
 
 int Listener::fd() const
@@ -121,6 +133,13 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
 	}
 }
 
+void Listener::closeIfValid()
+{
+	if (fd_ >= 0)
+		::close(fd_);
+	fd_ = -1;
+}
+
 // PUBLIC
 // ____________________________________________________________________________
 /*
@@ -152,6 +171,7 @@ void Listener::onReadable()
 			Logger::error("Listener::onReadable() failed → " + std::string(std::strerror(errno)));
 			break;
 		}
+		Logger::info("Listener::onReadable() → Connection accepted: " + std::to_string(cfd));
 
 		// TODO: Set non blocking for (fd).
 		setNonBlocking();
@@ -162,7 +182,9 @@ void Listener::onReadable()
 	}
 }
 
-// A Listner will not write
+/*
+ * Emply function: A Listner will not write.
+ */
 void Listener::onWritable()
 {
 }
@@ -172,3 +194,47 @@ void Listener::onHangupOrError(short revents)
 	// TODO: Listener::onHangupOrError().
 	Logger::error("Listener::onHangupOrError → " + std::to_string(revents));
 }
+
+// GETTERS & SETTERS
+// ____________________________________________________________________________
+const Server *Listener::getServer(void) const
+{
+	return (this->server);
+}
+
+const bool Listener::hasEventLoop(void) const
+{
+	if (this->server)
+		return (true);
+	return (false);
+}
+
+// OVERLOAD
+// ____________________________________________________________________________
+std::ostream &operator<<(std::ostream &out, const Listener &listener)
+{
+	const std::string hasEventLoop = listener.hasEventLoop() ? "true" : "false";
+
+	out << "Listener FD: " << listener.fd() << "\nListener Server: " << listener.getServer()->getName()
+		<< "\nListener has EventLoop: " << hasEventLoop << std::endl;
+
+	return (out);
+}
+
+// TESTING
+// ____________________________________________________________________________
+#define UNIT_TEST
+#ifdef UNIT_TEST
+
+#include <netinet/in.h>
+#include <sys/socket.h>
+
+unsigned short Listener::boundPort() const
+{
+	struct sockaddr_in addr;
+	socklen_t len = sizeof(addr);
+	if (::getsockname(fd(), reinterpret_cast<sockaddr *>(&addr), &len) != 0)
+		throw std::runtime_error("getsockname failed");
+	return (ntohs(addr.sin_port));
+}
+#endif
