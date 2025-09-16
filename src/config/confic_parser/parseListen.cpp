@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:06:36 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 18:07:58 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/16 13:52:11 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,9 @@ ListenEndpoint createListen(const std::string &token, TokenStream &tokenStream)
 
 void ConfigParser::parseListen(Server &server, TokenStream &tokenStream)
 {
-	std::size_t argumentCount = tokenStream.validateMinimumArguments(1);
-
 	tokenStream.removeValidSemicolon();
+
+	std::size_t argumentCount = tokenStream.validateMinimumArguments(1);
 
 	for (std::size_t i = 0; i < argumentCount; ++i)
 	{
@@ -111,4 +111,5 @@ void ConfigParser::parseListen(Server &server, TokenStream &tokenStream)
 			tokenStream.throwError("Duplicate Listens are not allowed");
 		}
 	}
+	server.markDirective(LISTEN);
 }

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/15 15:07:20 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/16 13:09:38 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,16 @@ class ConfigParser
 	template <std::size_t N>
 	int findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken);
 
-	void parseGlobal(ServerConfig &config, TokenStream &token);
-	void parseServer(Server &server, TokenStream &token);
-	void parseLocation(Server &server, TokenStream &token);
-	void throwParsingError(Server &server, TokenStream &token);
+	void parseGlobal(ServerConfig &config, TokenStream &tokenStream);
+	void parseServer(Server &server, TokenStream &tokenStream);
+	void parseLocation(Server &server, TokenStream &tokenStream);
+	void throwParsingError(Server &server, TokenStream &tokenStream);
 
 	// Server Directives //
 
-	void parseListen(Server &server, TokenStream &token);
+	void parseListen(Server &server, TokenStream &tokenStream);
 	void parseName(Server &server, TokenStream &tokenStream);
-	void parseIndex(Server &server, TokenStream &token);
+	void parseIndex(Server &server, TokenStream &tokenStream);
 
 	// Location Directives //
 

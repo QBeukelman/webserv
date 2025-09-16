@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 20:25:54 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/16 13:44:07 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 Server::Server()
 {
+	directiveFlags = 0;
 }
 
 // GETTER / SETTER
@@ -40,6 +41,9 @@ std::vector<ListenEndpoint> Server::getListens(void) const
 {
 	return (this->listens);
 }
+
+// SET PARSED DATA
+// ____________________________________________________________________________
 
 static bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
 {
@@ -76,21 +80,31 @@ bool Server::setName(const std::string &name)
 	return (true);
 }
 
-void Server::printNames()
+void Server::setRoot(const std::string &root)
 {
-	for (std::string s : names)
-	{
-		std::cout << s << std::endl;
-	}
+	this->root = root;
 }
 
-void Server::printListens()
+// BITMASK FLAGG FUNCTIONS
+// ____________________________________________________________________________
+
+void Server::markDirective(unsigned int directive)
 {
-	for (ListenEndpoint i : listens)
-	{
-		std::cout << "Host [ " + i.host + " ] Port [ " + std::to_string(i.port) + " ]" << std::endl;
-	}
+	directiveFlags |= directive;
 }
+
+bool Server::hasDirective(unsigned int directive)
+{
+	return ((directiveFlags & directive) != 0);
+}
+
+bool Server::requiredDirectives(unsigned int required)
+{
+	return ((directiveFlags & required) == required);
+}
+
+// EXCEPTIONS
+// ____________________________________________________________________________
 
 const char *Server::LocationNotFoundException::what() const throw()
 {

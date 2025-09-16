@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 23:05:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 11:29:20 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/16 13:51:38 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,16 +108,14 @@ void TokenStream::expectOpenBracket(const std::string &currentToken)
 {
 	if (currentToken != "{")
 	{
-		throw std::runtime_error("Error on line " + std::to_string(lineCount) + ". Expected [ { ] but found [ " +
-								 currentToken + " ]");
+		throwError("Expected [ { ] but found [ " + currentToken + " ]");
 	}
 	else if ((tokenIndex != tokenStream.size() - 1))
 	{
 		std::string junk = next();
 		if (junk != "}")
 		{
-			throw std::runtime_error("Error on line " + std::to_string(lineCount) + ". Unexpected input [ " + junk +
-									 " ] after open bracket was found");
+			throwError("Unexpected input [ " + junk + " ] after open bracket was found");
 		}
 	}
 }
@@ -151,14 +149,17 @@ void TokenStream::removeValidSemicolon(void)
 {
 	std::string &token = tokenStream.back();
 
-	if (!token.empty() && (token.back() == ';'))
+	if (token == ";")
+	{
+		tokenStream.pop_back();
+	}
+	else if (!token.empty() && (token.back() == ';'))
 	{
 		token.pop_back();
 	}
 	else
 	{
-		throw std::runtime_error("Parsing Error on line " + getLineCount() +
-								 " Expecting semicolon [ ; ] on last argument");
+		throwError("Expecting semicolon [ ; ] on last argument");
 	}
 }
 
@@ -168,7 +169,7 @@ std::size_t TokenStream::validateMinimumArguments(int n)
 
 	if (argumentCount < n)
 	{
-		throw std::runtime_error("Parsing Error on line " + getLineCount() + " Wrong amount of arguments");
+		throwError("Wrong amount of arguments. Expected a minimum of [ " + std::to_string(n) + " ] arguments");
 	}
 	return (argumentCount);
 }
@@ -177,7 +178,7 @@ void TokenStream::validateExpectedArguments(int n)
 {
 	if (tokenStream.size() - 1 != n)
 	{
-		throw std::runtime_error("Parsing Error on line " + getLineCount() + " Wrong amount of arguments");
+		throwError("Wrong amount of arguments. Expected [ " + std::to_string(n) + " ] arguments");
 	}
 }
 

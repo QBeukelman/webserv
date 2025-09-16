@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 20:00:24 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/16 13:43:55 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 
 #include <ostream>
 #include <vector>
+
+enum DirectiveFlags
+{
+	LISTEN = 1 << 0,
+	NAME = 1 << 1,
+	ROOT = 1 << 2,
+};
 
 struct ListenEndpoint
 {
@@ -33,9 +40,11 @@ struct ErrorPage
 class Server
 {
   private:
+	unsigned int directiveFlags;
 	std::vector<std::string> names;
 	std::vector<ListenEndpoint> listens;
 	std::vector<Location> locations;
+	std::string root;
 
   public:
 	Server();
@@ -44,18 +53,26 @@ class Server
 	Location findLocation(const std::string &requestPath) const;
 
 	// Getters / Setters
+	std::string &getName(void) const;
 	std::vector<Location> getLocations(void) const;
 	void setLocation(const Location &location);
 
 	std::vector<ListenEndpoint> getListens(void) const;
 
+	// Set Parsed Data
 	bool setListen(const ListenEndpoint &listen);
-
 	bool setName(const std::string &name);
-	std::string &getName(void) const;
+	void setRoot(const std::string &root);
 
-	void printNames();
+	// ServerPrint.cpp
 	void printListens();
+	void printNames();
+	void printRoot();
+
+	// Bitmask Methods
+	void markDirective(unsigned int directive);
+	bool hasDirective(unsigned int directive);
+	bool requiredDirectives(unsigned int directives);
 
 	class LocationNotFoundException : public std::exception
 	{
