@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 14:57:51 by hein              #+#    #+#             */
-/*   Updated: 2025/09/17 09:03:59 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 09:49:59 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,52 +14,33 @@
 
 #include <algorithm>
 
-Server::Server()
+Server::Server() : name("Server"), directiveFlags(0)
 {
-	directiveFlags = 0;
+}
+
+Server::Server(std::string name) : name(name), directiveFlags(0)
+{
 }
 
 // GETTER / SETTER
 // ____________________________________________________________________________
-// std::string Server::getName(void) const
-// {
-// 	std::string name = names.begin();
-// 	return (names.begin());
-// }
-
-std::vector<Location> Server::getLocations(void) const
+// Name
+std::string Server::getName(void) const
 {
-	return (this->locations);
+	return (this->name);
 }
 
-void Server::setLocation(const Location &location)
+void Server::setName(std::string newName)
 {
-	this->locations.push_back(location);
+	this->name = newName;
 }
 
+// Listens
 std::vector<ListenEndpoint> Server::getListens(void) const
 {
 	return (this->listens);
 }
 
-void Server::setListens(std::vector<ListenEndpoint> &newListens)
-{
-	this->listens = newListens;
-// SET PARSED DATA
-// ____________________________________________________________________________
-
-static bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
-{
-	if (a.port != b.port)
-	{
-		return (false);
-	}
-	if (a.host == "0.0.0.0" || b.host == "0.0.0.0")
-	{
-		return (true);
-	}
-	return (a.host == b.host);
-}
 bool Server::setListen(const ListenEndpoint &listen)
 {
 	for (ListenEndpoint &current : listens)
@@ -73,14 +54,40 @@ bool Server::setListen(const ListenEndpoint &listen)
 	return (true);
 }
 
-bool Server::setName(const std::string &name)
+void Server::setListens(std::vector<ListenEndpoint> &newListens)
 {
-	if (std::find(names.begin(), names.end(), name) != names.end())
+	this->listens = newListens;
+}
+
+// Location
+std::vector<Location> Server::getLocations(void) const
+{
+	return (this->locations);
+}
+
+void Server::addLocation(const Location &location)
+{
+	this->locations.push_back(location);
+}
+
+void Server::setLocations(const std::vector<Location> &newLocations)
+{
+	this->locations = newLocations;
+}
+
+// SET PARSED DATA
+// ____________________________________________________________________________
+bool Server::listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
+{
+	if (a.port != b.port)
 	{
 		return (false);
 	}
-	this->names.push_back(name);
-	return (true);
+	if (a.host == "0.0.0.0" || b.host == "0.0.0.0")
+	{
+		return (true);
+	}
+	return (a.host == b.host);
 }
 
 void Server::setRoot(const std::string &root)
@@ -90,7 +97,6 @@ void Server::setRoot(const std::string &root)
 
 // BITMASK FLAGG FUNCTIONS
 // ____________________________________________________________________________
-
 void Server::markDirective(unsigned int directive)
 {
 	directiveFlags |= directive;
@@ -108,7 +114,6 @@ bool Server::requiredDirectives(unsigned int required)
 
 // EXCEPTIONS
 // ____________________________________________________________________________
-
 const char *Server::LocationNotFoundException::what() const throw()
 {
 	return ("Exception: Server `findLocation()` not found");

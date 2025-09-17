@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   ConfigParser.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/16 13:43:30 by hein          ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   ConfigParser.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/11 09:39:08 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/17 09:40:36 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include <stdexcept>
 #include <string_view>
 
+// CONSTRUCTORS
+// ____________________________________________________________________________
 ConfigParser::ConfigParser()
 {
 	Logger::debug("Created Parser");
@@ -33,10 +35,30 @@ void ConfigParser::throwParsingError(Server &server, TokenStream &tokenStream)
 	tokenStream.throwError("unknown Directive");
 }
 
+// FIND INDEX
+// ____________________________________________________________________________
+int ConfigParser::findHandlerIndex(const std::vector<std::string> &allowed, const std::string &currentToken)
+{
+	for (std::size_t i = 0; i < allowed.size(); ++i)
+	{
+		if (allowed[i] == currentToken)
+		{
+			return (static_cast<int>(i));
+		}
+	}
+	return (static_cast<int>(allowed.size()));
+}
+
+// PARSE HELPERS
+// ____________________________________________________________________________
 void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 1> allowed = {"server"};
-	static const std::array<Handlers, 2> handler = {&ConfigParser::parseServer, &ConfigParser::throwParsingError};
+	static const std::vector<std::string> allowed = {"server"};
+
+	static const std::vector<Handlers> handlers = {
+		&ConfigParser::parseServer,
+		&ConfigParser::throwParsingError // fallback
+	};
 
 	while (true)
 	{
@@ -46,7 +68,9 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 
 		int index = findHandlerIndex(allowed, currentToken);
 
-		(this->*handler[index])(server, tokenStream);
+		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
+
+		(this->*handler)(server, tokenStream);
 
 		config.addServer(server);
 	}
@@ -54,12 +78,12 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 
 void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 7> allowed = {"listen", "server_name", "root",	"client_max_body_size",
-															"index",  "error_page",	 "location"};
-	static const std::array<Handlers, 8> handler = {&ConfigParser::parseListen,	  &ConfigParser::parseName,
-													&ConfigParser::parseRoot,	  &ConfigParser::parseMaxBody,
-													&ConfigParser::parseIndex,	  &ConfigParser::parseErrorPage,
-													&ConfigParser::parseLocation, &ConfigParser::throwParsingError};
+	static const std::vector<std::string> allowed = {"listen", "server_name", "root",	 "client_max_body_size",
+													 "index",  "error_page",  "location"};
+	static const std::vector<Handlers> handlers = {&ConfigParser::parseListen,	 &ConfigParser::parseName,
+												   &ConfigParser::parseRoot,	 &ConfigParser::parseMaxBody,
+												   &ConfigParser::parseIndex,	 &ConfigParser::parseErrorPage,
+												   &ConfigParser::parseLocation, &ConfigParser::throwParsingError};
 
 	tokenStream.expectOpenBracket(tokenStream.next());
 
@@ -69,30 +93,30 @@ void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 	{
 		int index = findHandlerIndex(allowed, currentToken);
 
-		(this->*handler[index])(server, tokenStream);
+		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
+
+		(this->*handler)(server, tokenStream);
 
 		currentToken = tokenStream.next();
 	}
 
 	if (server.requiredDirectives(NAME | LISTEN | ROOT))
 	{
-		server.printListens();
-		server.printNames();
-		server.printRoot();
+		// TODO: Print server
 	}
-	exit(1);
 
-	// validate server block //
+	// TODO: validate server block...
 }
 
 void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 7> allowed = {
-		"allowed_methods", "root", "client_max_body_size", "autoindex", "error_page", "return", "upload_store"};
-	static const std::array<Handlers, 8> handler = {&ConfigParser::parseAllowMethod, &ConfigParser::parseRoot,
-													&ConfigParser::parseMaxBody,	 &ConfigParser::parseAutoIndex,
-													&ConfigParser::parseErrorPage,	 &ConfigParser::parseReturn,
-													&ConfigParser::parseUpload,		 &ConfigParser::throwParsingError};
+	static const std::vector<std::string> allowed = {"allowed_methods", "root",	  "client_max_body_size", "autoindex",
+													 "error_page",		"return", "upload_store"};
+
+	static const std::vector<Handlers> handlers = {&ConfigParser::parseAllowMethod, &ConfigParser::parseRoot,
+												   &ConfigParser::parseMaxBody,		&ConfigParser::parseAutoIndex,
+												   &ConfigParser::parseErrorPage,	&ConfigParser::parseReturn,
+												   &ConfigParser::parseUpload,		&ConfigParser::throwParsingError};
 
 	tokenStream.expectOpenBracket(tokenStream.next());
 }

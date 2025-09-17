@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   parseName.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: hein <hein@student.codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/29 12:24:03 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/16 13:31:01 by hein          ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   parseName.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/29 12:24:03 by hein              #+#    #+#             */
+/*   Updated: 2025/09/17 09:43:03 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,23 +60,22 @@ static void validateLabels(const std::string &token, TokenStream &tokenStream)
 void ConfigParser::parseName(Server &server, TokenStream &tokenStream)
 {
 	tokenStream.removeValidSemicolon();
-
 	std::size_t argumentCount = tokenStream.validateMinimumArguments(1);
 
 	for (std::size_t i = 0; i < argumentCount; ++i)
 	{
+		if (i > 1)
+		{
+			tokenStream.throwError("Only one server name allowed");
+			break;
+		}
+
 		std::string token = tokenStream.next();
-
 		toLower(token);
-
 		validateServername(token, tokenStream);
-
 		validateLabels(token, tokenStream);
 
-		if (!server.setName(token))
-		{
-			tokenStream.throwError("Duplicate server names are not allowed");
-		}
+		server.setName(token);
 	}
 	server.markDirective(NAME);
 }

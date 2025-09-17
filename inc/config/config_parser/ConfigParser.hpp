@@ -6,16 +6,16 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 09:03:01 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 09:32:23 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIGPARSER_HPP
 #define CONFIGPARSER_HPP
 
-#include <array>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "config/Server.hpp"
 #include "config/ServerConfig.hpp"
@@ -25,10 +25,7 @@ class ConfigParser
 {
 
   private:
-	template <std::size_t N>
-	int findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken);
-	template <std::size_t N>
-	int findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken);
+	int findHandlerIndex(const std::vector<std::string> &allowed, const std::string &currentToken);
 
 	void parseGlobal(ServerConfig &config, TokenStream &tokenStream);
 	void parseServer(Server &server, TokenStream &tokenStream);
@@ -61,23 +58,7 @@ class ConfigParser
 
 typedef void (ConfigParser::*Handlers)(Server &, TokenStream &);
 
-template <std::size_t N>
-int ConfigParser::findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken)
-template <std::size_t N>
-int ConfigParser::findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken)
-{
-	for (std::size_t i = 0; i < N; ++i)
-	{
-		if (allowed[i] == currentToken)
-		{
-			return i;
-		}
-	}
-	return (N);
-}
-
 // ConfigParserUtils.cpp // Non member free function parsing utilities
-
 bool isalnumString(const std::string &s);
 bool isDigitString(const std::string &s);
 
