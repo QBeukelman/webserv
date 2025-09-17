@@ -44,7 +44,7 @@ make test
 ## Testing with `curl`
 
 ```bash
-curl -v -X POST "http://127.0.0.1:<PORT>/submit" \
+curl -v -X POST "http://127.0.0.1:8080/submit" \
   -H "Content-Length: 26" \
   --data "name=Alice&age=30&city=AMS"
 ```

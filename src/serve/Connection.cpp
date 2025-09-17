@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 12:12:02 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:38:25 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,51 +105,45 @@ void Connection::feedParserFromBuffer()
  */
 void Connection::onReadable()
 {
+	// TODO: Connection::onReadable() what is buffer size?
 	char buf[8192]; // 8kb
+	
 	ssize_t n = 0;
-	size_t total_read = 0;
 
-	// 256 KB per recv
-	const size_t MAX_PER_TICK = 256 * 1024;
-
-	while (total_read < MAX_PER_TICK)
+	n = ::recv(fd_, buf, sizeof(buf), 0);
+	if (n > 0)
 	{
-		n = ::recv(fd_, buf, sizeof(buf), 0);
-		if (n > 0)
-		{
-			lastActivityMs = loop->nowMs();
-			inBuf.append(buf, static_cast<size_t>(n));
-			total_read += static_cast<size_t>(n);
-			continue;
-		}
-		else if (n == 0)
-		{
-			// Peer closed
-			keepAlive = false;
-			loop->closeLater(this);
-			Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
-			return;
-		}
-
-		// n < 0
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-		{
-			break; // No more data to read now
-		}
-		if (errno == EINTR)
-		{
-			continue; // Retry read
-		}
-
-		// Fatal read error
+		// TODO: Connection::onReadable() What is max time?
+		lastActivityMs = loop->nowMs();
+		inBuf.append(buf, static_cast<size_t>(n));
+		feedParserFromBuffer();
+		return;
+	}
+	else if (n == 0)
+	{
+		// Peer closed
+		keepAlive = false;
 		loop->closeLater(this);
-		Logger::info("Connection::onReadable() → recv encountered error, returning early");
+		Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
 		return;
 	}
 
-	Logger::info("Connection::onReadable() → recv read " + std::to_string(total_read) + " bytes");
+	// n < 0
+	if (errno == EAGAIN || errno == EWOULDBLOCK)
+	{
+		Logger::error("Connection::onReadable() (errno == EAGAIN || errno == EWOULDBLOCK)");
+		return;
+	}
+	if (errno == EINTR)
+	{
+		Logger::error("Connection::onReadable() (errno == EINTR)");
+		return;
+	}
 
-	feedParserFromBuffer();
+	// TODO: Connection::onReadable() When should we mark this for closing?
+	loop->closeLater(this);
+	Logger::info("Connection::onReadable() → Reach end of recv");
+	return;
 }
 
 void Connection::onWritable()

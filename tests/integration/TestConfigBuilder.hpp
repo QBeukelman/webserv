@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 08:59:53 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 12:33:16 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:08:36 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@ struct TestConfigBuilder
 	}
 
 	// Location
-	TestConfigBuilder &mount(const std::string &p)
+	TestConfigBuilder &new_root(const std::string &root)
 	{
-		path_prefix = p;
+		root_dir = root;
 		return (*this);
 	}
-	TestConfigBuilder &docroot(const std::string &dir)
+	TestConfigBuilder &new_prefix(const std::string &prefix)
 	{
-		root_dir = dir;
+		path_prefix = prefix;
 		return (*this);
 	}
 	TestConfigBuilder &redirects(bool on)

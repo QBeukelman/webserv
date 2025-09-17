@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 13:49:20 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:30:04 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,9 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 	if (isMethodAllowed(request, location) == false)
 		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
 
-	// TODO: Define Response
+	// TODO: RequestHandler::handlePost() Body is not working?
 	Logger::info("RequestHandler::handlePost → Post Accepted");
+	std::cout << request;
 	return (HttpResponse());
 }
 
