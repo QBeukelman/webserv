@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Server.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: hein <hein@student.codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/12 10:06:09 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/08 14:57:51 by hein              #+#    #+#             */
+/*   Updated: 2025/09/15 09:43:30 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ std::vector<ListenEndpoint> Server::getListens(void) const
 	return (this->listens);
 }
 
-void Server::setListens(std::vector<ListenEndpoint> newListens)
+void Server::setListens(std::vector<ListenEndpoint> &newListens)
 {
 	this->listens = newListens;
 }

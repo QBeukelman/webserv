@@ -39,3 +39,17 @@ make test
 ---
 
 <br/>
+
+
+## Testing with `curl`
+
+```bash
+curl -v -X POST "http://127.0.0.1:<PORT>/submit" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "name=Alice&age=30&city=AMS"
+```
+
+---
+
+<br/>
+
