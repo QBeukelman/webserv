@@ -6,15 +6,15 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 23:05:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/08 14:48:54 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/16 13:51:38 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/config_parser/TokenStream.hpp"
 
-#include <sstream>
+#include <cctype>
 #include <fstream>
-
+#include <sstream>
 
 TokenStream::TokenStream()
 {
@@ -22,22 +22,22 @@ TokenStream::TokenStream()
 	tokenIndex = 0;
 }
 
-static void	trimWhitespace(std::string &line)
+static void trimWhitespace(std::string &line)
 {
-	size_t	start = line.find_first_not_of(" \t\r\n");
-	
+	size_t start = line.find_first_not_of(" \t\r\n");
+
 	if (start == std::string::npos)
 	{
 		line.clear();
-		return ;
+		return;
 	}
-	
+
 	if (start > 0)
 	{
 		line.erase(0, start);
 	}
 
-	size_t	end = line.find_last_not_of(" \t\r\n");
+	size_t end = line.find_last_not_of(" \t\r\n");
 
 	if (end < (line.length()))
 	{
@@ -45,9 +45,9 @@ static void	trimWhitespace(std::string &line)
 	}
 }
 
-void	TokenStream::nextValidLine(std::stringstream &ss)
+void TokenStream::nextValidLine(std::stringstream &ss)
 {
-    std::string line;
+	std::string line;
 
 	while (true)
 	{
@@ -61,25 +61,25 @@ void	TokenStream::nextValidLine(std::stringstream &ss)
 
 		++lineCount;
 		trimWhitespace(line);
-		
+
 		if (line.empty() || line[0] == '#')
 		{
-			continue ;
+			continue;
 		}
-		
+
 		ss.clear();
 		ss.str(line);
 
-		return ;
+		return;
 	}
 }
 
-void    TokenStream::setNextTokenStream( void )
+void TokenStream::setNextTokenStream(void)
 {
-    std::stringstream 	ss;
-	std::string			token;
+	std::stringstream ss;
+	std::string token;
 
-    nextValidLine(ss);
+	nextValidLine(ss);
 
 	tokenStream.clear();
 
@@ -88,11 +88,11 @@ void    TokenStream::setNextTokenStream( void )
 		tokenStream.push_back(token);
 		token.clear();
 	}
-	
+
 	tokenIndex = 0;
 }
 
-std::string	TokenStream::next( void )
+std::string TokenStream::next(void)
 {
 	++tokenIndex;
 
@@ -100,33 +100,32 @@ std::string	TokenStream::next( void )
 	{
 		setNextTokenStream();
 	}
-	
+
 	return tokenStream[tokenIndex];
-	
 }
 
-void	TokenStream::expectOpenBracket(const std::string& currentToken)
+void TokenStream::expectOpenBracket(const std::string &currentToken)
 {
 	if (currentToken != "{")
 	{
-		throw std::runtime_error("Error on line " + std::to_string(lineCount) + ". Expected [ { ] but found [ " + currentToken + " ]" );
+		throwError("Expected [ { ] but found [ " + currentToken + " ]");
 	}
 	else if ((tokenIndex != tokenStream.size() - 1))
 	{
 		std::string junk = next();
 		if (junk != "}")
 		{
-			throw std::runtime_error("Error on line " + std::to_string(lineCount) + ". Unexpected input [ " + junk + " ] after open bracket was found");
+			throwError("Unexpected input [ " + junk + " ] after open bracket was found");
 		}
 	}
 }
 
-bool	TokenStream::awaitClosingBracket(const std::string& currentToken)
+bool TokenStream::awaitClosingBracket(const std::string &currentToken)
 {
 	return currentToken == "}";
 }
 
-void	TokenStream::openFile(const std::string& path)
+void TokenStream::openFile(const std::string &path)
 {
 	file.open(path.c_str());
 
@@ -136,12 +135,54 @@ void	TokenStream::openFile(const std::string& path)
 	}
 }
 
-const std::string TokenStream::getLineCount( void )
+const std::string TokenStream::getLineCount(void)
 {
 	return std::to_string(lineCount);
 }
 
-const std::string& TokenStream::getCurrentToken( void )
+const std::string &TokenStream::getCurrentToken(void)
 {
 	return tokenStream[tokenIndex];
+}
+
+void TokenStream::removeValidSemicolon(void)
+{
+	std::string &token = tokenStream.back();
+
+	if (token == ";")
+	{
+		tokenStream.pop_back();
+	}
+	else if (!token.empty() && (token.back() == ';'))
+	{
+		token.pop_back();
+	}
+	else
+	{
+		throwError("Expecting semicolon [ ; ] on last argument");
+	}
+}
+
+std::size_t TokenStream::validateMinimumArguments(int n)
+{
+	std::size_t argumentCount = tokenStream.size() - 1;
+
+	if (argumentCount < n)
+	{
+		throwError("Wrong amount of arguments. Expected a minimum of [ " + std::to_string(n) + " ] arguments");
+	}
+	return (argumentCount);
+}
+
+void TokenStream::validateExpectedArguments(int n)
+{
+	if (tokenStream.size() - 1 != n)
+	{
+		throwError("Wrong amount of arguments. Expected [ " + std::to_string(n) + " ] arguments");
+	}
+}
+
+void TokenStream::throwError(const std::string &error)
+{
+	throw std::runtime_error("Parsing Error on line " + getLineCount() + ". " + error);
 }

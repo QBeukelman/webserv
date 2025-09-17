@@ -1,39 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerConfig.hpp                                   :+:      :+:    :+:   */
+/*   ListenEndpoint.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/18 19:25:34 by dkolodze          #+#    #+#             */
-/*   Updated: 2025/09/17 09:02:35 by qbeukelm         ###   ########.fr       */
+/*   Created: 2025/09/17 09:51:59 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/17 09:54:30 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef LISTENENDPOINT_HPP
+#define LISTENENDPOINT_HPP
 
-#include "config/Location.hpp"
-#include "config/Server.hpp"
+#include <string>
 
-#include <iostream>
-#include <ostream>
-#include <vector>
-
-/*
- * ServerConfig holds vector of Server
- */
-class ServerConfig
+struct ListenEndpoint
 {
-  private:
-	std::vector<Server> servers;
+	std::string host;	 // "" or "*" → any
+	unsigned short port; // e.g. 8080
 
-  public:
-	// Init
-	ServerConfig();
-
-	void addServer(const Server &server);
-	const std::vector<Server> &getServers(void) const;
+	ListenEndpoint() : host(""), port(8080)
+	{
+	}
+	ListenEndpoint(const std::string &h, unsigned short p) : host(h), port(p)
+	{
+	}
 };
 
-#endif // CONFIG_HPP
+#endif

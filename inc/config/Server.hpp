@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 14:52:56 by hein              #+#    #+#             */
-/*   Updated: 2025/09/15 09:43:37 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 09:54:50 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,24 @@
 #define SERVER_HPP
 
 #include "config/Location.hpp"
+#include "config/models/DirectiveFlags.hpp"
+#include "config/models/ErrorPage.hpp"
+#include "config/models/ListenEndpoint.hpp"
 
 #include <ostream>
+#include <string>
 #include <vector>
-
-struct ListenEndpoint
-{
-	std::string host;	 // "" or "*" → any
-	unsigned short port; // e.g. 8080
-
-	ListenEndpoint() : host(""), port(8080)
-	{
-	}
-	ListenEndpoint(const std::string &h, unsigned short p) : host(h), port(p)
-	{
-	}
-};
 
 class Server
 {
   private:
+	unsigned int directiveFlags;
 	std::string name;
-	std::vector<Location> locations;
 	std::vector<ListenEndpoint> listens;
+	std::vector<Location> locations;
+	std::string root;
+
+	bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b);
 
   public:
 	Server();
@@ -45,16 +40,28 @@ class Server
 	// Methods
 	Location findLocation(const std::string &requestPath) const;
 
-	// Getters / Setters
+	// -- Getters & Setters --
+	// Name
 	std::string getName(void) const;
 	void setName(std::string newName);
 
-	std::vector<Location> getLocations(void) const;
-	void setLocations(const std::vector<Location> &);
-	void addLocation(const Location &location);
-
+	// Listens
 	std::vector<ListenEndpoint> getListens(void) const;
+	bool setListen(const ListenEndpoint &listen);
 	void setListens(std::vector<ListenEndpoint> &);
+
+	// Location
+	std::vector<Location> getLocations(void) const;
+	void addLocation(const Location &location);
+	void setLocations(const std::vector<Location> &);
+
+	// Set Parsed Data
+	void setRoot(const std::string &root);
+
+	// Bitmask Methods
+	void markDirective(unsigned int directive);
+	bool hasDirective(unsigned int directive);
+	bool requiredDirectives(unsigned int directives);
 
 	class LocationNotFoundException : public std::exception
 	{

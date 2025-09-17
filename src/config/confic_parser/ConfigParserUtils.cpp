@@ -1,14 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Config.cpp                                         :+:    :+:            */
+/*   ConfigParserUtils.cpp                              :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/28 16:30:26 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/08 14:48:54 by hein          ########   odam.nl         */
+/*   Created: 2025/09/15 10:02:41 by hein          #+#    #+#                 */
+/*   Updated: 2025/09/15 15:04:44 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/config_parser/ConfigParser.hpp"
-#include "log/Logger.hpp"
+
+bool isalnumString(const std::string &s)
+{
+	for (char c : s)
+	{
+		if (!std::isalnum(static_cast<unsigned char>(c)))
+			return (false);
+	}
+	return (true);
+}
+
+bool isDigitString(const std::string &s)
+{
+	for (char c : s)
+	{
+		if (!std::isdigit(static_cast<unsigned char>(c)))
+			return (false);
+	}
+	return (true);
+}
+
+void toLower(std::string &s)
+{
+	for (char &c : s)
+	{
+		c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+	}
+}
