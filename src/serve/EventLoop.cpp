@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 12:06:16 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 12:17:34 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,12 @@ void EventLoop::run(void)
 			}
 			IOPollable *h = it->second;
 
+			if (re & (POLLERR | POLLHUP | POLLNVAL))
+			{
+				// TODO: run() → error or handup.
+				Logger::info("EventLoop::run() → onHangupOrError()");
+				h->onHangupOrError(re);
+			}
 			if (re & POLLIN)
 			{
 				// TODO: run() → data may be read without blocking.
@@ -204,15 +210,10 @@ void EventLoop::run(void)
 			}
 			if (re & POLLOUT)
 			{
+				// TODO: h->onWritable()
 				// TODO: run() → data may be written without blocking.
-				Logger::info("EventLoop::run() → onWritable()");
-				h->onWritable();
-			}
-			if (re & (POLLERR | POLLHUP | POLLNVAL))
-			{
-				// TODO: run() → error or handup.
-				Logger::info("EventLoop::run() → onHangupOrError()");
-				h->onHangupOrError(re);
+				// Logger::info("EventLoop::run() → onWritable()");
+				// h->onWritable();
 			}
 		}
 

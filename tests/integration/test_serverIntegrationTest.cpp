@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 12:13:21 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 13:49:51 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ TEST_CASE("Server Integration Test: Connect to Listener")
 TEST_CASE("Server Integration Test: Run Loop")
 {
 	TestConfigBuilder builder;
-	ServerConfig config = builder.listen("127.0.0.1", 0).mount("/").docroot("/tmp/www").allow(HttpMethod::POST).build();
+
+	ServerConfig config =
+		builder.listen("127.0.0.1", 8080).mount("/").docroot("/submit").allow(HttpMethod::POST).build();
 	WebServer webServer(config);
 
 	// Check port

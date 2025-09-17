@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/15 11:53:10 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 12:12:02 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,11 @@ void Connection::feedParserFromBuffer()
 		ParseStep step = parser.step(parseContext, window, window_size);
 		offset += step.consumed;
 
+		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
+
 		// 1) Handle parse error
-		if (step.status != PARSE_MALFORMED_REQUEST || step.status != PARSE_INCOMPLETE)
+		if (step.status == PARSE_INVALID_METHOD || step.status == PARSE_INVALID_VERSION ||
+			step.status == PARSE_MALFORMED_REQUEST || step.status == PARSE_EXCEED_LIMIT)
 		{
 			std::string detail = "Bad request";
 			HttpResponse response = RequestHandler(*this->server).makeError(HttpStatus::STATUS_BAD_REQUEST, detail);
@@ -103,33 +106,48 @@ void Connection::feedParserFromBuffer()
 void Connection::onReadable()
 {
 	char buf[8192]; // 8kb
+	ssize_t n = 0;
+	size_t total_read = 0;
 
-	while (true)
+	// 256 KB per recv
+	const size_t MAX_PER_TICK = 256 * 1024;
+
+	while (total_read < MAX_PER_TICK)
 	{
-		ssize_t n = ::recv(fd_, buf, sizeof(buf), 0);
+		n = ::recv(fd_, buf, sizeof(buf), 0);
 		if (n > 0)
 		{
 			lastActivityMs = loop->nowMs();
 			inBuf.append(buf, static_cast<size_t>(n));
+			total_read += static_cast<size_t>(n);
+			continue;
 		}
 		else if (n == 0)
 		{
 			// Peer closed
 			keepAlive = false;
 			loop->closeLater(this);
+			Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
 			return;
 		}
-		else
+
+		// n < 0
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
 		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				break; // No more data to read now
-			if (errno == EINTR)
-				continue; // Retry read
-			// Fatal read error
-			loop->closeLater(this);
-			return;
+			break; // No more data to read now
 		}
+		if (errno == EINTR)
+		{
+			continue; // Retry read
+		}
+
+		// Fatal read error
+		loop->closeLater(this);
+		Logger::info("Connection::onReadable() → recv encountered error, returning early");
+		return;
 	}
+
+	Logger::info("Connection::onReadable() → recv read " + std::to_string(total_read) + " bytes");
 
 	feedParserFromBuffer();
 }
