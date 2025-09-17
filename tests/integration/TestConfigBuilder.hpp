@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 08:59:53 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 09:06:02 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 12:33:16 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,35 +34,39 @@ struct TestConfigBuilder
 	// ListenEndpoint
 	TestConfigBuilder &listen(const std::string &ip, unsigned short port)
 	{
+		if (port != 0 && port < 1024)
+		{
+			throw std::runtime_error("Refusing to bind privileged port (<1024) in tests");
+		}
 		listenEndpoints.push_back(ListenEndpoint(ip, port));
-		return *this;
+		return (*this);
 	}
 
 	// Location
 	TestConfigBuilder &mount(const std::string &p)
 	{
 		path_prefix = p;
-		return *this;
+		return (*this);
 	}
 	TestConfigBuilder &docroot(const std::string &dir)
 	{
 		root_dir = dir;
-		return *this;
+		return (*this);
 	}
 	TestConfigBuilder &redirects(bool on)
 	{
 		has_redirects = on;
-		return *this;
+		return (*this);
 	}
 	TestConfigBuilder &allow(HttpMethod m)
 	{
 		allowed.insert(m);
-		return *this;
+		return (*this);
 	}
 	TestConfigBuilder &disallow(HttpMethod m)
 	{
 		allowed.erase(m);
-		return *this;
+		return (*this);
 	}
 
 	// Add Location
@@ -70,7 +74,7 @@ struct TestConfigBuilder
 	{
 		server.addLocation(loc);
 		rootAdded = true;
-		return *this;
+		return (*this);
 	}
 
 	// Build ServerConfig

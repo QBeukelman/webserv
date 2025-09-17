@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   RequestHandler.cpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/12 14:04:24 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   RequestHandler.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/17 13:49:20 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 	case HttpMethod::POST:
 		return (handlePost(request, location));
 	case HttpMethod::DELETE:
-		return (handlePost(request, location));
+		return (handleDelete(request, location));
 	default:
 		return (makeError(HttpStatus::STATUS_BAD_REQUEST, "HttpMethod not found"));
 	}
@@ -99,16 +99,25 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	if (isMethodAllowed(request, location) == false)
 		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet()"));
 
+	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
+	{
+		// Run CGI(CGI)
+		return (HttpResponse());
+	}
+
 	// TODO: Define Response
+	Logger::info("RequestHandler::handleGet → Get Accepted");
 	return (HttpResponse());
 }
 
 HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
 {
+
 	if (isMethodAllowed(request, location) == false)
 		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
 
 	// TODO: Define Response
+	Logger::info("RequestHandler::handlePost → Post Accepted");
 	return (HttpResponse());
 }
 
@@ -118,5 +127,6 @@ HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Loca
 		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete()"));
 
 	// TODO: Define Response
+	Logger::info("RequestHandler::handleDelete → Delete Accepted");
 	return (HttpResponse());
 }

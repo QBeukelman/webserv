@@ -45,7 +45,7 @@ make test
 
 ```bash
 curl -v -X POST "http://127.0.0.1:<PORT>/submit" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Content-Length: 26" \
   --data "name=Alice&age=30&city=AMS"
 ```
 

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/08 10:11:06 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 13:55:33 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,20 @@ bool Location::hasMethod(const HttpMethod method) const
 	return (allowed_methods.find(method) != allowed_methods.end());
 }
 
+/*
+ * Add a single CGI to `map<extension, CGI>`
+ *
+ * Notes:
+ * 	- Ignores duplicate keys.
+ */
+void Location::addCgi(const CGI &cgi)
+{
+	if (cgis.find(cgi.extension) == cgis.end())
+	{
+		this->cgis[cgi.extension] = cgi;
+	}
+}
+
 // STATIC
 // ____________________________________________________________________________
 static void printAllowedMethods(const std::set<HttpMethod> allowed_methods)
@@ -43,6 +57,14 @@ static void printAllowedMethods(const std::set<HttpMethod> allowed_methods)
 		if (it != allowed_methods.end())
 			std::cout << ", ";
 	}
+}
+
+// CGI
+// ____________________________________________________________________________
+// TODO: Location getCgiByExtension
+std::optional<CGI> Location::getCgiByExtension(std::string requestPath) const
+{
+	return (std::nullopt);
 }
 
 std::ostream &operator<<(std::ostream &out, const Location &location)

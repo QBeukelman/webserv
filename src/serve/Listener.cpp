@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/15 11:58:35 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:02:56 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,21 @@
 
 // CONSTRUCTORS
 // ____________________________________________________________________________
+/*
+ * Construct a Listener from `ip` and `port`
+ *
+ * Warning:
+ * 	- Throws
+ */
 Listener::Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop)
 	: fd_(-1), server(server), loop(loop)
 {
+
+	if (port != 0 && port < 1024)
+	{
+		Logger::error("Listener::Listener: Will not bind port `< 1024`");
+		throw std::runtime_error("Will not bind port `< 1024`");
+	}
 
 	// 1) Create a TCP/IPv4 socket
 	fd_ = ::socket(AF_INET, SOCK_STREAM, 0);
@@ -31,7 +43,7 @@ Listener::Listener(const std::string &ip, unsigned short port, const Server *ser
 	setReuseAddress();
 
 	// 3) Set the scoket to non-blocking mode
-	setNonBlocking();
+	setNonBlocking(fd_);
 
 	// 4) Bind & Listen
 	bindAndListen(ip, port);
@@ -90,11 +102,11 @@ void Listener::setReuseAddress()
  * Makes the socket non-blocking.
  * This means calls like accept() and recv() won’t freeze the program if nothing is ready
  */
-void Listener::setNonBlocking()
+void Listener::setNonBlocking(int fd)
 {
-	if (::fcntl(fd_, F_SETFL, O_NONBLOCK) < 0)
+	if (::fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
 	{
-		::close(fd_);
+		::close(fd);
 		Logger::error("Listener::Listener: fcntl(O_NONBLOCK) failed");
 		throw std::runtime_error("fcntl(O_NONBLOCK) failed");
 	}
@@ -154,7 +166,6 @@ void Listener::closeIfValid()
  */
 void Listener::onReadable()
 {
-	// TODO: Listener::onReadable().
 	while (true)
 	{
 		sockaddr_in address;
@@ -174,7 +185,7 @@ void Listener::onReadable()
 		Logger::info("Listener::onReadable() → Connection accepted: " + std::to_string(cfd));
 
 		// TODO: Set non blocking for (fd).
-		setNonBlocking();
+		setNonBlocking(cfd);
 
 		// Create a Connection for this client and register it.
 		Connection *connection = new Connection(cfd, server, loop);

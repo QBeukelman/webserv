@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   findLocation.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 11:14:18 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   findLocation.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/03 14:04:15 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/17 13:29:08 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ Location Server::findLocation(const std::string &requestPath) const
 	std::vector<Location>::const_iterator it = locations.begin();
 	while (it != locations.end())
 	{
+		std::cout << "Find location: " << requestPath << " -> " << it->path_prefix << std::endl;
 		if (has_segment_boundry_match(requestPath, it->path_prefix))
 		{
 			if (it->path_prefix.size() > best_len)
