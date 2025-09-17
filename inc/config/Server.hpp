@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 14:52:56 by hein              #+#    #+#             */
-/*   Updated: 2025/09/17 09:01:30 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 09:02:07 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "config/Location.hpp"
 
 #include <ostream>
+#include <string>
 #include <vector>
 
 enum DirectiveFlags
