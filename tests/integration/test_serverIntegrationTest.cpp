@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 14:09:07 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:48:41 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,5 @@ TEST_CASE("Server Integration Test: Run Loop")
 
 	std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
 
-	webServer.run();
+	// webServer.run();
 }
