@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   ConfigParser.hpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/16 13:09:38 by hein          ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   ConfigParser.hpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/11 09:39:27 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/17 09:03:01 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIGPARSER_HPP
 #define CONFIGPARSER_HPP
 
+#include <array>
 #include <string>
+#include <string_view>
 
 #include "config/Server.hpp"
 #include "config/ServerConfig.hpp"
@@ -23,6 +25,8 @@ class ConfigParser
 {
 
   private:
+	template <std::size_t N>
+	int findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken);
 	template <std::size_t N>
 	int findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken);
 
@@ -57,6 +61,8 @@ class ConfigParser
 
 typedef void (ConfigParser::*Handlers)(Server &, TokenStream &);
 
+template <std::size_t N>
+int ConfigParser::findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken)
 template <std::size_t N>
 int ConfigParser::findHandlerIndex(const std::array<std::string_view, N> &allowed, const std::string &currentToken)
 {

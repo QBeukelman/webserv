@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   ServerConfig.hpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/18 19:25:34 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/09/15 19:42:01 by hein          ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   ServerConfig.hpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/18 19:25:34 by dkolodze          #+#    #+#             */
+/*   Updated: 2025/09/17 09:02:35 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,7 @@ class ServerConfig
 	ServerConfig();
 
 	void addServer(const Server &server);
-
-	std::vector<Server> getServers(void) const;
+	const std::vector<Server> &getServers(void) const;
 };
-
-// TODO: Add overload for ServerConfig
-// std::ostream &operator<<(std::ostream &out, const ServerConfig &server);
 
 #endif // CONFIG_HPP

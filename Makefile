@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
-#                                                    +#+                       #
-#    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/09/08 14:27:23 by hein          ########   odam.nl          #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/08/11 09:30:12 by qbeukelm          #+#    #+#              #
+#    Updated: 2025/09/15 10:16:07 by qbeukelm         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,6 @@ RESET				:= \033[0m
 # ---------------- Compiler ----------------
 CXX       := c++
 CXXFLAGS  := -std=c++17 -MMD -MP -Iinc -Itests
-# Uncomment for sanitizers while testing:
-# SANFLAGS  := -fsanitize=address,undefined -fno-omit-frame-pointer
-# CXXFLAGS += $(SANFLAGS)
-# LDFLAGS  += $(SANFLAGS)
 
 # ---------------- Targets -----------------
 NAME      := webserv

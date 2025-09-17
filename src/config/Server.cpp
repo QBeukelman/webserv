@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Server.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: hein <hein@student.codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/16 13:44:07 by hein          ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/08 14:57:51 by hein              #+#    #+#             */
+/*   Updated: 2025/09/17 09:03:59 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ std::vector<ListenEndpoint> Server::getListens(void) const
 	return (this->listens);
 }
 
+void Server::setListens(std::vector<ListenEndpoint> &newListens)
+{
+	this->listens = newListens;
 // SET PARSED DATA
 // ____________________________________________________________________________
 
