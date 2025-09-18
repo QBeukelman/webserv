@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestHandler.hpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 13:37:59 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestHandler.hpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/18 11:44:43 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include "log/Logger.hpp"
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 class RequestHandler
@@ -40,6 +41,9 @@ class RequestHandler
 	HttpResponse handle(const HttpRequest &request) const;
 
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
+
+	// TODO: RequestHandler -> Delete method
+	HttpResponse makeMock200(const HttpRequest &request) const;
 };
 
 #endif

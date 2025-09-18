@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 09:26:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 15:36:07 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,21 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 
 	// TODO: HttpResponse set `content-type` header
 	response.headers["Content-Type"] = "text/html; charset=UTF-8";
-
 	// TODO: HttpResponse html body
 	response.body = "<html>\r\n";
-
 	response.headers["Content-Length"] = std::to_string(response.body.size());
 
+	return (response);
+}
+
+HttpResponse RequestHandler::makeMock200(const HttpRequest &request) const
+{
+	HttpResponse response;
+
+	response.httpStatus = HttpStatus::STATUS_OK;
+	response.headers["Content-Type"] = "text/plain";
+	response.body = request.body;
+	response.headers["Content-Length"] = std::to_string(response.body.size());
 	return (response);
 }
 
@@ -107,22 +116,25 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 
 	// TODO: Define Response
 	Logger::info("RequestHandler::handleGet → Get Accepted");
-	return (HttpResponse());
+	return (makeMock200(request));
 }
 
 HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
 {
-
+	// Allowed methods
 	if (isMethodAllowed(request, location) == false)
 		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
 
-	// TODO: RequestHandler::handlePost() Body is not working?
+	// Allowed uploads
+	if (location.allow_uploads == false || location.upload_dir.empty())
+		return (makeError(STATUS_FORBIDDEN, "Uploads not allowed on this Location"));
+	if (location.hasUploadsDir(location.upload_dir) == false)
+		return (makeError(STATUS_INTERNAL_ERROR, "Upload directory missing"));
+
+	// TODO: handlePost() → Create and write to file in "uploads" directory
+
 	Logger::info("RequestHandler::handlePost → Post Accepted");
-
-	// ! << request
-	std::cout << request;
-
-	return (HttpResponse());
+	return (makeMock200(request));
 }
 
 HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Location &location) const

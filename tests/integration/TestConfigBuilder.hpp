@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   TestConfigBuilder.hpp                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 08:59:53 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 14:08:36 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   TestConfigBuilder.hpp                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/15 08:59:53 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/18 14:26:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ struct TestConfigBuilder
 	std::string root_dir;
 	bool has_redirects;
 	std::set<HttpMethod> allowed;
+	std::string upload_loc;
 
 	TestConfigBuilder()
 		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/tmp"), has_redirects(false)
@@ -68,6 +69,11 @@ struct TestConfigBuilder
 		allowed.erase(m);
 		return (*this);
 	}
+	TestConfigBuilder &upload_location(std::string upload)
+	{
+		upload_loc = upload;
+		return (*this);
+	}
 
 	// Add Location
 	TestConfigBuilder &addLocation(const Location &loc)
@@ -87,6 +93,7 @@ struct TestConfigBuilder
 		if (!rootAdded)
 		{
 			Location rootLoc(path_prefix, root_dir, has_redirects, allowed);
+			rootLoc.addUploadDirectory(upload_loc);
 			server.addLocation(rootLoc);
 			rootAdded = true;
 		}

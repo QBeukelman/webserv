@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 09:54:50 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/12 14:20:41 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 12:00:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ std::string HttpResponse::serialize()
 	std::ostringstream out;
 
 	// Status line
-	out << toStatusLine(this->httpStatus);
+	out << toStatusLine(this->httpStatus) << "\r\n";
 
 	// Headers
 	for (std::map<std::string, std::string>::const_iterator it = this->headers.begin(); it != this->headers.end(); ++it)
