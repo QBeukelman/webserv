@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/18 14:39:53 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/18 23:49:24 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ Server::Server()
 // 	std::string name = names.begin();
 // 	return (names.begin());
 // }
+
+const std::string &Server::getName(void) const
+{
+	return (this->names.front());
+}
 
 std::vector<Location> Server::getLocations(void) const
 {
@@ -54,6 +59,16 @@ std::string Server::getRoot(void) const
 std::vector<std::string> Server::getIndexFiles(void) const
 {
 	return (this->indexFiles);
+}
+
+std::vector<ErrorPage> Server::getErrorPages(void) const
+{
+	return (this->errorPages);
+}
+
+std::size_t Server::getMaxBodySize(void) const
+{
+	return (this->maxBodySize);
 }
 
 // SET PARSED DATA
@@ -109,6 +124,24 @@ bool Server::setIndex(const std::string &index)
 	return (true);
 }
 
+bool Server::setErrorPage(const ErrorPage &errorPage)
+{
+	for (auto it : errorPages)
+	{
+		if (it.code == errorPage.code)
+		{
+			return (false);
+		}
+	}
+	errorPages.push_back(errorPage);
+	return (true);
+}
+
+void Server::setMaxBodySize(const std::size_t &maxBody)
+{
+	maxBodySize = maxBody;
+}
+
 // BITMASK FLAGG METHODS
 // ____________________________________________________________________________
 
@@ -145,18 +178,28 @@ std::ostream &operator<<(std::ostream &os, Server &server)
 	{
 		os << name << " ";
 	}
+
 	os << "\nListens: ";
 	for (const auto &listen : server.getListens())
 	{
 		os << listen.host << ":" << listen.port << " ";
 	}
-	os << "\nRoot: ";
-	os << server.getRoot();
+
+	os << "\nRoot: " << server.getRoot();
+
 	os << "\nIndexFiles; ";
 	for (const auto &index : server.getIndexFiles())
 	{
 		os << index << " ";
 	}
+
+	os << "\nErrorPages: ";
+	for (const auto &errorPage : server.getErrorPages())
+	{
+		os << errorPage.code << "-" << errorPage.path << " ";
+	}
+
+	os << "\nMax Body Size " << server.getMaxBodySize();
 
 	return (os);
 }
