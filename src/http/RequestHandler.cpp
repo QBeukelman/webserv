@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestHandler.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 14:30:04 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestHandler.cpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/18 09:26:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,10 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 
 	// TODO: RequestHandler::handlePost() Body is not working?
 	Logger::info("RequestHandler::handlePost → Post Accepted");
+
+	// ! << request
 	std::cout << request;
+
 	return (HttpResponse());
 }
 
