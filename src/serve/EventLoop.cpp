@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   EventLoop.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/12 15:03:43 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   EventLoop.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/08 12:49:07 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/09/15 12:06:16 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,30 @@ std::vector<pollfd> EventLoop::getPollFds(void) const
  *
  * map <`fd`, `IOPollable`>
  */
-void EventLoop::add(IOPollable *handler)
+void EventLoop::add(IOPollable *h)
 {
-	int fd = handler->fd();
-	handlers[fd] = handler;
+	int fd = h->fd();
+	if (fd < 0)
+	{
+		Logger::error("EventLoop::add() → Invalid fd");
+		return;
+	}
+
+	if (handlers.find(fd) != handlers.end())
+	{
+		Logger::error("EventLoop::add → fd already registered: " + std::to_string(fd));
+		return;
+	}
+
+	handlers[fd] = h;
 
 	struct pollfd pfd;
 	pfd.fd = fd;
-	pfd.events = handler->interest();
+	pfd.events = h->interest();
 	pfd.revents = 0;
 	pfds.push_back(pfd);
+
+	Logger::info("EventLoop::add → registered fd " + std::to_string(fd));
 }
 
 /*
@@ -69,7 +83,7 @@ void EventLoop::remove(int fd)
 	{
 		if (pfds[i].fd == fd)
 		{
-			pfds.erase(pfds.begin() + 1);
+			pfds.erase(pfds.begin() + i);
 			break;
 		}
 	}
@@ -169,11 +183,19 @@ void EventLoop::run(void)
 		// 2) Dispatch events
 		for (size_t i = 0; i < pfds.size(); i++)
 		{
-			short re = pfds[i].revents;
+			const int fd = pfds[i].fd;
+			const short re = pfds[i].revents;
 			if (!re)
 				continue;
 
-			IOPollable *h = handlers[pfds[i].fd];
+			std::map<int, IOPollable *>::iterator it = handlers.find(fd);
+			if (it == handlers.end() || it->second == NULL)
+			{
+				Logger::error("EventLoop: no handler for fd " + std::to_string(fd));
+				continue;
+			}
+			IOPollable *h = it->second;
+
 			if (re & POLLIN)
 			{
 				// TODO: run() → data may be read without blocking.
@@ -193,13 +215,14 @@ void EventLoop::run(void)
 				h->onHangupOrError(re);
 			}
 		}
-	}
 
-	// 3) Cleanup defferred closes
-	willClosePending();
+		// 3) Cleanup defferred closes
+		willClosePending();
+	}
 }
 
 void EventLoop::stop(void)
 {
+	// TODO: stop() → STOPPED
 	Logger::info("EventLoop → STOPPED");
 }

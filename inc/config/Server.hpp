@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/18 11:46:32 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/18 14:23:38 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "config/Location.hpp"
 
 #include <ostream>
+#include <string>
 #include <vector>
 
 enum DirectiveFlags

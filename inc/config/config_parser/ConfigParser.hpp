@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 10:37:19 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/18 14:33:45 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <map>
 #include <string>
+#include <string_view>
 
 #include "config/Server.hpp"
 #include "config/ServerConfig.hpp"

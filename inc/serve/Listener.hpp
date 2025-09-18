@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Listener.hpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/04 09:13:07 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/12 10:16:18 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Listener.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 09:13:07 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/15 10:45:11 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LISTENER_HPP
 #define LISTENER_HPP
+#define UNIT_TEST
 
 #include "config/ServerConfig.hpp"
 #include "serve/Connection.hpp"
@@ -49,10 +50,17 @@ class Listener : public IOPollable
 	void setReuseAddress(); // SO_REUSEADDR
 	void setNonBlocking();	// O_NONBLOCK
 	void bindAndListen(const std::string &ip, unsigned short port);
+	void closeIfValid();
 
   public:
 	explicit Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop);
+	Listener(Listener &&other) noexcept;
+	Listener &operator=(Listener &&other) noexcept;
 	~Listener();
+
+	// Listener is non-copyable & non-movable
+	Listener(const Listener &) = delete;
+	Listener &operator=(const Listener &) = delete;
 
 	// IOPollable
 	int fd() const;
@@ -60,6 +68,15 @@ class Listener : public IOPollable
 	void onReadable();
 	void onWritable();
 	void onHangupOrError(short revents);
+
+	const Server *getServer(void) const;
+	const bool hasEventLoop(void) const;
+
+#ifdef UNIT_TEST
+	unsigned short boundPort() const;
+#endif
 };
+
+std::ostream &operator<<(std::ostream &out, const Listener &listener);
 
 #endif // LISTENER_HPP
