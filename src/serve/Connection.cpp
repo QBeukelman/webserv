@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Connection.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/09 16:19:51 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 14:38:25 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Connection.cpp                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/18 10:38:17 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ void Connection::feedParserFromBuffer()
 
 	while (offset < inBuf.size())
 	{
-		const char *window = inBuf.data() + offset;
+		const char *data = inBuf.data();
 		size_t window_size = inBuf.size() - offset;
 
-		ParseStep step = parser.step(parseContext, window, window_size);
+		ParseStep step = parser.step(parseContext, data, window_size);
 		offset += step.consumed;
 
 		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
@@ -107,7 +107,7 @@ void Connection::onReadable()
 {
 	// TODO: Connection::onReadable() what is buffer size?
 	char buf[8192]; // 8kb
-	
+
 	ssize_t n = 0;
 
 	n = ::recv(fd_, buf, sizeof(buf), 0);

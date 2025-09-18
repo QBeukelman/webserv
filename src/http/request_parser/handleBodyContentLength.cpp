@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/30 15:25:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/05 15:59:39 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 10:39:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 		ctx.last_status = PARSE_EXCEED_LIMIT;
 		step.status = PARSE_EXCEED_LIMIT;
 		step.need_more = false;
+		Logger::info("handleBodyContentLength: Max body size");
 		return (step);
 	}
 
@@ -75,5 +76,6 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 	step.need_more = false;
 	step.request_complete = true;
 	step.status = PARSE_OK;
+
 	return (step);
 }
