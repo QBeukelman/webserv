@@ -6,13 +6,14 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/16 13:44:07 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/18 11:48:22 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/Server.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 Server::Server()
 {
@@ -40,6 +41,19 @@ void Server::setLocation(const Location &location)
 std::vector<ListenEndpoint> Server::getListens(void) const
 {
 	return (this->listens);
+}
+std::vector<std::string> Server::getNames(void) const
+{
+	return (this->names);
+}
+std::string Server::getRoot(void) const
+{
+	return (this->root);
+}
+
+std::vector<std::string> Server::getIndexFiles(void) const
+{
+	return (this->indexFiles);
 }
 
 // SET PARSED DATA
@@ -85,7 +99,17 @@ void Server::setRoot(const std::string &root)
 	this->root = root;
 }
 
-// BITMASK FLAGG FUNCTIONS
+bool Server::setIndex(const std::string &index)
+{
+	if (std::find(indexFiles.begin(), indexFiles.end(), index) != indexFiles.end())
+	{
+		return (false);
+	}
+	indexFiles.push_back(index);
+	return (true);
+}
+
+// BITMASK FLAGG METHODS
 // ____________________________________________________________________________
 
 void Server::markDirective(unsigned int directive)
@@ -109,4 +133,30 @@ bool Server::requiredDirectives(unsigned int required)
 const char *Server::LocationNotFoundException::what() const throw()
 {
 	return ("Exception: Server `findLocation()` not found");
+}
+
+// PRINT SERVER
+// ____________________________________________________________________________
+
+std::ostream &operator<<(std::ostream &os, Server &server)
+{
+	os << "Server Names: ";
+	for (const auto &name : server.getNames())
+	{
+		os << name << " ";
+	}
+	os << "\nListens: ";
+	for (const auto &listen : server.getListens())
+	{
+		os << listen.host << ":" << listen.port << " ";
+	}
+	os << "\nRoot: ";
+	os << server.getRoot();
+	os << "\nIndexFiles; ";
+	for (const auto &index : server.getIndexFiles())
+	{
+		os << index << " ";
+	}
+
+	return (os);
 }

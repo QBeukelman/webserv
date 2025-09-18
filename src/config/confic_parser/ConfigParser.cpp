@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/16 13:43:30 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/18 11:13:05 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,28 +25,38 @@
 
 ConfigParser::ConfigParser()
 {
-	Logger::debug("Created Parser");
-}
+	serverHandlers = {{"listen", &ConfigParser::parseListen},
+					  {"server_name", &ConfigParser::parseName},
+					  {"root", &ConfigParser::parseRoot<Server>},
+					  {"index", &ConfigParser::parseIndex<Server>},
+					  {"client_max_body_size", &ConfigParser::parseMaxBody},
+					  {"error_page", &ConfigParser::parseErrorPage},
+					  {"location", &ConfigParser::parseLocation}};
 
-void ConfigParser::throwParsingError(Server &server, TokenStream &tokenStream)
-{
-	tokenStream.throwError("unknown Directive");
+	locationHandlers = {{"allowed_methods", &ConfigParser::parseAllowMethod},
+						{"root", &ConfigParser::parseRoot<Location>},
+						{"index", &ConfigParser::parseIndex<Location>},
+						{"autoindex", &ConfigParser::parseAutoIndex},
+						{"return", &ConfigParser::parseReturn},
+						{"upload_store", &ConfigParser::parseUpload}};
 }
 
 void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 1> allowed = {"server"};
-	static const std::array<Handlers, 2> handler = {&ConfigParser::parseServer, &ConfigParser::throwParsingError};
-
 	while (true)
 	{
 		Server server;
 
-		std::string currentToken = tokenStream.next();
+		std::string token = tokenStream.next();
 
-		int index = findHandlerIndex(allowed, currentToken);
-
-		(this->*handler[index])(server, tokenStream);
+		if (token == "server")
+		{
+			parseServer(server, tokenStream);
+		}
+		else
+		{
+			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		}
 
 		config.addServer(server);
 	}
@@ -54,31 +64,30 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 
 void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 7> allowed = {"listen", "server_name", "root",	"client_max_body_size",
-															"index",  "error_page",	 "location"};
-	static const std::array<Handlers, 8> handler = {&ConfigParser::parseListen,	  &ConfigParser::parseName,
-													&ConfigParser::parseRoot,	  &ConfigParser::parseMaxBody,
-													&ConfigParser::parseIndex,	  &ConfigParser::parseErrorPage,
-													&ConfigParser::parseLocation, &ConfigParser::throwParsingError};
 
 	tokenStream.expectOpenBracket(tokenStream.next());
 
-	std::string currentToken = tokenStream.next();
+	std::string token = tokenStream.next();
 
-	while (!tokenStream.awaitClosingBracket(currentToken))
+	while (!tokenStream.awaitClosingBracket(token))
 	{
-		int index = findHandlerIndex(allowed, currentToken);
+		auto index = serverHandlers.find(token);
 
-		(this->*handler[index])(server, tokenStream);
+		if (index != serverHandlers.end())
+		{
+			(this->*(index->second))(server, tokenStream);
+		}
+		else
+		{
+			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		}
 
-		currentToken = tokenStream.next();
+		token = tokenStream.next();
 	}
 
 	if (server.requiredDirectives(NAME | LISTEN | ROOT))
 	{
-		server.printListens();
-		server.printNames();
-		server.printRoot();
+		std::cout << server << std::endl;
 	}
 	exit(1);
 
@@ -87,14 +96,27 @@ void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 
 void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 7> allowed = {
-		"allowed_methods", "root", "client_max_body_size", "autoindex", "error_page", "return", "upload_store"};
-	static const std::array<Handlers, 8> handler = {&ConfigParser::parseAllowMethod, &ConfigParser::parseRoot,
-													&ConfigParser::parseMaxBody,	 &ConfigParser::parseAutoIndex,
-													&ConfigParser::parseErrorPage,	 &ConfigParser::parseReturn,
-													&ConfigParser::parseUpload,		 &ConfigParser::throwParsingError};
+	Location newLocation;
 
 	tokenStream.expectOpenBracket(tokenStream.next());
+
+	std::string token = tokenStream.next();
+
+	while (!tokenStream.awaitClosingBracket(token))
+	{
+		auto index = locationHandlers.find(token);
+
+		if (index != locationHandlers.end())
+		{
+			(this->*(index->second))(newLocation, tokenStream);
+		}
+		else
+		{
+			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		}
+
+		token = tokenStream.next();
+	}
 }
 
 ServerConfig ConfigParser::parse(const std::string &path)

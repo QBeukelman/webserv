@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/10 15:08:23 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/17 12:16:07 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
-void	ConfigParser::parseAllowMethod(Server &server, TokenStream &token)
+void ConfigParser::parseAllowMethod(Location &Location, TokenStream &token)
 {
 	Logger::debug("Parsing Allowed Method");
 }
