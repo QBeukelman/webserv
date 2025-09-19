@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:07:10 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/18 11:52:16 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 09:39:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ template <typename T> void ConfigParser::parseIndex(T &container, TokenStream &t
 
 		validateIndexFile(token, tokenStream);
 
-		if (!container.setIndex(token))
+		if (!container.addIndexFile(token))
 		{
 			tokenStream.throwError("Duplicate Index Files are not allowed");
 		}

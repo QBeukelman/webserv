@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:22:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/18 23:57:59 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 09:37:27 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void ConfigParser::parseErrorPage(Server &server, TokenStream &tokenStream)
 
 	newErrorPage.path = token;
 
-	if (!server.setErrorPage(newErrorPage))
+	if (!server.addErrorPage(newErrorPage))
 	{
 		tokenStream.throwError("Duplicate Error Codes are not allowed");
 	}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Listener.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 09:21:09 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 11:02:56 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Listener.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/19 09:21:07 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ std::ostream &operator<<(std::ostream &out, const Listener &listener)
 {
 	const std::string hasEventLoop = listener.hasEventLoop() ? "true" : "false";
 
-	out << "Listener FD: " << listener.fd() << "\nListener Server: " << listener.getServer()->getName()
+	out << "Listener FD: " << listener.fd() << "\nListener Server: " << listener.getServer()->getName(0)
 		<< "\nListener has EventLoop: " << hasEventLoop << std::endl;
 
 	return (out);

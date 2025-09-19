@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/19 08:50:39 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 09:37:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,83 +15,40 @@
 #include <algorithm>
 #include <iostream>
 
-Server::Server() : name("Server"), directiveFlags(0)
+Server::Server() : directiveFlags(0)
 {
+	this->setName("Server");
 }
 
-Server::Server(std::string name) : name(name), directiveFlags(0)
+Server::Server(std::string name) : directiveFlags(0)
 {
+	this->setName(name);
 }
 
 // GETTER / SETTER
 // ____________________________________________________________________________
-// std::string Server::getName(void) const
-// {
-// 	std::string name = names.begin();
-// 	return (names.begin());
-// }
-
-const std::string &Server::getName(void) const
+// ===== Names =====
+const std::string &Server::getName(const int index) const
 {
-	return (this->names.front());
+	return (this->names[index]);
 }
 
-std::vector<Location> Server::getLocations(void) const
-	// Name
-	std::string Server::getName(void) const
-{
-	return (this->name);
-}
-
-void Server::setName(std::string newName)
-{
-	this->name = newName;
-}
-
-// Listens
-std::vector<ListenEndpoint> Server::getListens(void) const
-{
-	return (this->listens);
-}
 std::vector<std::string> Server::getNames(void) const
 {
 	return (this->names);
 }
-std::string Server::getRoot(void) const
+
+void Server::setName(std::string newName)
 {
-	return (this->root);
+	this->names.push_back(newName);
 }
 
-std::vector<std::string> Server::getIndexFiles(void) const
+// ===== Listens =====
+std::vector<ListenEndpoint> Server::getListens(void) const
 {
-	return (this->indexFiles);
+	return (this->listens);
 }
 
-std::vector<ErrorPage> Server::getErrorPages(void) const
-{
-	return (this->errorPages);
-}
-
-std::size_t Server::getMaxBodySize(void) const
-{
-	return (this->maxBodySize);
-}
-
-// SET PARSED DATA
-// ____________________________________________________________________________
-
-static bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
-{
-	if (a.port != b.port)
-	{
-		return (false);
-	}
-	if (a.host == "0.0.0.0" || b.host == "0.0.0.0")
-	{
-		return (true);
-	}
-	return (a.host == b.host);
-}
 bool Server::setListen(const ListenEndpoint &listen)
 {
 	for (ListenEndpoint &current : listens)
@@ -110,7 +67,7 @@ void Server::setListens(std::vector<ListenEndpoint> &newListens)
 	this->listens = newListens;
 }
 
-// Location
+// ===== Locations =====
 std::vector<Location> Server::getLocations(void) const
 {
 	return (this->locations);
@@ -126,19 +83,10 @@ void Server::setLocations(const std::vector<Location> &newLocations)
 	this->locations = newLocations;
 }
 
-// SET PARSED DATA
-// ____________________________________________________________________________
-bool Server::listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
+// ===== Root =====
+std::string Server::getRoot(void) const
 {
-	if (a.port != b.port)
-	{
-		return (false);
-	}
-	if (a.host == "0.0.0.0" || b.host == "0.0.0.0")
-	{
-		return (true);
-	}
-	return (a.host == b.host);
+	return (this->root);
 }
 
 void Server::setRoot(const std::string &root)
@@ -146,7 +94,13 @@ void Server::setRoot(const std::string &root)
 	this->root = root;
 }
 
-bool Server::setIndex(const std::string &index)
+// ===== Index Files =====
+std::vector<std::string> Server::getIndexFiles(void) const
+{
+	return (this->indexFiles);
+}
+
+bool Server::addIndexFile(const std::string &index)
 {
 	if (std::find(indexFiles.begin(), indexFiles.end(), index) != indexFiles.end())
 	{
@@ -156,7 +110,13 @@ bool Server::setIndex(const std::string &index)
 	return (true);
 }
 
-bool Server::setErrorPage(const ErrorPage &errorPage)
+// ===== Error Pages =====
+std::vector<ErrorPage> Server::getErrorPages(void) const
+{
+	return (this->errorPages);
+}
+
+bool Server::addErrorPage(const ErrorPage &errorPage)
 {
 	for (auto it : errorPages)
 	{
@@ -169,12 +129,18 @@ bool Server::setErrorPage(const ErrorPage &errorPage)
 	return (true);
 }
 
-void Server::setMaxBodySize(const std::size_t &maxBody)
+// ===== Limits =====
+HttpRequestLimits Server::getLimits(void) const
 {
-	maxBodySize = maxBody;
+	return (this->limits);
 }
 
-// BITMASK FLAGG METHODS
+void Server::setMaxBodySize(const std::size_t &maxBody)
+{
+	this->limits.max_body_size = maxBody;
+}
+
+// BITMASK FLAG METHODS
 // ____________________________________________________________________________
 void Server::markDirective(unsigned int directive)
 {
@@ -191,6 +157,21 @@ bool Server::requiredDirectives(unsigned int required)
 	return ((directiveFlags & required) == required);
 }
 
+// PRIVATE
+// ____________________________________________________________________________
+bool Server::listenConflict(const ListenEndpoint &a, const ListenEndpoint &b)
+{
+	if (a.port != b.port)
+	{
+		return (false);
+	}
+	if (a.host == "0.0.0.0" || b.host == "0.0.0.0")
+	{
+		return (true);
+	}
+	return (a.host == b.host);
+}
+
 // EXCEPTIONS
 // ____________________________________________________________________________
 const char *Server::LocationNotFoundException::what() const throw()
@@ -198,9 +179,8 @@ const char *Server::LocationNotFoundException::what() const throw()
 	return ("Exception: Server `findLocation()` not found");
 }
 
-// PRINT SERVER
+// OVERLOAD
 // ____________________________________________________________________________
-
 std::ostream &operator<<(std::ostream &os, Server &server)
 {
 	os << "Server Names: ";
@@ -229,7 +209,7 @@ std::ostream &operator<<(std::ostream &os, Server &server)
 		os << errorPage.code << "-" << errorPage.path << " ";
 	}
 
-	os << "\nMax Body Size " << server.getMaxBodySize();
+	os << "\nMax Body Size " << server.getLimits().max_body_size;
 
 	return (os);
 }

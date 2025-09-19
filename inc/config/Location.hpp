@@ -6,13 +6,14 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 08:44:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 09:55:34 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
+#include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/CGI.hpp"
 #include "http/models/HttpMethod.hpp"
 
@@ -33,9 +34,8 @@
  * Notes:
  * 	- `allow_uploads` is false untill one is added.
  */
-class Location
+class Location : public IConfigBlock
 {
-
   private:
 	unsigned int directiveFlags;
 	std::string root;
@@ -56,17 +56,6 @@ class Location
 
 	bool hasMethod(const HttpMethod) const;
 
-	// Set Parsed Data
-	void setRoot(const std::string &root);
-	bool setIndex(const std::string &index);
-
-	std::string getRoot(void) const;
-
-	// Bitmask Methods
-	void markDirective(unsigned int directive);
-	bool hasDirective(unsigned int directive);
-	bool requiredDirectives(unsigned int directives);
-
 	// CGI
 	std::optional<CGI> getCgiByExtension(std::string requestPath) const;
 	void addCgi(const CGI &cgi);
@@ -74,6 +63,16 @@ class Location
 	// Uploads
 	void addUploadDirectory(const std::string dir);
 	bool hasUploadsDir(const std::string dir) const;
+
+	// IConfigBlock overrides
+	void setRoot(const std::string &root); /* override */
+	std::string getRoot(void) const;	   /* override */
+
+	bool addIndexFile(const std::string &index); /* override */
+
+	void markDirective(unsigned int directive);		  /* override */
+	bool hasDirective(unsigned int directive);		  /* override */
+	bool requiredDirectives(unsigned int directives); /* override */
 };
 
 std::ostream &operator<<(std::ostream &out, const Location &location);

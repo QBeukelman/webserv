@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ErrorPage.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/17 09:52:01 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 09:54:47 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   ErrorPage.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/17 09:52:01 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/19 08:56:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 struct ErrorPage
 {
 	unsigned short code;
-	std::string route;
+	std::string path;
 };
 
 #endif

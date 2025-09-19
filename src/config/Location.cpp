@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 08:48:19 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 09:40:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void Location::setRoot(const std::string &root)
 	this->root = root;
 }
 
-bool Location::setIndex(const std::string &index)
+bool Location::addIndexFile(const std::string &index)
 {
 	if (std::find(indexFiles.begin(), indexFiles.end(), index) != indexFiles.end())
 	{
@@ -81,7 +81,6 @@ bool Location::setIndex(const std::string &index)
 
 // GETTERS
 // ____________________________________________________________________________
-
 std::string Location::getRoot(void) const
 {
 	return (this->root);
@@ -89,7 +88,6 @@ std::string Location::getRoot(void) const
 
 // BITMASK FLAGG METHODS
 // ____________________________________________________________________________
-
 void Location::markDirective(unsigned int directive)
 {
 	directiveFlags |= directive;

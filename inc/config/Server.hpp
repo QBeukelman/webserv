@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/19 08:46:46 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 09:56:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,27 @@
 #define SERVER_HPP
 
 #include "config/Location.hpp"
+#include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/DirectiveFlags.hpp"
 #include "config/models/ErrorPage.hpp"
 #include "config/models/ListenEndpoint.hpp"
+#include "http/models/HttpRequestLimits.hpp"
 
 #include <ostream>
 #include <string>
 #include <vector>
 
-enum DirectiveFlags
-{
-	LISTEN = 1 << 0,
-	NAME = 1 << 1,
-	ROOT = 1 << 2,
-	INDEX = 1 << 3,
-	ERRORPAGE = 1 << 4,
-	MAXBODYSIZE = 1 << 5
-};
-
-struct ListenEndpoint
-{
-	std::string host;	 // "" or "*" → any
-	unsigned short port; // e.g. 8080
-};
-
-struct ErrorPage
-{
-	unsigned short code;
-	std::string path;
-};
-
-class Server
+class Server : public IConfigBlock
 {
   private:
 	unsigned int directiveFlags;
-	std::string name;
+	std::vector<std::string> names;
 	std::vector<ListenEndpoint> listens;
 	std::vector<Location> locations;
 	std::vector<std::string> indexFiles;
 	std::string root;
 	std::vector<ErrorPage> errorPages;
-	size_t maxBodySize;
+	HttpRequestLimits limits;
 
 	bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b);
 
@@ -66,17 +46,13 @@ class Server
 	Location findLocation(const std::string &requestPath) const;
 
 	// -- Getters & Setters --
-	// Name
-	const std::string getName(void) const;
+	// Names
+	const std::string &getName(const int index) const;
+	std::vector<std::string> getNames(void) const;
 	void setName(std::string newName);
 
 	// Listens
 	std::vector<ListenEndpoint> getListens(void) const;
-	std::vector<std::string> getNames(void) const;
-	std::string getRoot(void) const;
-	std::vector<std::string> getIndexFiles(void) const;
-	std::vector<ErrorPage> getErrorPages(void) const;
-	std::size_t getMaxBodySize(void) const;
 	bool setListen(const ListenEndpoint &listen);
 	void setListens(std::vector<ListenEndpoint> &);
 
@@ -85,16 +61,26 @@ class Server
 	void addLocation(const Location &location);
 	void setLocations(const std::vector<Location> &);
 
-	// Set Parsed Data
-	void setRoot(const std::string &root);
-	bool setIndex(const std::string &index);
-	bool setErrorPage(const ErrorPage &errorPage);
+	// Index files
+	std::vector<std::string> getIndexFiles(void) const;
+
+	// Error pages
+	std::vector<ErrorPage> getErrorPages(void) const;
+	bool addErrorPage(const ErrorPage &errorPage);
+
+	// Limits
+	HttpRequestLimits getLimits(void) const;
 	void setMaxBodySize(const std::size_t &maxBody);
 
-	// Bitmask Methods
-	void markDirective(unsigned int directive);
-	bool hasDirective(unsigned int directive);
-	bool requiredDirectives(unsigned int required);
+	// IConfigBlock overrides
+	void setRoot(const std::string &root); /* override */
+	std::string getRoot(void) const;	   /* override */
+
+	bool addIndexFile(const std::string &index); /* override */
+
+	void markDirective(unsigned int directive);		  /* override */
+	bool hasDirective(unsigned int directive);		  /* override */
+	bool requiredDirectives(unsigned int directives); /* override */
 
 	class LocationNotFoundException : public std::exception
 	{

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/19 08:55:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 09:18:31 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,20 +61,11 @@ int ConfigParser::findHandlerIndex(const std::vector<std::string> &allowed, cons
 // ____________________________________________________________________________
 void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 {
-	static const std::array<std::string_view, 1> allowed = {"server"};
-	static const std::array<Handlers, 2> handler = {&ConfigParser::parseServer, &ConfigParser::throwParsingError};
-
 	while (true)
 	{
 		Server server;
 
 		std::string token = tokenStream.next();
-
-		int index = findHandlerIndex(allowed, currentToken);
-
-		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
-
-		(this->*handler)(server, tokenStream);
 		if (token == "server")
 		{
 			parseServer(server, tokenStream);
@@ -90,20 +81,12 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 
 void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 {
-
 	tokenStream.expectOpenBracket(tokenStream.next());
 
 	std::string token = tokenStream.next();
 
 	while (!tokenStream.awaitClosingBracket(token))
 	{
-		int index = findHandlerIndex(allowed, currentToken);
-
-		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
-
-		(this->*handler)(server, tokenStream);
-
-		currentToken = tokenStream.next();
 		auto index = serverHandlers.find(token);
 
 		if (index != serverHandlers.end())
@@ -122,8 +105,7 @@ void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 	{
 		std::cout << server << std::endl;
 	}
-
-	// TODO: validate server block...
+	exit(1);
 }
 
 void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
