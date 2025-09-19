@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 10:35:21 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 10:43:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "config/models/CGI.hpp"
 #include "http/models/HttpMethod.hpp"
 
+#include <algorithm>
 #include <dirent.h>
 #include <iostream>
 #include <map>

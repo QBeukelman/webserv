@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/19 09:56:47 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 10:43:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "config/models/ListenEndpoint.hpp"
 #include "http/models/HttpRequestLimits.hpp"
 
+#include <algorithm>
 #include <ostream>
 #include <string>
 #include <vector>
