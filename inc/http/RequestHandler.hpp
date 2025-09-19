@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 11:44:43 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 12:03:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,13 @@
 #include "http/models/RequestParseStatus.hpp"
 #include "log/Logger.hpp"
 
+#include <cerrno>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
+
+#define MAX_UPLOAD_FILES 10000
 
 class RequestHandler
 {
@@ -36,13 +40,23 @@ class RequestHandler
 	HttpResponse handlePost(const HttpRequest &, const Location &) const;
 	HttpResponse handleDelete(const HttpRequest &, const Location &) const;
 
+// Utils
+#ifdef UNIT_TEST
   public:
+#else
+  private:
+#endif
+	// TODO: RequestHandler::generateUploadFile -> Generate a file
+	const std::string generateUploadFile(const std::string &upload_dir) const;
+	const bool isMethodAllowed(const HttpRequest &request, const Location &location) const;
+
+  public:
+	// Constructors
 	explicit RequestHandler(const Server &);
+
+	// Handlers
 	HttpResponse handle(const HttpRequest &request) const;
-
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
-
-	// TODO: RequestHandler -> Delete method
 	HttpResponse makeMock200(const HttpRequest &request) const;
 };
 
