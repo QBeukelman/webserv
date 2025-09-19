@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 15:36:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 11:55:55 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,40 +69,6 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 
 // PRIVATE
 // ____________________________________________________________________________
-static bool isMethodAllowed(const HttpRequest &request, const Location &location)
-{
-	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
-}
-
-HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
-{
-	// Log error
-	Logger::error("RequestHandler::" + detail + " → [" + std::to_string(status) + "] " + reasonPhrase(status));
-
-	// Create error response
-	HttpResponse response;
-	response.httpStatus = status;
-
-	// TODO: HttpResponse set `content-type` header
-	response.headers["Content-Type"] = "text/html; charset=UTF-8";
-	// TODO: HttpResponse html body
-	response.body = "<html>\r\n";
-	response.headers["Content-Length"] = std::to_string(response.body.size());
-
-	return (response);
-}
-
-HttpResponse RequestHandler::makeMock200(const HttpRequest &request) const
-{
-	HttpResponse response;
-
-	response.httpStatus = HttpStatus::STATUS_OK;
-	response.headers["Content-Type"] = "text/plain";
-	response.body = request.body;
-	response.headers["Content-Length"] = std::to_string(response.body.size());
-	return (response);
-}
-
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
@@ -145,4 +111,42 @@ HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Loca
 	// TODO: Define Response
 	Logger::info("RequestHandler::handleDelete → Delete Accepted");
 	return (HttpResponse());
+}
+
+// ==== Utils ====
+const bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
+{
+	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
+}
+
+// PUBLIC
+// ____________________________________________________________________________
+// ==== Handlers ====
+HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
+{
+	// Log error
+	Logger::error("RequestHandler::" + detail + " → [" + std::to_string(status) + "] " + reasonPhrase(status));
+
+	// Create error response
+	HttpResponse response;
+	response.httpStatus = status;
+
+	// TODO: HttpResponse set `content-type` header
+	response.headers["Content-Type"] = "text/html; charset=UTF-8";
+	// TODO: HttpResponse html body
+	response.body = "<html>\r\n";
+	response.headers["Content-Length"] = std::to_string(response.body.size());
+
+	return (response);
+}
+
+HttpResponse RequestHandler::makeMock200(const HttpRequest &request) const
+{
+	HttpResponse response;
+
+	response.httpStatus = HttpStatus::STATUS_OK;
+	response.headers["Content-Type"] = "text/plain";
+	response.body = request.body;
+	response.headers["Content-Length"] = std::to_string(response.body.size());
+	return (response);
 }
