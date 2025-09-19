@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:24:24 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/10 15:09:49 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/17 12:16:37 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
-void	ConfigParser::parseReturn(Server &server, TokenStream &token)
+void ConfigParser::parseReturn(Location &Location, TokenStream &token)
 {
 	Logger::debug("Parsing Return");
 }

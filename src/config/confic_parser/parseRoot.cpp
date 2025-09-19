@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:24:43 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/16 13:56:45 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/17 12:19:48 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ static void validateRootPath(std::string &token, TokenStream &tokenStream)
 	}
 }
 
-void ConfigParser::parseRoot(Server &server, TokenStream &tokenStream)
+template <typename T> void ConfigParser::parseRoot(T &container, TokenStream &tokenStream)
 {
-	if (server.hasDirective(ROOT))
+	if (container.hasDirective(ROOT))
 	{
 		tokenStream.throwError("Diplicate Root directives are not allowed");
 	}
@@ -49,7 +49,10 @@ void ConfigParser::parseRoot(Server &server, TokenStream &tokenStream)
 
 	validateRootPath(token, tokenStream);
 
-	server.setRoot(token);
+	container.setRoot(token);
 
-	server.markDirective(ROOT);
+	container.markDirective(ROOT);
 }
+
+template void ConfigParser::parseRoot<Server>(Server &, TokenStream &);
+template void ConfigParser::parseRoot<Location>(Location &, TokenStream &);

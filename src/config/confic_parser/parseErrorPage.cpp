@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:22:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/10 15:08:53 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 09:37:27 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,67 @@
 #include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
-void	ConfigParser::parseErrorPage(Server &server, TokenStream &token)
+#include <filesystem>
+#include <unistd.h>
+
+static unsigned short validateErrorCode(std::string &token, TokenStream &tokenStream)
 {
-	Logger::debug("Parsing Error Page");
+	if (!isDigitString(token))
+	{
+		tokenStream.throwError("Error Code contains non numeric characters");
+	}
+
+	unsigned short code = std::stoi(token);
+
+	if (code < 300 || code > 599)
+	{
+		tokenStream.throwError("Error Code is out of standard HTML Error range [ 300 - 599 ]");
+	}
+	return (code);
+}
+
+static void validateErrorPage(std::string &token, TokenStream &tokenStream)
+{
+	if (token.front() != '/')
+	{
+		tokenStream.throwError("Error Page path must be absolute. Starting with [ / ]");
+	}
+	if (!std::filesystem::exists(token))
+	{
+		tokenStream.throwError("Error Page does not exist");
+	}
+	if (!std::filesystem::is_regular_file(token))
+	{
+		tokenStream.throwError("Error Page is not a Regular file");
+	}
+	if (access(token.c_str(), R_OK) != 0)
+	{
+		tokenStream.throwError("Error Page is not readable (Permission denied)");
+	}
+}
+
+void ConfigParser::parseErrorPage(Server &server, TokenStream &tokenStream)
+{
+	tokenStream.removeValidSemicolon();
+
+	tokenStream.validateExpectedArguments(2);
+
+	ErrorPage newErrorPage;
+
+	std::string token = tokenStream.next();
+
+	newErrorPage.code = validateErrorCode(token, tokenStream);
+
+	token = tokenStream.next();
+
+	validateErrorPage(token, tokenStream);
+
+	newErrorPage.path = token;
+
+	if (!server.addErrorPage(newErrorPage))
+	{
+		tokenStream.throwError("Duplicate Error Codes are not allowed");
+	}
+
+	server.markDirective(ERRORPAGE);
 }

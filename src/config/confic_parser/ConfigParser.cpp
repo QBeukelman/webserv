@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParser.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 09:39:08 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 09:40:36 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   ConfigParser.cpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/19 09:18:31 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,20 @@
 // ____________________________________________________________________________
 ConfigParser::ConfigParser()
 {
-	Logger::debug("Created Parser");
-}
+	serverHandlers = {{"listen", &ConfigParser::parseListen},
+					  {"server_name", &ConfigParser::parseName},
+					  {"root", &ConfigParser::parseRoot<Server>},
+					  {"index", &ConfigParser::parseIndex<Server>},
+					  {"client_max_body_size", &ConfigParser::parseMaxBody},
+					  {"error_page", &ConfigParser::parseErrorPage},
+					  {"location", &ConfigParser::parseLocation}};
 
-void ConfigParser::throwParsingError(Server &server, TokenStream &tokenStream)
-{
-	tokenStream.throwError("unknown Directive");
+	locationHandlers = {{"allowed_methods", &ConfigParser::parseAllowMethod},
+						{"root", &ConfigParser::parseRoot<Location>},
+						{"index", &ConfigParser::parseIndex<Location>},
+						{"autoindex", &ConfigParser::parseAutoIndex},
+						{"return", &ConfigParser::parseReturn},
+						{"upload_store", &ConfigParser::parseUpload}};
 }
 
 // FIND INDEX
@@ -53,24 +61,19 @@ int ConfigParser::findHandlerIndex(const std::vector<std::string> &allowed, cons
 // ____________________________________________________________________________
 void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 {
-	static const std::vector<std::string> allowed = {"server"};
-
-	static const std::vector<Handlers> handlers = {
-		&ConfigParser::parseServer,
-		&ConfigParser::throwParsingError // fallback
-	};
-
 	while (true)
 	{
 		Server server;
 
-		std::string currentToken = tokenStream.next();
-
-		int index = findHandlerIndex(allowed, currentToken);
-
-		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
-
-		(this->*handler)(server, tokenStream);
+		std::string token = tokenStream.next();
+		if (token == "server")
+		{
+			parseServer(server, tokenStream);
+		}
+		else
+		{
+			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		}
 
 		config.addServer(server);
 	}
@@ -78,47 +81,56 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 
 void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 {
-	static const std::vector<std::string> allowed = {"listen", "server_name", "root",	 "client_max_body_size",
-													 "index",  "error_page",  "location"};
-	static const std::vector<Handlers> handlers = {&ConfigParser::parseListen,	 &ConfigParser::parseName,
-												   &ConfigParser::parseRoot,	 &ConfigParser::parseMaxBody,
-												   &ConfigParser::parseIndex,	 &ConfigParser::parseErrorPage,
-												   &ConfigParser::parseLocation, &ConfigParser::throwParsingError};
-
 	tokenStream.expectOpenBracket(tokenStream.next());
 
-	std::string currentToken = tokenStream.next();
+	std::string token = tokenStream.next();
 
-	while (!tokenStream.awaitClosingBracket(currentToken))
+	while (!tokenStream.awaitClosingBracket(token))
 	{
-		int index = findHandlerIndex(allowed, currentToken);
+		auto index = serverHandlers.find(token);
 
-		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
+		if (index != serverHandlers.end())
+		{
+			(this->*(index->second))(server, tokenStream);
+		}
+		else
+		{
+			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		}
 
-		(this->*handler)(server, tokenStream);
-
-		currentToken = tokenStream.next();
+		token = tokenStream.next();
 	}
 
 	if (server.requiredDirectives(NAME | LISTEN | ROOT))
 	{
-		// TODO: Print server
+		std::cout << server << std::endl;
 	}
-
-	// TODO: validate server block...
+	exit(1);
 }
 
 void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
 {
-	static const std::vector<std::string> allowed = {"allowed_methods", "root",	  "client_max_body_size", "autoindex",
-													 "error_page",		"return", "upload_store"};
-
-	static const std::vector<Handlers> handlers = {&ConfigParser::parseAllowMethod, &ConfigParser::parseRoot,
-												   &ConfigParser::parseMaxBody,		&ConfigParser::parseAutoIndex,
-												   &ConfigParser::parseErrorPage,	&ConfigParser::parseReturn,
-												   &ConfigParser::parseUpload,		&ConfigParser::throwParsingError};
+	Location newLocation;
 
 	tokenStream.expectOpenBracket(tokenStream.next());
+
+	std::string token = tokenStream.next();
+
+	while (!tokenStream.awaitClosingBracket(token))
+	{
+		auto index = locationHandlers.find(token);
+
+		if (index != locationHandlers.end())
+		{
+			(this->*(index->second))(newLocation, tokenStream);
+		}
+		else
+		{
+			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		}
+
+		token = tokenStream.next();
+	}
 }
 
 ServerConfig ConfigParser::parse(const std::string &path)

@@ -6,16 +6,18 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 15:02:39 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 10:43:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
+#include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/CGI.hpp"
 #include "http/models/HttpMethod.hpp"
 
+#include <algorithm>
 #include <dirent.h>
 #include <iostream>
 #include <map>
@@ -24,6 +26,7 @@
 #include <set>
 #include <string>
 #include <sys/stat.h>
+#include <vector>
 
 /*
  * Configuration block that defines how a certain URL path (or prefix) should be handled.
@@ -33,14 +36,18 @@
  * Notes:
  * 	- `allow_uploads` is false untill one is added.
  */
-class Location
+class Location : public IConfigBlock
 {
+  private:
+	unsigned int directiveFlags;
+	std::string root;
+	std::vector<std::string> indexFiles;
+
   public:
 	Location();
 	Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods);
 
 	std::string path_prefix; // e.g. "/static/" or "/upload"
-	std::string root;		 // e.g. "/var/www/site"
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
 	std::map<std::string, CGI> cgis; // Key is same as file extension `.py`. Including `.`
@@ -58,6 +65,16 @@ class Location
 	// Uploads
 	void addUploadDirectory(const std::string dir);
 	bool hasUploadsDir(const std::string dir) const;
+
+	// IConfigBlock overrides
+	void setRoot(const std::string &root); /* override */
+	std::string getRoot(void) const;	   /* override */
+
+	bool addIndexFile(const std::string &index); /* override */
+
+	void markDirective(unsigned int directive);		  /* override */
+	bool hasDirective(unsigned int directive);		  /* override */
+	bool requiredDirectives(unsigned int directives); /* override */
 };
 
 std::ostream &operator<<(std::ostream &out, const Location &location);

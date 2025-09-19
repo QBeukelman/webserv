@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 14:52:56 by hein              #+#    #+#             */
-/*   Updated: 2025/09/17 09:54:50 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Server.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: hein <hein@student.codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
+/*   Updated: 2025/09/19 10:43:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,28 @@
 #define SERVER_HPP
 
 #include "config/Location.hpp"
+#include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/DirectiveFlags.hpp"
 #include "config/models/ErrorPage.hpp"
 #include "config/models/ListenEndpoint.hpp"
+#include "http/models/HttpRequestLimits.hpp"
 
+#include <algorithm>
 #include <ostream>
 #include <string>
 #include <vector>
 
-class Server
+class Server : public IConfigBlock
 {
   private:
 	unsigned int directiveFlags;
-	std::string name;
+	std::vector<std::string> names;
 	std::vector<ListenEndpoint> listens;
 	std::vector<Location> locations;
+	std::vector<std::string> indexFiles;
 	std::string root;
+	std::vector<ErrorPage> errorPages;
+	HttpRequestLimits limits;
 
 	bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b);
 
@@ -41,8 +47,9 @@ class Server
 	Location findLocation(const std::string &requestPath) const;
 
 	// -- Getters & Setters --
-	// Name
-	std::string getName(void) const;
+	// Names
+	const std::string &getName(const int index) const;
+	std::vector<std::string> getNames(void) const;
 	void setName(std::string newName);
 
 	// Listens
@@ -55,13 +62,26 @@ class Server
 	void addLocation(const Location &location);
 	void setLocations(const std::vector<Location> &);
 
-	// Set Parsed Data
-	void setRoot(const std::string &root);
+	// Index files
+	std::vector<std::string> getIndexFiles(void) const;
 
-	// Bitmask Methods
-	void markDirective(unsigned int directive);
-	bool hasDirective(unsigned int directive);
-	bool requiredDirectives(unsigned int directives);
+	// Error pages
+	std::vector<ErrorPage> getErrorPages(void) const;
+	bool addErrorPage(const ErrorPage &errorPage);
+
+	// Limits
+	HttpRequestLimits getLimits(void) const;
+	void setMaxBodySize(const std::size_t &maxBody);
+
+	// IConfigBlock overrides
+	void setRoot(const std::string &root); /* override */
+	std::string getRoot(void) const;	   /* override */
+
+	bool addIndexFile(const std::string &index); /* override */
+
+	void markDirective(unsigned int directive);		  /* override */
+	bool hasDirective(unsigned int directive);		  /* override */
+	bool requiredDirectives(unsigned int directives); /* override */
 
 	class LocationNotFoundException : public std::exception
 	{
@@ -69,5 +89,7 @@ class Server
 		virtual const char *what() const throw();
 	};
 };
+
+std::ostream &operator<<(std::ostream &os, Server &server);
 
 #endif

@@ -1,18 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParser.hpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 09:39:27 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 09:32:23 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   ConfigParser.hpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/19 08:47:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIGPARSER_HPP
 #define CONFIGPARSER_HPP
 
+#include <map>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -23,6 +24,12 @@
 
 class ConfigParser
 {
+  public:
+	ConfigParser();
+	ServerConfig parse(const std::string &path);
+
+	using ServerHandler = void (ConfigParser::*)(Server &, TokenStream &);
+	using LocationHandler = void (ConfigParser::*)(Location &, TokenStream &);
 
   private:
 	int findHandlerIndex(const std::vector<std::string> &allowed, const std::string &currentToken);
@@ -30,33 +37,29 @@ class ConfigParser
 	void parseGlobal(ServerConfig &config, TokenStream &tokenStream);
 	void parseServer(Server &server, TokenStream &tokenStream);
 	void parseLocation(Server &server, TokenStream &tokenStream);
-	void throwParsingError(Server &server, TokenStream &tokenStream);
 
 	// Server Directives //
 
 	void parseListen(Server &server, TokenStream &tokenStream);
 	void parseName(Server &server, TokenStream &tokenStream);
-	void parseIndex(Server &server, TokenStream &tokenStream);
+	void parseErrorPage(Server &server, TokenStream &tokenStream);
+	void parseMaxBody(Server &server, TokenStream &tokenStream);
 
 	// Location Directives //
 
-	void parseAllowMethod(Server &server, TokenStream &token);
-	void parseAutoIndex(Server &server, TokenStream &token);
-	void parseReturn(Server &server, TokenStream &token);
-	void parseUpload(Server &server, TokenStream &token);
+	void parseAllowMethod(Location &location, TokenStream &tokenStream);
+	void parseAutoIndex(Location &location, TokenStream &tokenStream);
+	void parseReturn(Location &location, TokenStream &tokenStream);
+	void parseUpload(Location &location, TokenStream &tokenStream);
 
-	// General Directives //
+	// Shared Directives //
 
-	void parseRoot(Server &server, TokenStream &token);
-	void parseErrorPage(Server &server, TokenStream &token);
-	void parseMaxBody(Server &server, TokenStream &token);
+	template <typename T> void parseRoot(T &container, TokenStream &token);
+	template <typename T> void parseIndex(T &container, TokenStream &tokenStream);
 
-  public:
-	ConfigParser();
-	ServerConfig parse(const std::string &path);
+	std::map<std::string_view, ServerHandler> serverHandlers;
+	std::map<std::string_view, LocationHandler> locationHandlers;
 };
-
-typedef void (ConfigParser::*Handlers)(Server &, TokenStream &);
 
 // ConfigParserUtils.cpp // Non member free function parsing utilities
 bool isalnumString(const std::string &s);
