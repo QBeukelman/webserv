@@ -3,55 +3,56 @@
 /*                                                        ::::::::            */
 /*   TestConfigBuilder.hpp                              :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/09/15 08:59:53 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 14:26:09 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/09/14 13:11:08 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/14 18:20:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef TESTCONFIGBUILDER_HPP
+#define TESTCONFIGBUILDER_HPP
+
+#include "config/Location.hpp"
 #include "config/Server.hpp"
 #include "config/ServerConfig.hpp"
+#include "http/models/HttpMethod.hpp"
+#include "serve/Listener.hpp"
 
 struct TestConfigBuilder
 {
-	Server server;
+	Server server = Server("Test Server");
 	bool rootAdded;
 	std::vector<ListenEndpoint> listenEndpoints;
 
-	// Defaults for Location
 	std::string path_prefix;
 	std::string root_dir;
 	bool has_redirects;
 	std::set<HttpMethod> allowed;
-	std::string upload_loc;
 
+	// Constructor
 	TestConfigBuilder()
-		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/tmp"), has_redirects(false)
+		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/temp"), has_redirects(false)
 	{
 		allowed.insert(HttpMethod::GET);
 	}
 
-	// ListenEndpoint
+	// Add a listen endpoint
 	TestConfigBuilder &listen(const std::string &ip, unsigned short port)
 	{
-		if (port != 0 && port < 1024)
-		{
-			throw std::runtime_error("Refusing to bind privileged port (<1024) in tests");
-		}
 		listenEndpoints.push_back(ListenEndpoint(ip, port));
 		return (*this);
 	}
 
-	// Location
-	TestConfigBuilder &new_root(const std::string &root)
+	// Adjust default root location
+	TestConfigBuilder &mount(const std::string &p)
 	{
-		root_dir = root;
+		path_prefix = p;
 		return (*this);
 	}
-	TestConfigBuilder &new_prefix(const std::string &prefix)
+	TestConfigBuilder &docroot(const std::string &dir)
 	{
-		path_prefix = prefix;
+		root_dir = dir;
 		return (*this);
 	}
 	TestConfigBuilder &redirects(bool on)
@@ -69,13 +70,8 @@ struct TestConfigBuilder
 		allowed.erase(m);
 		return (*this);
 	}
-	TestConfigBuilder &upload_location(std::string upload)
-	{
-		upload_loc = upload;
-		return (*this);
-	}
 
-	// Add Location
+	// Add explicid location
 	TestConfigBuilder &addLocation(const Location &loc)
 	{
 		server.addLocation(loc);
@@ -83,24 +79,25 @@ struct TestConfigBuilder
 		return (*this);
 	}
 
-	// Build ServerConfig
+	// Build a ServerConfig
 	ServerConfig build()
 	{
 		// 1) listeners
 		server.setListens(listenEndpoints);
 
-		// 2) At least one Location
+		// 2) ensure at least one Location exists
 		if (!rootAdded)
 		{
 			Location rootLoc(path_prefix, root_dir, has_redirects, allowed);
-			rootLoc.addUploadDirectory(upload_loc);
 			server.addLocation(rootLoc);
 			rootAdded = true;
 		}
 
-		// 3) Assemble ServerConfig
+		// 3) assemble ServerConfig
 		ServerConfig config;
 		config.addServer(server);
 		return (config);
 	}
 };
+
+#endif

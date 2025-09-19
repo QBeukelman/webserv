@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 14:33:45 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 08:47:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "config/Server.hpp"
 #include "config/ServerConfig.hpp"
@@ -31,6 +32,8 @@ class ConfigParser
 	using LocationHandler = void (ConfigParser::*)(Location &, TokenStream &);
 
   private:
+	int findHandlerIndex(const std::vector<std::string> &allowed, const std::string &currentToken);
+
 	void parseGlobal(ServerConfig &config, TokenStream &tokenStream);
 	void parseServer(Server &server, TokenStream &tokenStream);
 	void parseLocation(Server &server, TokenStream &tokenStream);
@@ -59,7 +62,6 @@ class ConfigParser
 };
 
 // ConfigParserUtils.cpp // Non member free function parsing utilities
-
 bool isalnumString(const std::string &s);
 bool isDigitString(const std::string &s);
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handleStartLineAndHeaders.cpp                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/05 15:04:20 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handleStartLineAndHeaders.cpp                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 20:39:56 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/09/17 12:00:44 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,8 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 {
 	ParseStep step;
 
+	Logger::info("RequestParser::handleStartLineAndHeaders()");
+
 	// 1) Find end of header
 	size_t header_end = 0;
 	if (find_header_end(data, len, header_end) == false)
@@ -219,10 +221,16 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 		return (returnFailure(ctx, step, PARSE_MALFORMED_REQUEST, "Both Transfer-Encoding and Content-Length present"));
 
 	if (!te.empty())
+	{
+		Logger::info("RequestParser::handleStartLineAndHeaders() → Apply transfer encoding");
 		return (applyTransferEncoding(ctx, te, consumed_headers, len));
+	}
 
 	if (!cl.empty())
+	{
+		Logger::info("RequestParser::handleStartLineAndHeaders() → Apply content length");
 		return (applyContentLength(ctx, cl, consumed_headers, len));
+	}
 
 	// TODO: No Encoding or Content Lenght -> Treat as no body for requests
 	step.consumed = consumed_headers;

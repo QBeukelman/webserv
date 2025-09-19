@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 11:13:05 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 08:55:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include <stdexcept>
 #include <string_view>
 
+// CONSTRUCTORS
+// ____________________________________________________________________________
 ConfigParser::ConfigParser()
 {
 	serverHandlers = {{"listen", &ConfigParser::parseListen},
@@ -41,14 +43,38 @@ ConfigParser::ConfigParser()
 						{"upload_store", &ConfigParser::parseUpload}};
 }
 
+// FIND INDEX
+// ____________________________________________________________________________
+int ConfigParser::findHandlerIndex(const std::vector<std::string> &allowed, const std::string &currentToken)
+{
+	for (std::size_t i = 0; i < allowed.size(); ++i)
+	{
+		if (allowed[i] == currentToken)
+		{
+			return (static_cast<int>(i));
+		}
+	}
+	return (static_cast<int>(allowed.size()));
+}
+
+// PARSE HELPERS
+// ____________________________________________________________________________
 void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 {
+	static const std::array<std::string_view, 1> allowed = {"server"};
+	static const std::array<Handlers, 2> handler = {&ConfigParser::parseServer, &ConfigParser::throwParsingError};
+
 	while (true)
 	{
 		Server server;
 
 		std::string token = tokenStream.next();
 
+		int index = findHandlerIndex(allowed, currentToken);
+
+		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
+
+		(this->*handler)(server, tokenStream);
 		if (token == "server")
 		{
 			parseServer(server, tokenStream);
@@ -71,6 +97,13 @@ void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 
 	while (!tokenStream.awaitClosingBracket(token))
 	{
+		int index = findHandlerIndex(allowed, currentToken);
+
+		Handlers handler = (index < (int)allowed.size()) ? handlers[index] : handlers.back();
+
+		(this->*handler)(server, tokenStream);
+
+		currentToken = tokenStream.next();
 		auto index = serverHandlers.find(token);
 
 		if (index != serverHandlers.end())
@@ -89,9 +122,8 @@ void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 	{
 		std::cout << server << std::endl;
 	}
-	exit(1);
 
-	// validate server block //
+	// TODO: validate server block...
 }
 
 void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)

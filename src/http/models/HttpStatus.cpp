@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:23:10 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 11:23:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 12:00:25 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ const char *reasonPhrase(HttpStatus code)
 std::string toStatusLine(HttpStatus status, const std::string &version)
 {
 	std::ostringstream oss;
-	oss << version << " " << static_cast<int>(status) << " " << reasonPhrase(status) << "\r\n";
+	oss << version << " " << static_cast<int>(status) << " " << reasonPhrase(status);
 	return (oss.str());
 }
 

@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/08/11 09:30:12 by qbeukelm          #+#    #+#              #
-#    Updated: 2025/09/15 10:16:07 by qbeukelm         ###   ########.fr        #
+#                                                         ::::::::             #
+#    Makefile                                           :+:    :+:             #
+#                                                      +:+                     #
+#    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
+#                                                    +#+                       #
+#    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
+#    Updated: 2025/09/18 15:33:12 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,8 +24,9 @@ CXX       := c++
 CXXFLAGS  := -std=c++17 -MMD -MP -Iinc -Itests
 
 # ---------------- Targets -----------------
-NAME      := webserv
-TEST_BIN  := unit_tests
+NAME				:= webserv
+TEST_BIN  			:= unit_tests
+UPLOADS_DIRECTORY	:= uploads
 
 # ---------------- Dirs --------------------
 DIR_OBJ   := obj
@@ -48,16 +49,13 @@ TEST_SOURCES := $(sort $(shell find $(TEST_DIRS) -type f -name 'test_*.cpp'))
 TEST_OBJECTS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_SOURCES))
 TEST_DEPENDS := $(TEST_OBJECTS:.o=.d)
 
-# TEST_HELPERS := $(sort $(shell find $(TEST_DIRS) -type f -name '*.cpp' -not -name 'test_*.cpp'))
-# TEST_HELPER_OBJECTS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_HELPERS))
-# TEST_HELPER_DEPENDS := $(TEST_HELPER_OBJECTS:.o=.d)
-
 # ---------------- Rules -------------------
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
 	@echo "$(BLUE)\nLinking $(NAME)...$(RESET)"
 	@$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
+	@mkdir $(UPLOADS_DIRECTORY)
 	@echo "$(GREEN)\nDone\n$(RESET)"
 
 # Build + run unit tests
@@ -76,7 +74,7 @@ $(DIR_OBJ)/%.o: %.cpp
 
 clean:
 	@echo "$(BLUE)\nCleaning ...$(RESET)"
-	@rm -rf $(DIR_OBJ) $(TEST_BIN)
+	@rm -rf $(DIR_OBJ) $(TEST_BIN) $(UPLOADS_DIRECTORY)
 	@echo "$(GREEN)$(BOLD)\nAll clean!\n$(RESET)"
 
 fclean: clean

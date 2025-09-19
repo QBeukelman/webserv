@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Connection.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/09 16:19:51 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/15 11:53:10 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Connection.cpp                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/18 13:28:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,17 @@ void Connection::feedParserFromBuffer()
 
 	while (offset < inBuf.size())
 	{
-		const char *window = inBuf.data() + offset;
+		const char *data = inBuf.data();
 		size_t window_size = inBuf.size() - offset;
 
-		ParseStep step = parser.step(parseContext, window, window_size);
+		ParseStep step = parser.step(parseContext, data, window_size);
 		offset += step.consumed;
 
+		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
+
 		// 1) Handle parse error
-		if (step.status != PARSE_MALFORMED_REQUEST || step.status != PARSE_INCOMPLETE)
+		if (step.status == PARSE_INVALID_METHOD || step.status == PARSE_INVALID_VERSION ||
+			step.status == PARSE_MALFORMED_REQUEST || step.status == PARSE_EXCEED_LIMIT)
 		{
 			std::string detail = "Bad request";
 			HttpResponse response = RequestHandler(*this->server).makeError(HttpStatus::STATUS_BAD_REQUEST, detail);
@@ -62,6 +65,8 @@ void Connection::feedParserFromBuffer()
 		{
 			HttpResponse response = RequestHandler(*this->server).handle(parseContext.request);
 			outBuf = response.serialize();
+
+			std::cout << "Out Buffer: " << outBuf << std::endl;
 
 			// TODO: Connection::feedParserFromBuffer() → Keep-Alive decision
 			keepAlive = true;
@@ -102,41 +107,63 @@ void Connection::feedParserFromBuffer()
  */
 void Connection::onReadable()
 {
+	// TODO: Connection::onReadable() what is buffer size?
 	char buf[8192]; // 8kb
 
-	while (true)
+	ssize_t n = 0;
+
+	n = ::recv(fd_, buf, sizeof(buf), 0);
+	if (n > 0)
 	{
-		ssize_t n = ::recv(fd_, buf, sizeof(buf), 0);
-		if (n > 0)
-		{
-			lastActivityMs = loop->nowMs();
-			inBuf.append(buf, static_cast<size_t>(n));
-		}
-		else if (n == 0)
-		{
-			// Peer closed
-			keepAlive = false;
-			loop->closeLater(this);
-			return;
-		}
-		else
-		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				break; // No more data to read now
-			if (errno == EINTR)
-				continue; // Retry read
-			// Fatal read error
-			loop->closeLater(this);
-			return;
-		}
+		// TODO: Connection::onReadable() What is max time?
+		lastActivityMs = loop->nowMs();
+		inBuf.append(buf, static_cast<size_t>(n));
+		feedParserFromBuffer();
+		return;
+	}
+	else if (n == 0)
+	{
+		// Peer closed
+		keepAlive = false;
+		loop->closeLater(this);
+		Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
+		return;
 	}
 
-	feedParserFromBuffer();
+	// n < 0
+	if (errno == EAGAIN || errno == EWOULDBLOCK)
+	{
+		Logger::error("Connection::onReadable() (errno == EAGAIN || errno == EWOULDBLOCK)");
+		return;
+	}
+	if (errno == EINTR)
+	{
+		Logger::error("Connection::onReadable() (errno == EINTR)");
+		return;
+	}
+
+	// TODO: Connection::onReadable() When should we mark this for closing?
+	loop->closeLater(this);
+	Logger::info("Connection::onReadable() → Reach end of recv");
+	return;
 }
 
 void Connection::onWritable()
 {
 	// TODO: Connection::onWritable()
+	ssize_t n = ::send(fd_, outBuf.data(), outBuf.size(), 0);
+	if (n > 0)
+	{
+		outBuf.erase(0, n);
+	}
+	else if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+	{
+		// Try again later when poll() says POLLOUT
+	}
+	else
+	{
+		// Error: close connection
+	}
 }
 
 /*
@@ -146,7 +173,11 @@ void Connection::onWritable()
  */
 short Connection::interest() const
 {
-	return (outBuf.empty() ? POLLIN : POLLIN | POLLOUT);
+	const short interest = outBuf.empty() ? POLLIN : POLLIN | POLLOUT;
+
+	const std::string log = interest == POLLIN ? "POLLIN" : "POLLOUT";
+	Logger::info("Connection::interest() → New interest: " + log);
+	return (interest);
 }
 
 void Connection::onHangupOrError(short revents)

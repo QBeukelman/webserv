@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 15:34:19 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/02 13:55:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 10:34:25 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ std::ostream &operator<<(std::ostream &out, const ParseContext ctx)
 		// << ctx.limits.max_body_size
 
 		// Request
-		<< "\nHttpRequest: " << ctx.request
+		// << "\nHttpRequest: " << ctx.request
 
 		<< std::endl;
 	return out;

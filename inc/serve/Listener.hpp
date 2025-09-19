@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 09:13:07 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/15 10:45:11 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:59:32 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ class Listener : public IOPollable
 	const Server *server; // Which server this listener serves
 	EventLoop *loop;	  // To register new connections
 
-	void setReuseAddress(); // SO_REUSEADDR
-	void setNonBlocking();	// O_NONBLOCK
+	void setReuseAddress();		 // SO_REUSEADDR
+	void setNonBlocking(int fd); // O_NONBLOCK
 	void bindAndListen(const std::string &ip, unsigned short port);
 	void closeIfValid();
 

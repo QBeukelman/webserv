@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/18 23:46:52 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 08:46:46 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #define SERVER_HPP
 
 #include "config/Location.hpp"
+#include "config/models/DirectiveFlags.hpp"
+#include "config/models/ErrorPage.hpp"
+#include "config/models/ListenEndpoint.hpp"
 
 #include <ostream>
 #include <string>
@@ -45,7 +48,7 @@ class Server
 {
   private:
 	unsigned int directiveFlags;
-	std::vector<std::string> names;
+	std::string name;
 	std::vector<ListenEndpoint> listens;
 	std::vector<Location> locations;
 	std::vector<std::string> indexFiles;
@@ -53,27 +56,36 @@ class Server
 	std::vector<ErrorPage> errorPages;
 	size_t maxBodySize;
 
+	bool listenConflict(const ListenEndpoint &a, const ListenEndpoint &b);
+
   public:
 	Server();
+	Server(std::string name);
 
 	// Methods
 	Location findLocation(const std::string &requestPath) const;
 
-	// Getters / Setters
-	const std::string &getName(void) const;
-	std::vector<Location> getLocations(void) const;
-	void setLocation(const Location &location);
+	// -- Getters & Setters --
+	// Name
+	const std::string getName(void) const;
+	void setName(std::string newName);
 
+	// Listens
 	std::vector<ListenEndpoint> getListens(void) const;
 	std::vector<std::string> getNames(void) const;
 	std::string getRoot(void) const;
 	std::vector<std::string> getIndexFiles(void) const;
 	std::vector<ErrorPage> getErrorPages(void) const;
 	std::size_t getMaxBodySize(void) const;
+	bool setListen(const ListenEndpoint &listen);
+	void setListens(std::vector<ListenEndpoint> &);
+
+	// Location
+	std::vector<Location> getLocations(void) const;
+	void addLocation(const Location &location);
+	void setLocations(const std::vector<Location> &);
 
 	// Set Parsed Data
-	bool setListen(const ListenEndpoint &listen);
-	bool setName(const std::string &name);
 	void setRoot(const std::string &root);
 	bool setIndex(const std::string &index);
 	bool setErrorPage(const ErrorPage &errorPage);
