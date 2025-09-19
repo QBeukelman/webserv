@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 10:39:38 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 15:21:43 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,12 @@ TEST_CASE("Server Integration Test: Run Loop")
 {
 	TestConfigBuilder builder;
 
-	ServerConfig config =
-		builder.listen("127.0.0.1", 8080).new_root("/").new_prefix("/submit").allow(HttpMethod::POST).build();
+	ServerConfig config = builder.listen("127.0.0.1", 8080)
+							  .new_root("/")
+							  .new_prefix("/submit")
+							  .allow(HttpMethod::POST)
+							  .upload_location("/uploads")
+							  .build();
 	WebServer webServer(config);
 
 	// Check port

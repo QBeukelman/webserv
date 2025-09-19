@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 10:38:17 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/18 13:28:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ void Connection::feedParserFromBuffer()
 		{
 			HttpResponse response = RequestHandler(*this->server).handle(parseContext.request);
 			outBuf = response.serialize();
+
+			std::cout << "Out Buffer: " << outBuf << std::endl;
 
 			// TODO: Connection::feedParserFromBuffer() → Keep-Alive decision
 			keepAlive = true;
@@ -149,6 +151,19 @@ void Connection::onReadable()
 void Connection::onWritable()
 {
 	// TODO: Connection::onWritable()
+	ssize_t n = ::send(fd_, outBuf.data(), outBuf.size(), 0);
+	if (n > 0)
+	{
+		outBuf.erase(0, n);
+	}
+	else if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+	{
+		// Try again later when poll() says POLLOUT
+	}
+	else
+	{
+		// Error: close connection
+	}
 }
 
 /*
@@ -158,7 +173,11 @@ void Connection::onWritable()
  */
 short Connection::interest() const
 {
-	return (outBuf.empty() ? POLLIN : POLLIN | POLLOUT);
+	const short interest = outBuf.empty() ? POLLIN : POLLIN | POLLOUT;
+
+	const std::string log = interest == POLLIN ? "POLLIN" : "POLLOUT";
+	Logger::info("Connection::interest() → New interest: " + log);
+	return (interest);
 }
 
 void Connection::onHangupOrError(short revents)
