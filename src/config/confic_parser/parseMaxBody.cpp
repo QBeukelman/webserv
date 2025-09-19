@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:23:45 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/18 23:54:48 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/19 10:39:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 #include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
+#include <cstddef> // std::size_t
+#include <limits>  // std::numeric_limits
+
+// TODO: Max Body Size -> Prefer Limits obj
 #define MIN_BODY_SIZE 100ULL * 1024
 #define MAX_BODY_SIZE 1ULL * 1024 * 1024 * 1024
 

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 09:55:34 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/19 10:35:21 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <set>
 #include <string>
 #include <sys/stat.h>
+#include <vector>
 
 /*
  * Configuration block that defines how a certain URL path (or prefix) should be handled.
