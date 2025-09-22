@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/19 12:03:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/22 09:55:04 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "config/Location.hpp"
 #include "config/ServerConfig.hpp"
 #include "http/RequestParser.hpp"
+#include "http/models/File.hpp"
 #include "http/models/HttpMethod.hpp"
 #include "http/models/HttpRequest.hpp"
 #include "http/models/HttpResponse.hpp"
@@ -24,6 +25,7 @@
 #include "log/Logger.hpp"
 
 #include <cerrno>
+#include <fcntl.h>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -46,8 +48,7 @@ class RequestHandler
 #else
   private:
 #endif
-	// TODO: RequestHandler::generateUploadFile -> Generate a file
-	const std::string generateUploadFile(const std::string &upload_dir) const;
+	const File generateUploadFile(const std::string &upload_dir) const;
 	const bool isMethodAllowed(const HttpRequest &request, const Location &location) const;
 
   public:

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:56:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 12:02:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/22 10:10:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,15 @@
 #include "tests/doctest.h"
 
 #include "http/RequestHandler.hpp"
+
+static void deleteFile(const File file)
+{
+	if (file.getFd() >= 0)
+	{
+		::close(file.getFd());
+	}
+	::remove(file.getName().c_str());
+}
 
 TEST_CASE("RequestHandler: generateUploadFile")
 {
@@ -36,10 +45,10 @@ TEST_CASE("RequestHandler: generateUploadFile")
 	std::vector<Location> locations;
 
 	Location location_root("/", "root/", false, methods);
-	location_root.addUploadDirectory("/uploads");
+	location_root.addUploadDirectory("uploads");
 
 	Location location_submit("/submit-form", "submit-form/", false, methods);
-	location_root.addUploadDirectory("/uploads");
+	location_root.addUploadDirectory("uploads");
 
 	locations.push_back(location_root);
 	locations.push_back(location_submit);
@@ -48,7 +57,16 @@ TEST_CASE("RequestHandler: generateUploadFile")
 
 	RequestHandler handler(server);
 
-	std::string file_name = handler.generateUploadFile("/uploads");
-
-	std::cout << "FileName: " << file_name << std::endl;
+	std::vector<File> files;
+	for (int i = 0; i <= 10; i++)
+	{
+		files.push_back(handler.generateUploadFile("uploads"));
+		CHECK(files[i].getFd() >= 0);
+		if (i == 10)
+			CHECK(files[i].getName() == "uploads/upload_00010.txt");
+	}
+	for (int i = 0; i <= 10; i++)
+	{
+		deleteFile(files[i]);
+	}
 }

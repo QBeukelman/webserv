@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:42:45 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 12:03:38 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/22 10:10:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,34 +27,30 @@ static int numDigits(int i)
 static std::string zeroPad(unsigned int value, unsigned int width)
 {
 	std::ostringstream oss;
+	for (int i = 0; i < width; i++)
+		oss << "0";
 	oss << value;
-	std::string s = oss.str();
-	if (s.size() < width)
-		s.insert(0, width - s.size(), '0');
-	return (s);
+	return (oss.str());
 }
 
 static std::string paddedName(int i)
 {
-	const unsigned int width = numDigits(MAX_UPLOAD_FILES - 1);
-	return (zeroPad(static_cast<unsigned int>(i), width));
+	const unsigned int width = (numDigits(MAX_UPLOAD_FILES) - numDigits(i));
+	return (zeroPad(i, width));
 }
 
-// TODO: RequestHandler::generateUploadFile -> Generate a file
-const std::string RequestHandler::generateUploadFile(const std::string &upload_dir) const
+static const std::string newFileName(const std::string &upload_dir)
 {
 	// Normalize directory
 	std::string dir = upload_dir;
 	if (dir.empty() == false && dir[dir.size() - 1] != '/')
 		dir += '/';
 
-	const unsigned int width = numDigits(MAX_UPLOAD_FILES - 1);
-
 	// Start at 1 to produce 00001 as the first name
-	int i = 0;
+	unsigned int i = 0;
 	while (i < MAX_UPLOAD_FILES)
 	{
-		std::string name = "upload_" + zeroPad(i, width) + ".txt";
+		std::string name = "upload_" + paddedName(i) + ".txt";
 		std::string candidate = dir + name;
 
 		if (access(candidate.c_str(), F_OK) != 0)
@@ -62,8 +58,36 @@ const std::string RequestHandler::generateUploadFile(const std::string &upload_d
 			// Not found, take it
 			return (candidate);
 		}
+		i++;
 	}
 
 	// No new names
 	return (std::string());
+}
+
+/*
+ * Create a new file with unique name in the given directory. Names are appended with `0`
+ * .e.g. `uploads/upload_00001.txt`.
+ *
+ * Returns:
+ * 	- An open File with `name` and `fd`.
+ *  - `-1` on failure.
+ *
+ * Notes:
+ * 	- Files have `.txt` extension.
+ * 	- File names are prepended with `upload_`
+ * 	- Limited to `10000` files.
+ */
+const File RequestHandler::generateUploadFile(const std::string &upload_dir) const
+{
+	const std::string newName = newFileName(upload_dir);
+	if (newName.empty())
+	{
+		Logger::error("RequestHandler::generateUploadFile() → Exceeded allowed number of uploads");
+		return (File("", -1));
+	}
+
+	const int fd = open(newName.data(), O_WRONLY | O_CREAT | O_EXCL, 0644);
+
+	return (File(newName, fd));
 }
