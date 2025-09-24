@@ -1,34 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   File.hpp                                           :+:    :+:            */
+/*   Mime.hpp                                           :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/09/22 09:48:29 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:19:20 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/09/24 10:23:58 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/24 11:31:04 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FILE_HPP
-#define FILE_HPP
+#ifndef MIME_HPP
+#define MIME_HPP
 
-#include <iostream>
+#include <map>
 #include <string>
 
-class File
+/*
+ * Multipurpose Internet Mail Extensions
+ */
+class Mime
 {
-  private:
-	const std::string name;
-	const int fd;
-
   public:
-	File(const std::string name, const int fd);
-
-	const std::string getName() const;
-	const int getFd() const;
+	std::string getExtension(const std::string &type_string) const;
+	std::string getTypeString(const std::string &extension) const;
 };
-
-std::ostream &operator<<(std::ostream &out, const File &file);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:56:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/22 10:10:29 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/23 13:16:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ TEST_CASE("RequestHandler: generateUploadFile")
 	methods.insert(HttpMethod::GET);
 	std::vector<Location> locations;
 
-	Location location_root("/", "root/", false, methods);
-	location_root.addUploadDirectory("uploads");
+	Location location_root("var/www", "/uploads", false, methods);
+	location_root.addUploadDirectory("var/www/uploads");
 
 	Location location_submit("/submit-form", "submit-form/", false, methods);
 	location_root.addUploadDirectory("uploads");
@@ -60,10 +60,10 @@ TEST_CASE("RequestHandler: generateUploadFile")
 	std::vector<File> files;
 	for (int i = 0; i <= 10; i++)
 	{
-		files.push_back(handler.generateUploadFile("uploads"));
+		files.push_back(handler.generateUploadFile("var/www/uploads"));
 		CHECK(files[i].getFd() >= 0);
 		if (i == 10)
-			CHECK(files[i].getName() == "uploads/upload_00010.txt");
+			CHECK(files[i].getName() == "var/www/uploads/upload_00010.txt");
 	}
 	for (int i = 0; i <= 10; i++)
 	{

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:42:45 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/22 10:10:47 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/23 13:15:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static const std::string newFileName(const std::string &upload_dir)
 
 /*
  * Create a new file with unique name in the given directory. Names are appended with `0`
- * .e.g. `uploads/upload_00001.txt`.
+ * .e.g. `var/www/uploads/upload_00001.txt`.
  *
  * Returns:
  * 	- An open File with `name` and `fd`.

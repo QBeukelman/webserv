@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handleStartLineAndHeaders.cpp                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/28 20:39:56 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 12:00:44 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handleStartLineAndHeaders.cpp                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/24 11:21:08 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,13 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 	// 6) Decide what to do with `body` based on headers
 	const std::string te = toLower(searchHeader(ctx.request.headers, "transfer-encoding"));
 	const std::string &cl = searchHeader(ctx.request.headers, "content-length");
+	const std::string ct = searchHeader(ctx.request.headers, "content-type");
+
+	ContentType contentType = ContentType(ct);
+	if (contentType.getType() != UNKONOWN)
+	{
+		ctx.request.content_type = contentType;
+	}
 
 	// TODO: Treat a message as chunked only if the last coding is chunked.
 	if (!te.empty() && !cl.empty())

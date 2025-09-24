@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 11:36:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/24 08:59:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,8 +211,8 @@ void EventLoop::run(void)
 			if (re & POLLOUT)
 			{
 				// TODO: run() → data may be written without blocking.
-				Logger::info("EventLoop::run() → onWritable()");
-				h->onWritable();
+				// Logger::info("EventLoop::run() → onWritable()");
+				// h->onWritable();
 			}
 		}
 

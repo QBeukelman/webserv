@@ -1,34 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   File.hpp                                           :+:    :+:            */
+/*   handleDelete.cpp                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/09/22 09:48:29 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:19:20 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/09/23 08:26:48 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/23 08:28:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FILE_HPP
-#define FILE_HPP
+#include "http/RequestHandler.hpp"
 
-#include <iostream>
-#include <string>
-
-class File
+HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Location &location) const
 {
-  private:
-	const std::string name;
-	const int fd;
+	if (isMethodAllowed(request, location) == false)
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete()"));
 
-  public:
-	File(const std::string name, const int fd);
-
-	const std::string getName() const;
-	const int getFd() const;
-};
-
-std::ostream &operator<<(std::ostream &out, const File &file);
-
-#endif
+	// TODO: Define Response
+	Logger::info("RequestHandler::handleDelete → Delete Accepted");
+	return (HttpResponse());
+}

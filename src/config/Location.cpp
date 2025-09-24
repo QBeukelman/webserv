@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 09:40:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/23 13:24:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,9 +130,11 @@ void Location::addUploadDirectory(const std::string dir)
 	this->allow_uploads = true;
 }
 
-bool Location::hasUploadsDir(const std::string dir) const
+bool Location::hasUploadsDir(std::string dir) const
 {
 	struct stat stat_buffer;
+
+	std::cout << "Trying to open: " << dir << std::endl;
 
 	// Read or write permission about file
 	if (stat(dir.c_str(), &stat_buffer) != 0)
@@ -147,4 +149,19 @@ bool Location::hasUploadsDir(const std::string dir) const
 	}
 
 	return (true);
+}
+
+/*
+ * Returns directory path without leading `/`.
+ */
+std::string Location::normalizeDirectory(std::string directory) const
+{
+	if (directory.size() == 1)
+		return (directory);
+
+	if (directory[0] == '/' && directory[1] != '/')
+	{
+		directory = directory.substr(1, directory.size());
+	}
+	return (directory);
 }

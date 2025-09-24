@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 13:28:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/24 09:47:51 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,13 @@ void Connection::feedParserFromBuffer()
 		const char *data = inBuf.data();
 		size_t window_size = inBuf.size() - offset;
 
+		std::cout << "Data: " << data << std::endl;
+
 		ParseStep step = parser.step(parseContext, data, window_size);
 		offset += step.consumed;
 
 		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
+		std::cout << step << std::endl;
 
 		// 1) Handle parse error
 		if (step.status == PARSE_INVALID_METHOD || step.status == PARSE_INVALID_VERSION ||
@@ -66,8 +69,6 @@ void Connection::feedParserFromBuffer()
 			HttpResponse response = RequestHandler(*this->server).handle(parseContext.request);
 			outBuf = response.serialize();
 
-			std::cout << "Out Buffer: " << outBuf << std::endl;
-
 			// TODO: Connection::feedParserFromBuffer() → Keep-Alive decision
 			keepAlive = true;
 
@@ -84,9 +85,10 @@ void Connection::feedParserFromBuffer()
 			continue;
 		}
 
+		// TODO: Connection::feedParserFromBuffer() → Test with transfer encoding chunked
 		// 3) Need more bytes to proceed → stop feeding for now
-		if (step.need_more)
-			break;
+		// if (step.need_more)
+		// 	break;
 	}
 
 	// Drop consumed bytes

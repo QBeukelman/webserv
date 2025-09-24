@@ -49,6 +49,14 @@ curl -v -X POST "http://127.0.0.1:8080/submit" \
   --data "name=Alice&age=30&city=AMS"
 ```
 
+For PDF upload
+
+```bash
+curl -v -X POST http://127.0.0.1:8080/uploads \
+  -F "file=@tests/test_files/document.pdf;type=application/pdf" \
+  -F "title=Quarterly report"
+```
+
 ---
 
 <br/>
