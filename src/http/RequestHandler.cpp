@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/25 09:52:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 21:22:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,6 @@ RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
-
-	// std::cout << "HANDLE REQUEST()\n" << request << std::endl;
-
 	Location location;
 	try
 	{
@@ -96,19 +93,8 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 	// TODO: HttpResponse set `content-type` header
 	response.headers["Content-Type"] = "text/html; charset=UTF-8";
 	// TODO: HttpResponse html body
-	response.body = "<html>\r\n";
+	response.body = "ERROR\r\n";
 	response.headers["Content-Length"] = std::to_string(response.body.size());
 
-	return (response);
-}
-
-HttpResponse RequestHandler::makeMock200(const HttpRequest &request) const
-{
-	HttpResponse response;
-
-	response.httpStatus = HttpStatus::STATUS_OK;
-	response.headers["Content-Type"] = "text/plain";
-	response.body = request.body;
-	response.headers["Content-Length"] = std::to_string(response.body.size());
 	return (response);
 }

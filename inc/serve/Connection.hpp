@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 10:27:14 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:05:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Connection : public IOPollable
 
 	bool keepAlive;
 	unsigned long lastActivityMs;
+	unsigned short port;
 
 	const Server *server; // Which server this listener serves
 	EventLoop *loop;	  // To register new connections
@@ -66,7 +67,9 @@ class Connection : public IOPollable
 	void feedParserFromBuffer();
 
   public:
-	Connection(int clientFd, const Server *server, EventLoop *loop);
+	Connection(int clientFd, const Server *server, EventLoop *loop, unsigned short port);
+
+	unsigned short getPort() const;
 
 	// IOPollable
 	int fd() const;

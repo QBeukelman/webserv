@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 11:22:45 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 23:40:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ TEST_CASE("Server Integration Test: Connect to Listener")
 	::close(cfd);
 }
 
-TEST_CASE("Server Integration Test: Run Loop")
+TEST_CASE("Server Integration Test: POST(upload), GET, DELETE")
 {
 	TestConfigBuilder builder;
 
@@ -57,6 +57,37 @@ TEST_CASE("Server Integration Test: Run Loop")
 							  .allow(HttpMethod::DELETE)
 							  .upload_location("/var/www/uploads")
 							  .build();
+	WebServer webServer(config);
+
+	// Check port
+	unsigned short port = webServer.primaryPort();
+	CHECK(port > 0);
+
+	// std::cout << "=================================================================\n";
+	// std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
+
+	// webServer.run();
+}
+
+TEST_CASE("Server Integration Test: CGI")
+{
+	TestConfigBuilder builder;
+
+	CGI new_cgi;
+	new_cgi.extension = ".py";
+	new_cgi.executable_path = "/usr/bin/python3";
+	new_cgi.working_directory = "/var/www/scripts";
+
+	ServerConfig config = builder.listen("127.0.0.1", 8080)
+							  .new_root("/var/www")
+							  .new_prefix("/scripts")
+							  .allow(HttpMethod::GET)
+							  .allow(HttpMethod::POST)
+							  .allow(HttpMethod::DELETE)
+							  .upload_location("/var/www/uploads")
+							  .cgi(new_cgi)
+							  .build();
+
 	WebServer webServer(config);
 
 	// Check port

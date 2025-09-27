@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 14:06:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 17:26:23 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,11 +234,11 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 	step.consumed = consumed_headers;
 
 	// 5) Decide what to do with `body` based on headers
-	const std::string te = toLower(searchHeader(ctx.request.headers, "transfer-encoding"));
-	const std::string &cl = searchHeader(ctx.request.headers, "content-length");
+	const std::string te = ctx.request.toLower(ctx.request.searchHeader("transfer-encoding"));
+	const std::string &cl = ctx.request.searchHeader("content-length");
 
 	// Content Type
-	const std::string ct = searchHeader(ctx.request.headers, "content-type");
+	const std::string ct = ctx.request.searchHeader("content-type");
 	ctx.request.content_type = classifyContentType(ct);
 
 	// TODO: Treat a message as chunked only if the last coding is chunked.

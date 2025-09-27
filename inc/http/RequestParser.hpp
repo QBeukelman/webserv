@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 13:51:16 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 17:22:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,9 @@ class RequestParser
 	ParseStep handleChunkData(ParseContext &, const char *, size_t) const;
 	ParseStep handleComplete(ParseContext &) const;
 
-	ParseStep handleError(ParseContext &) const; // TODO: Will remove
-
   public:
 	explicit RequestParser(HttpRequestLimits limits);
 
-	std::string searchHeader(const std::map<std::string, std::string> &h, const std::string &key) const;
 	HttpRequestLimits getLimits(void) const;
 	size_t strLen(const char *data) const;
 

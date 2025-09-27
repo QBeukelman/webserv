@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 10:26:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 16:41:52 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class RequestHandler
   private:
 	const Server &server;
 
+	HttpResponse handleCgi(const HttpRequest &, const Location &, const CGI &) const;
 	HttpResponse handleGet(const HttpRequest &, const Location &) const;
 	HttpResponse handlePost(const HttpRequest &, const Location &) const;
 	HttpResponse handleDelete(const HttpRequest &, const Location &) const;
@@ -61,7 +62,6 @@ class RequestHandler
 	// Handlers
 	HttpResponse handle(const HttpRequest &request) const;
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
-	HttpResponse makeMock200(const HttpRequest &request) const;
 };
 
 #endif

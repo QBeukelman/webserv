@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 11:20:41 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:33:58 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 
 	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
 	{
-		// Run CGI(CGI)
-		return (HttpResponse());
+		Logger::info("RequestHandler::handleGet() → Starting CGI");
+		return (handleCgi(request, location, *cgi));
 	}
 
 	// 1) Open file

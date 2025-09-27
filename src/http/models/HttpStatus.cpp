@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:23:10 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 12:00:25 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 19:48:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,66 @@ const char *reasonPhrase(HttpStatus code)
 
 	default:
 		return "Unknown Status";
+	}
+}
+
+HttpStatus toHttpStatus(int code)
+{
+	switch (code)
+	{
+	// 1xx Informational
+	case 100:
+		return STATUS_CONTINUE;
+	case 101:
+		return STATUS_SWITCHING_PROTOCOL;
+
+	// 2xx Success
+	case 200:
+		return STATUS_OK;
+	case 201:
+		return STATUS_CREATED;
+	case 204:
+		return STATUS_NO_CONTENT;
+
+	// 3xx Redirection
+	case 301:
+		return STATUS_MOVED_PERMANENTLY;
+	case 302:
+		return STATUS_FOUND;
+	case 303:
+		return STATUS_SEE_OTHER;
+	case 304:
+		return STATUS_NOT_MODIFIED;
+	case 307:
+		return STATUS_TEMPORARY_REDIRECT;
+
+	// 4xx Client errors
+	case 400:
+		return STATUS_BAD_REQUEST;
+	case 401:
+		return STATUS_UNAUTHORIZED;
+	case 403:
+		return STATUS_FORBIDDEN;
+	case 404:
+		return STATUS_NOT_FOUND;
+	case 405:
+		return STATUS_METHOD_NOT_ALLOWED;
+	case 413:
+		return STATUS_PAYLOAD_TOO_LARGE;
+
+	// 5xx Server errors
+	case 500:
+		return STATUS_INTERNAL_ERROR;
+	case 501:
+		return STATUS_NOT_IMPLEMENTED;
+	case 502:
+		return STATUS_BAD_GATEWAY;
+	case 503:
+		return STATUS_SERVICE_UNAVAILABLE;
+
+	default:
+		// Fallback:
+		return STATUS_INTERNAL_ERROR;
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 09:12:18 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:08:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,21 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
 	}
 }
 
+unsigned short Listener::getLocalPort(int fd) const
+{
+	sockaddr_storage ss;
+	socklen_t s_len = sizeof(ss);
+
+	if (::getsockname(fd, reinterpret_cast<sockaddr *>(&ss), &s_len) == 0)
+	{
+		if (ss.ss_family == AF_INET)
+			return (ntohs(reinterpret_cast<sockaddr_in *>(&ss)->sin_port));
+		else if (ss.ss_family == AF_INET6)
+			return (ntohs(reinterpret_cast<sockaddr_in6 *>(&ss)->sin6_port));
+	}
+	return (0);
+}
+
 void Listener::closeIfValid()
 {
 	if (fd_ >= 0)
@@ -188,7 +203,8 @@ void Listener::onReadable()
 		setNonBlocking(cfd);
 
 		// Create a Connection for this client and register it.
-		Connection *connection = new Connection(cfd, server, loop);
+		unsigned short localPort = getLocalPort(cfd);
+		Connection *connection = new Connection(cfd, server, loop, localPort);
 		loop->add(connection);
 	}
 }
@@ -240,6 +256,7 @@ std::ostream &operator<<(std::ostream &out, const Listener &listener)
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+// TODO: Listener -> Use getLocalPort() with getsockname()
 unsigned short Listener::boundPort() const
 {
 	struct sockaddr_in addr;

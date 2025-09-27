@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 11:35:30 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/05 13:54:14 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 17:26:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ TEST_CASE("RequestParser: handleStartLineAndHeaders()")
 
 	// Headers
 	// CHECK(p.searchHeader(context.request.headers, "transfer-encoding") == "none"); // TODO: Should throw error
-	CHECK(p.searchHeader(context.request.headers, "content-length") == "26");
-	CHECK(p.searchHeader(context.request.headers, "content-type") == "application/x-www-form-urlencoded");
-	CHECK(p.searchHeader(context.request.headers, "host") == "www.example.com");
-	CHECK(p.searchHeader(context.request.headers, "user-agent") == "curl/7.68.0");
+	CHECK(context.request.searchHeader("content-length") == "26");
+	CHECK(context.request.searchHeader("content-type") == "application/x-www-form-urlencoded");
+	CHECK(context.request.searchHeader("host") == "www.example.com");
+	CHECK(context.request.searchHeader("user-agent") == "curl/7.68.0");
 }

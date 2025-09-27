@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 23:56:19 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:34:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 	// Allowed methods
 	if (isMethodAllowed(request, location) == false)
 		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
+
+	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
+	{
+		Logger::info("RequestHandler::handlePost() → Starting CGI");
+		return (handleCgi(request, location, *cgi));
+	}
 
 	// Allowed uploads
 	if (location.allow_uploads == false || location.upload_dir.empty())
