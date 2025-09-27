@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 10:07:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/24 10:21:51 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:04:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@
 /*
 	HttpResponse: Immutable once parsed
 */
-struct HttpRequest
+class HttpRequest
 {
+  public:
 	HttpMethod method;	 // "GET", "POST", "DELETE"
 	std::string target;	 // "/path?query=..."
 	std::string path;	 // "/path"
@@ -33,8 +34,16 @@ struct HttpRequest
 	std::string version; // "HTTP/1.1"
 	std::string body;
 	ContentType content_type;
+	unsigned short port; // For CGI
 	std::map<std::string, std::string> headers;
 	RequestParseStatus status = RequestParseStatus::PARSE_INCOMPLETE;
+
+	std::string toLower(const std::string &s) const;
+
+	// Headers
+	std::string searchHeader(const std::string &key) const;
+	std::string getHostName() const;
+	unsigned short getHostPort() const;
 };
 
 std::ostream &operator<<(std::ostream &out, const HttpRequest &req);

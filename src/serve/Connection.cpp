@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 23:55:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:06:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 // CONSTRUCTOR
 // ____________________________________________________________________________
-Connection::Connection(int clientFd, const Server *server, EventLoop *loop)
-	: fd_(clientFd), parser(parse_context.limits), keepAlive(false), lastActivityMs(0), loop(loop), server(server)
+Connection::Connection(int clientFd, const Server *server, EventLoop *loop, unsigned short port)
+	: fd_(clientFd), port(port), parser(parse_context.limits), keepAlive(false), lastActivityMs(0), loop(loop),
+	  server(server)
 {
 	Logger::info("Connection::Connection(" + std::to_string(clientFd) + ")");
 
@@ -31,6 +32,11 @@ Connection::Connection(int clientFd, const Server *server, EventLoop *loop)
 int Connection::fd() const
 {
 	return (this->fd_);
+}
+
+unsigned short Connection::getPort() const
+{
+	return (this->port);
 }
 
 static bool parserStalled(const ParseStep &step)

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 10:20:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/24 15:06:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 22:03:59 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,57 @@ std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 		<< "Body: " << req.body << "\n"
 		<< std::endl;
 	return (out);
+}
+
+std::string HttpRequest::toLower(const std::string &s) const
+{
+	std::string out;
+	out.reserve(s.size());
+	for (size_t i = 0; i < s.size(); ++i)
+		out.push_back(std::tolower(static_cast<unsigned char>(s[i])));
+	return (out);
+}
+
+/*
+ * Case-insensitive header lookup
+ *
+ * Return:
+ * 	- `Value` or "" if not found.
+ */
+std::string HttpRequest::searchHeader(const std::string &key) const
+{
+	std::string key_l = toLower(key);
+
+	for (std::map<std::string, std::string>::const_iterator it = headers.begin(); it != headers.end(); ++it)
+	{
+		if (toLower(it->first) == key_l)
+		{
+			return (it->second);
+		}
+	}
+	return ("");
+}
+
+std::string HttpRequest::getHostName() const
+{
+	std::string h = searchHeader("Host");
+	if (h.empty())
+		return ("");
+
+	size_t c = h.find(':');
+	if (c != std::string::npos)
+		return (h.substr(0, c));
+	return h;
+}
+
+unsigned short HttpRequest::getHostPort() const
+{
+	std::string h = searchHeader("Host");
+
+	size_t c = h.find(':');
+	if (c != std::string::npos)
+	{
+		return (static_cast<unsigned short>(std::atoi(h.substr(c + 1).c_str())));
+	}
+	return (this->port);
 }

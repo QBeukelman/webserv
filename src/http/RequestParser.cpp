@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 13:47:06 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 17:18:51 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,6 @@ RequestParser::RequestParser(HttpRequestLimits limits)
 HttpRequestLimits RequestParser::getLimits(void) const
 {
 	return (this->limits);
-}
-
-/*
- * Case-insensitive header lookup
- *
- * Return:
- * 	- `Value` or "" if not found.
- */
-std::string RequestParser::searchHeader(const std::map<std::string, std::string> &h, const std::string &key) const
-{
-	std::string key_l = toLower(key);
-
-	for (std::map<std::string, std::string>::const_iterator it = h.begin(); it != h.end(); ++it)
-	{
-		if (toLower(it->first) == key_l)
-		{
-			return (it->second);
-		}
-	}
-	return ("");
 }
 
 /*

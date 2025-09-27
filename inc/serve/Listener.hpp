@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Listener.hpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 09:13:07 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 10:59:32 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Listener.hpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/04 09:13:07 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/27 21:39:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Listener : public IOPollable
 	void setNonBlocking(int fd); // O_NONBLOCK
 	void bindAndListen(const std::string &ip, unsigned short port);
 	void closeIfValid();
+	unsigned short getLocalPort(int fd) const;
 
   public:
 	explicit Listener(const std::string &ip, unsigned short port, const Server *server, EventLoop *loop);

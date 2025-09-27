@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 01:23:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 14:30:07 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/CGI.hpp"
 #include "http/models/HttpMethod.hpp"
+#include "log/Logger.hpp"
 
 #include <algorithm>
 #include <dirent.h>
@@ -43,6 +44,8 @@ class Location : public IConfigBlock
 	std::string root;
 	std::vector<std::string> indexFiles;
 
+	const std::string getFileExtenstion(const std::string &request_path) const;
+
   public:
 	Location();
 	Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods);
@@ -59,7 +62,7 @@ class Location : public IConfigBlock
 	bool hasMethod(const HttpMethod) const;
 
 	// CGI
-	std::optional<CGI> getCgiByExtension(std::string requestPath) const;
+	std::optional<CGI> getCgiByExtension(const std::string &requestPath) const;
 	void addCgi(const CGI &cgi);
 
 	// Uploads

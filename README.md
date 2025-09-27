@@ -74,6 +74,19 @@ curl -v http://127.0.0.1:8080/uploads/Image_1.png --output "Image_1.png"
 curl -v -X DELETE http://127.0.0.1:8080/uploads/Image_1.png
 ```
 
+## `cgi`
+
+```bash
+# GET
+curl "http://127.0.0.1:8080/scripts/form.py?name=John"
+
+# POST
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "name=John&age=30" \
+  http://127.0.0.1:8080/scripts/form.py
+```
+
 ---
 
 <br/>

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpStatus.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 15:13:02 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/08 10:05:47 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpStatus.hpp                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/02 15:13:02 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/27 19:48:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,12 @@ const char *reasonPhrase(HttpStatus code);
  *	"HTTP/1.1 404 Not Found\r\n"
  */
 std::string toStatusLine(HttpStatus status, const std::string &version = "HTTP/1.1");
+
+/*
+ * Returns:
+ *	HttpStatus form integer
+ */
+HttpStatus toHttpStatus(int code);
 
 std::ostream &operator<<(std::ostream &out, HttpStatus status);
 

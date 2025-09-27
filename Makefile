@@ -6,7 +6,7 @@
 #    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/09/23 10:50:07 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/09/27 14:34:18 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,8 +55,6 @@ all: $(NAME)
 $(NAME): $(OBJECTS)
 	@echo "$(BLUE)\nLinking $(NAME)...$(RESET)"
 	@$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
-	@mkdir "var"
-	@mkdir "var/www"
 	@mkdir $(UPLOADS_DIRECTORY)
 	@echo "$(GREEN)\nDone\n$(RESET)"
 # TODO: Makefile: Only make upload directory if it does not exist
@@ -82,8 +80,6 @@ clean:
 
 fclean: clean
 	@rm -rf $(UPLOADS_DIRECTORY)
-	@rm -rf "var/www"
-	@rm -rf "var"
 	@rm -f $(NAME)
 
 re: fclean all

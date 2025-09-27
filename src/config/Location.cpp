@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 01:25:12 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 14:20:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,14 +99,6 @@ bool Location::hasDirective(unsigned int directive)
 bool Location::requiredDirectives(unsigned int required)
 {
 	return ((directiveFlags & required) == required);
-}
-
-// CGI
-// ____________________________________________________________________________
-// TODO: Location getCgiByExtension
-std::optional<CGI> Location::getCgiByExtension(std::string requestPath) const
-{
-	return (std::nullopt);
 }
 
 std::ostream &operator<<(std::ostream &out, const Location &location)
