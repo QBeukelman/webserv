@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:56:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 22:57:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 11:13:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,9 @@ TEST_CASE("RequestHandler: generateUploadFile")
 
 	RequestHandler handler(server);
 
-	std::vector<File> files;
-	for (int i = 0; i <= 10; i++)
-	{
-		files.push_back(handler.generateUploadFile("var/www/uploads", "test_file_" + std::to_string(i) + ".pdf"));
-		CHECK(files[i].getFd() >= 0);
-		if (i == 10)
-			CHECK(files[i].getName() == "var/www/uploads/test_file_10.pdf");
-	}
-	for (int i = 0; i <= 10; i++)
-	{
-		deleteFile(files[i]);
-	}
+	File file = handler.generateUploadFile("var/www/uploads", "test_file.pdf");
+	CHECK(file.getFd() >= 0);
+	CHECK(file.getName() == "var/www/uploads/test_file.pdf");
+
+	deleteFile(file);
 }

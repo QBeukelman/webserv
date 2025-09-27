@@ -69,6 +69,9 @@ curl -v -X POST http://127.0.0.1:8080/uploads \
 
 # GET
 curl -v http://127.0.0.1:8080/uploads/Image_1.png --output "Image_1.png"
+
+# DELETE
+curl -v -X DELETE http://127.0.0.1:8080/uploads/Image_1.png
 ```
 
 ---
