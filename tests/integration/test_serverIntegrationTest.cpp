@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/24 11:32:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 09:58:52 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ TEST_CASE("Server Integration Test: Connect to Listener")
 	int rc = ::connect(cfd, reinterpret_cast<sockaddr *>(&sa), sizeof(sa));
 	CHECK(rc == 0); // connect should succeed
 	::close(cfd);
-
-	// std::cout << "WebServer listening on 127.0.0.1:" << port << "\n";
 }
 
 TEST_CASE("Server Integration Test: Run Loop")

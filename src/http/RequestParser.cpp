@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestParser.cpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/25 09:50:01 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/17 12:03:06 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestParser.cpp                                  :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/26 13:47:06 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ ParseStep RequestParser::step(ParseContext &ctx, const char *data, size_t len) c
 	ParseStep step;
 
 	Logger::info("RequestParser::step() → Phase: " + toStringPhase(ctx.phase));
+
 	switch (ctx.phase)
 	{
 	case READ_START_LINE:
@@ -84,7 +85,7 @@ ParseStep RequestParser::step(ParseContext &ctx, const char *data, size_t len) c
 	case COMPLETE:
 		return (step = handleComplete(ctx));
 
-	case ERROR_STATE:
+	case ERROR_PHASE:
 	default:
 		return (step);
 	}

@@ -6,13 +6,13 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 09:22:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 14:07:10 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config/ServerConfig.hpp"
 
-static bool has_segment_boundry_match(const std::string &path, const std::string &prefix)
+static bool has_segment_boundary_match(const std::string &path, const std::string &prefix)
 {
 	if (path.compare(0, prefix.size(), prefix) != 0)
 		return (false);
@@ -51,7 +51,7 @@ Location Server::findLocation(const std::string &requestPath) const
 	std::vector<Location>::const_iterator it = locations.begin();
 	while (it != locations.end())
 	{
-		if (has_segment_boundry_match(requestPath, it->path_prefix))
+		if (has_segment_boundary_match(requestPath, it->path_prefix))
 		{
 			if (it->path_prefix.size() > best_len)
 			{

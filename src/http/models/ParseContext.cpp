@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 15:34:19 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 10:34:25 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:15:51 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ std::string toStringPhase(ParserPhase phase)
 		return "Read chunk data";
 	case COMPLETE:
 		return "Complete";
-	case ERROR_STATE:
-		return "Error";
+	case ERROR_PHASE:
+		return "Error Phase";
 	default:
 		return "Unknown phase";
 	}

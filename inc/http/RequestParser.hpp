@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/24 10:39:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 13:51:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ class RequestParser
 	ParseStep handleChunkSize(ParseContext &, const char *, size_t) const;
 	ParseStep handleChunkData(ParseContext &, const char *, size_t) const;
 	ParseStep handleComplete(ParseContext &) const;
-	ParseStep handleError(ParseContext &) const;
+
+	ParseStep handleError(ParseContext &) const; // TODO: Will remove
 
   public:
 	explicit RequestParser(HttpRequestLimits limits);

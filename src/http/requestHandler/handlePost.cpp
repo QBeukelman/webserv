@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:22:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 23:56:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 		return (makeError(STATUS_INTERNAL_ERROR, "Upload directory missing, server misconfiguration"));
 	}
 
+	// Check body size
 	const std::string &body = request.body;
 	if (body.empty())
 	{
@@ -33,9 +34,20 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 		return (makeError(STATUS_BAD_REQUEST, "Request body is empty"));
 	}
 
+	// File Upload
+	MultipartFile multipartFile;
+	if (request.content_type.getType() == ContentTypeKind::MULTIPART)
+	{
+		multipartFile = composeMultiPartData(request);
+	}
+
 	// Make a file
-	File file = generateUploadFile(location.normalizeDirectory(location.upload_dir));
-	std::cout << file << std::endl;
+	const std::string file_name = multipartFile.name + multipartFile.mime.getExtension();
+	File file = generateUploadFile(location.normalizeDirectory(location.upload_dir), file_name);
+
+	const std::string raw_data =
+		request.content_type.getType() == ContentTypeKind::MULTIPART ? multipartFile.data : body.data();
+
 	if (file.getFd() <= 0)
 	{
 		Logger::error("RequestHandler::handlePost() → Failed to create/open a new file");
@@ -43,7 +55,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 	}
 
 	// Write to file
-	ssize_t written = ::write(file.getFd(), body.data(), body.size());
+	ssize_t written = ::write(file.getFd(), raw_data.data(), body.size());
 	if (written < 0 || static_cast<size_t>(written) != body.size())
 	{
 		Logger::error("RequestHandler::handlePost() → Writing failed, wrote: " + std::to_string(written) + " bytes");

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 16:12:29 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/01 20:24:28 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:15:56 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 inline ParseStep returnError(ParseContext &ctx, RequestParseStatus status, std::string msg)
 {
 	ParseStep s;
-	ctx.phase = ERROR_STATE;
+	ctx.phase = ERROR_PHASE;
 	s.status = status;
 	s.need_more = false;
 
@@ -34,7 +34,9 @@ ParseStep RequestParser::handleChunkData(ParseContext &ctx, const char *data, si
 	ParseStep step;
 
 	// 1) Consume as many bytes as possible from chunk
-	size_t to_copy = std::min(ctx.chunk_bytes_remaining, len - ctx.read_offset);
+	const size_t available = len - ctx.read_offset;
+	const size_t to_copy = std::min(ctx.chunk_bytes_remaining, available);
+
 	if (to_copy > 0)
 	{
 		ctx.request.body.append(data + ctx.read_offset, to_copy);

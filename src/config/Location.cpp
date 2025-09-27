@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:24:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 01:25:12 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,8 +134,6 @@ bool Location::hasUploadsDir(std::string dir) const
 {
 	struct stat stat_buffer;
 
-	std::cout << "Trying to open: " << dir << std::endl;
-
 	// Read or write permission about file
 	if (stat(dir.c_str(), &stat_buffer) != 0)
 	{
@@ -164,4 +162,11 @@ std::string Location::normalizeDirectory(std::string directory) const
 		directory = directory.substr(1, directory.size());
 	}
 	return (directory);
+}
+
+// PATH
+// ____________________________________________________________________________
+std::string Location::getPath() const
+{
+	return (this->path_prefix);
 }

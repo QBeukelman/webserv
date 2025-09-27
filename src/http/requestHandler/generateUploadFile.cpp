@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:42:45 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:15:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 09:52:28 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,16 +78,9 @@ static const std::string newFileName(const std::string &upload_dir)
  * 	- File names are prepended with `upload_`
  * 	- Limited to `10000` files.
  */
-const File RequestHandler::generateUploadFile(const std::string &upload_dir) const
+const File RequestHandler::generateUploadFile(const std::string &upload_dir, const std::string file_name) const
 {
-	const std::string newName = newFileName(upload_dir);
-	if (newName.empty())
-	{
-		Logger::error("RequestHandler::generateUploadFile() → Exceeded allowed number of uploads");
-		return (File("", -1));
-	}
-
-	const int fd = open(newName.data(), O_WRONLY | O_CREAT | O_EXCL, 0644);
-
-	return (File(newName, fd));
+	const std::string file_path = upload_dir + "/" + file_name;
+	const int fd = open(file_path.data(), O_WRONLY | O_CREAT, 0644);
+	return (File(file_path, fd));
 }

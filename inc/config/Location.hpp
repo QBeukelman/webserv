@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:05:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 01:23:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ class Location : public IConfigBlock
 	void addUploadDirectory(const std::string dir);
 	bool hasUploadsDir(std::string dir) const;
 	std::string normalizeDirectory(std::string directory) const;
+
+	std::string getPath() const;
 
 	// IConfigBlock overrides
 	void setRoot(const std::string &root); /* override */

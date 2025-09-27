@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/24 08:58:12 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/25 09:52:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
 
-	std::cout << request << std::endl;
+	// std::cout << "HANDLE REQUEST()\n" << request << std::endl;
 
 	Location location;
 	try
