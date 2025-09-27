@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 09:58:52 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 11:22:45 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ TEST_CASE("Server Integration Test: Run Loop")
 	ServerConfig config = builder.listen("127.0.0.1", 8080)
 							  .new_root("/var/www")
 							  .new_prefix("/uploads")
+							  .allow(HttpMethod::GET)
 							  .allow(HttpMethod::POST)
+							  .allow(HttpMethod::DELETE)
 							  .upload_location("/var/www/uploads")
 							  .build();
 	WebServer webServer(config);

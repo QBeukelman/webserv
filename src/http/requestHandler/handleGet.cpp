@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 10:24:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 11:20:41 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 		}
 	}
 	::close(fd);
-
-	std::cout << "Body " << body << std::endl;
 
 	// Make response
 	// TODO: handleGet() → Stream entire file

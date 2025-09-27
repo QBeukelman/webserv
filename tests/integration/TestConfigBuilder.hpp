@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 08:59:53 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 14:26:09 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 11:21:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ struct TestConfigBuilder
 	TestConfigBuilder()
 		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/tmp"), has_redirects(false)
 	{
-		allowed.insert(HttpMethod::GET);
 	}
 
 	// ListenEndpoint
