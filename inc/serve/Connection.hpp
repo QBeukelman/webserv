@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 10:24:37 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 10:27:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "serve/EventLoop.hpp"
 #include "serve/IOPollable.hpp"
 
+#include <cstring>
 #include <string>
 #include <sys/socket.h>
 

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 22:48:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 10:26:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include "log/Logger.hpp"
 
 #include <cerrno>
+#include <cstring>
 #include <fcntl.h>
 #include <iostream>
 #include <sstream>
