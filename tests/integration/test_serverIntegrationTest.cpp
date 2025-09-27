@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 15:21:43 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 09:58:52 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ TEST_CASE("Server Integration Test: Connect to Listener")
 	int rc = ::connect(cfd, reinterpret_cast<sockaddr *>(&sa), sizeof(sa));
 	CHECK(rc == 0); // connect should succeed
 	::close(cfd);
-
-	// std::cout << "WebServer listening on 127.0.0.1:" << port << "\n";
 }
 
 TEST_CASE("Server Integration Test: Run Loop")
@@ -52,10 +50,10 @@ TEST_CASE("Server Integration Test: Run Loop")
 	TestConfigBuilder builder;
 
 	ServerConfig config = builder.listen("127.0.0.1", 8080)
-							  .new_root("/")
-							  .new_prefix("/submit")
+							  .new_root("/var/www")
+							  .new_prefix("/uploads")
 							  .allow(HttpMethod::POST)
-							  .upload_location("/uploads")
+							  .upload_location("/var/www/uploads")
 							  .build();
 	WebServer webServer(config);
 
@@ -63,6 +61,7 @@ TEST_CASE("Server Integration Test: Run Loop")
 	unsigned short port = webServer.primaryPort();
 	CHECK(port > 0);
 
+	std::cout << "=================================================================\n";
 	std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
 
 	// webServer.run();

@@ -41,12 +41,34 @@ make test
 <br/>
 
 
-## Testing with `curl`
+# Testing with `curl`
+
+## `.txt`
 
 ```bash
 curl -v -X POST "http://127.0.0.1:8080/submit" \
   -H "Content-Length: 26" \
   --data "name=Alice&age=30&city=AMS"
+```
+
+## `.pdf`
+
+```bash
+curl -v -X POST http://127.0.0.1:8080/uploads \
+  -F "file=@tests/test_files/document.pdf;type=application/pdf" \
+  -F "title=Quarterly Report"
+```
+
+## `.png`
+
+```bash
+# POST
+curl -v -X POST http://127.0.0.1:8080/uploads \
+  -F "file=@tests/test_files/cat.png;type=image/png" \
+  -F "title=Image_1"
+
+# GET
+curl -v http://127.0.0.1:8080/uploads/Image_1.png --output "Image_1.png"
 ```
 
 ---

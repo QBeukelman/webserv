@@ -6,7 +6,7 @@
 #    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/09/18 15:33:12 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/09/23 10:50:07 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ CXXFLAGS  := -std=c++17 -MMD -MP -Iinc -Itests
 # ---------------- Targets -----------------
 NAME				:= webserv
 TEST_BIN  			:= unit_tests
-UPLOADS_DIRECTORY	:= uploads
+UPLOADS_DIRECTORY	:= var/www/uploads
 
 # ---------------- Dirs --------------------
 DIR_OBJ   := obj
@@ -55,8 +55,11 @@ all: $(NAME)
 $(NAME): $(OBJECTS)
 	@echo "$(BLUE)\nLinking $(NAME)...$(RESET)"
 	@$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
+	@mkdir "var"
+	@mkdir "var/www"
 	@mkdir $(UPLOADS_DIRECTORY)
 	@echo "$(GREEN)\nDone\n$(RESET)"
+# TODO: Makefile: Only make upload directory if it does not exist
 
 # Build + run unit tests
 test: $(TEST_BIN)
@@ -74,10 +77,13 @@ $(DIR_OBJ)/%.o: %.cpp
 
 clean:
 	@echo "$(BLUE)\nCleaning ...$(RESET)"
-	@rm -rf $(DIR_OBJ) $(TEST_BIN) $(UPLOADS_DIRECTORY)
+	@rm -rf $(DIR_OBJ) $(TEST_BIN)
 	@echo "$(GREEN)$(BOLD)\nAll clean!\n$(RESET)"
 
 fclean: clean
+	@rm -rf $(UPLOADS_DIRECTORY)
+	@rm -rf "var/www"
+	@rm -rf "var"
 	@rm -f $(NAME)
 
 re: fclean all

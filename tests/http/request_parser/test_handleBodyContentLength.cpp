@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 13:01:00 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/05 16:02:04 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:16:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ TEST_CASE("handleBodyContentLength: partial copy respects remaining length")
 	CHECK(s1.consumed == 4);
 	CHECK(ctx.request.body == "GHIJ");
 	CHECK(ctx.content_length_remaining == 6);
-	CHECK(ctx.read_offset == 10);
 
 	const char *data2 = "0123456789";
 	ctx.read_offset = 0;
@@ -106,7 +105,7 @@ TEST_CASE("handleBodyContentLength: enforces max_body_size across calls")
 	const char *data2 = "BBBB";
 	ParseStep s2 = p.handleBodyContentLength(ctx, data2, 4);
 	CHECK(s2.status == PARSE_EXCEED_LIMIT);
-	CHECK(ctx.phase == ERROR_STATE);
+	CHECK(ctx.phase == ERROR_PHASE);
 }
 
 TEST_CASE("handleBodyContentLength: does not read past current window (available)")

@@ -5,6 +5,9 @@ webserv
 obj
 unit_tests
 
+# Uploads directory
+uploads
+
 # Mac OS X thing
 .DS_Store
 

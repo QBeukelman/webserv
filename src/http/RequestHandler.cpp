@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 15:36:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/25 09:52:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
+
+	// std::cout << "HANDLE REQUEST()\n" << request << std::endl;
+
 	Location location;
 	try
 	{
@@ -69,15 +72,22 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 
 // PRIVATE
 // ____________________________________________________________________________
-static bool isMethodAllowed(const HttpRequest &request, const Location &location)
+/*
+ * Search locations for allowed methods.
+ */
+const bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
 {
 	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
 }
 
+// PUBLIC
+// ____________________________________________________________________________
+// ==== Handlers ====
 HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
 {
 	// Log error
-	Logger::error("RequestHandler::" + detail + " → [" + std::to_string(status) + "] " + reasonPhrase(status));
+	Logger::error("RequestHandler::makeError() → " + detail + " → [" + std::to_string(status) + "] " +
+				  reasonPhrase(status));
 
 	// Create error response
 	HttpResponse response;
@@ -101,48 +111,4 @@ HttpResponse RequestHandler::makeMock200(const HttpRequest &request) const
 	response.body = request.body;
 	response.headers["Content-Length"] = std::to_string(response.body.size());
 	return (response);
-}
-
-HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
-{
-	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet()"));
-
-	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
-	{
-		// Run CGI(CGI)
-		return (HttpResponse());
-	}
-
-	// TODO: Define Response
-	Logger::info("RequestHandler::handleGet → Get Accepted");
-	return (makeMock200(request));
-}
-
-HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
-{
-	// Allowed methods
-	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
-
-	// Allowed uploads
-	if (location.allow_uploads == false || location.upload_dir.empty())
-		return (makeError(STATUS_FORBIDDEN, "Uploads not allowed on this Location"));
-	if (location.hasUploadsDir(location.upload_dir) == false)
-		return (makeError(STATUS_INTERNAL_ERROR, "Upload directory missing"));
-
-	// TODO: handlePost() → Create and write to file in "uploads" directory
-
-	Logger::info("RequestHandler::handlePost → Post Accepted");
-	return (makeMock200(request));
-}
-
-HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Location &location) const
-{
-	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleDelete()"));
-
-	// TODO: Define Response
-	Logger::info("RequestHandler::handleDelete → Delete Accepted");
-	return (HttpResponse());
 }

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 09:17:41 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/01 20:01:00 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:16:02 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ bool exceedsBodyLimit(const ParseContext &ctx, size_t next_chunk)
 inline ParseStep returnError(ParseContext &ctx, RequestParseStatus status, std::string msg)
 {
 	ParseStep s;
-	ctx.phase = ERROR_STATE;
+	ctx.phase = ERROR_PHASE;
 	s.status = status;
 	s.need_more = false;
 

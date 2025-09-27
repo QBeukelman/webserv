@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/18 11:36:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 23:54:23 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,8 +166,14 @@ void EventLoop::run(void)
 
 	while (true)
 	{
-		// 1) Poll
-		// What if poll() → UB if empty.
+		// 1) UB Guard
+		if (pfds.empty())
+		{
+			willClosePending();
+			continue;
+		}
+
+		// 2) Poll
 		int n = ::poll(&pfds[0], pfds.size(), -1);
 		if (n == 0)
 		{
@@ -180,15 +186,16 @@ void EventLoop::run(void)
 			continue;
 		}
 
-		// 2) Dispatch events
-		for (size_t i = 0; i < pfds.size(); i++)
+		// 3) Dispatch events
+		size_t pfd_count = pfds.size();
+		for (size_t i = 0; i < pfd_count; i++)
 		{
 			const int fd = pfds[i].fd;
 			const short re = pfds[i].revents;
 			if (!re)
 				continue;
 
-			std::map<int, IOPollable *>::iterator it = handlers.find(fd);
+			auto it = handlers.find(fd);
 			if (it == handlers.end() || it->second == NULL)
 			{
 				Logger::error("EventLoop: no handler for fd " + std::to_string(fd));
@@ -198,25 +205,23 @@ void EventLoop::run(void)
 
 			if (re & (POLLERR | POLLHUP | POLLNVAL))
 			{
-				// TODO: run() → error or handup.
 				Logger::info("EventLoop::run() → onHangupOrError()");
 				h->onHangupOrError(re);
+				continue;
 			}
 			if (re & POLLIN)
 			{
-				// TODO: run() → data may be read without blocking.
 				Logger::info("EventLoop::run() → onReadable()");
 				h->onReadable();
 			}
 			if (re & POLLOUT)
 			{
-				// TODO: run() → data may be written without blocking.
 				Logger::info("EventLoop::run() → onWritable()");
 				h->onWritable();
 			}
 		}
 
-		// 3) Cleanup defferred closes
+		// 4) Cleanup defferred closes
 		willClosePending();
 	}
 }

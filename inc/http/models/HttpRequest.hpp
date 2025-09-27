@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 10:07:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 13:43:51 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/24 10:21:51 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 #include "HttpMethod.hpp"
 #include "RequestParseStatus.hpp"
+#include "http/models/ContentType.hpp"
 
 #include <iostream>
 #include <map>
 #include <string>
 
 /*
-	HttpResponse: Immutable once parced
+	HttpResponse: Immutable once parsed
 */
 struct HttpRequest
 {
@@ -31,6 +32,7 @@ struct HttpRequest
 	std::string query;	 // "a=1&b=2"
 	std::string version; // "HTTP/1.1"
 	std::string body;
+	ContentType content_type;
 	std::map<std::string, std::string> headers;
 	RequestParseStatus status = RequestParseStatus::PARSE_INCOMPLETE;
 };

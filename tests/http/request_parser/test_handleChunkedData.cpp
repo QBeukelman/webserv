@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 16:29:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/05 13:53:34 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:16:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,24 +47,18 @@ TEST_CASE("RequestParser: handleChunkedData() with loop")
 	// A fixed raw request (chunked). Normally from recv()
 	const char *raw = HTTP_REQUEST_POST_CHUNKED;
 	size_t total_len = 210;
-	size_t offset = 0;
 
 	// Feed data until complete
-	while (offset < total_len && context.request.status != PARSE_OK)
+	while (context.read_offset < total_len && context.request.status != PARSE_OK)
 	{
-		// Call parser with the *remaining* data
 		step = p.step(context, raw, total_len);
-
-		// Advance buffer offset by what parser consumed
-		offset += step.consumed;
-
-		// std::cout << step << "\n";
+		if (context.phase == ERROR_PHASE)
+			break;
 	}
-	// std::cout << context;
 
 	CHECK(step.request_complete == true);
 	CHECK(step.status == PARSE_OK);
 	CHECK(context.phase == COMPLETE);
 	CHECK(context.request.body == "MozillaDeveloperNetwork");
-	CHECK(offset == (total_len - 1));
+	CHECK(context.read_offset == (total_len - 1));
 }

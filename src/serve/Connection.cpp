@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 13:28:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 23:55:31 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 // CONSTRUCTOR
 // ____________________________________________________________________________
 Connection::Connection(int clientFd, const Server *server, EventLoop *loop)
-	: fd_(clientFd), parser(parseContext.limits), keepAlive(false), lastActivityMs(0), loop(loop), server(server)
+	: fd_(clientFd), parser(parse_context.limits), keepAlive(false), lastActivityMs(0), loop(loop), server(server)
 {
 	Logger::info("Connection::Connection(" + std::to_string(clientFd) + ")");
 
 	// Init ParseContext
-	parseContext = ParseContext();
+	parse_context = ParseContext();
+	connection_state = ConnectionState::READING;
 
 	// Buffers start empty
 	inBuf.clear();
@@ -32,66 +33,85 @@ int Connection::fd() const
 	return (this->fd_);
 }
 
+static bool parserStalled(const ParseStep &step)
+{
+	if (step.consumed == 0 && !step.need_more && !step.request_complete && step.status != PARSE_INVALID_METHOD &&
+		step.status != PARSE_INVALID_VERSION && step.status != PARSE_MALFORMED_REQUEST &&
+		step.status != PARSE_EXCEED_LIMIT)
+	{
+		return (true);
+	}
+	return (false);
+}
+
+bool Connection::handleParseError(const ParseStep &step)
+{
+	if (step.status == PARSE_INVALID_METHOD || step.status == PARSE_INVALID_VERSION ||
+		step.status == PARSE_MALFORMED_REQUEST || step.status == PARSE_EXCEED_LIMIT)
+	{
+		HttpStatus st = (step.status == PARSE_EXCEED_LIMIT) ? HttpStatus::STATUS_PAYLOAD_TOO_LARGE // 413
+															: HttpStatus::STATUS_BAD_REQUEST;	   // 400
+
+		HttpResponse response = RequestHandler(*this->server).makeError(st, "Bad request");
+		outBuf = response.serialize();
+		keepAlive = false;
+		loop->update(this); // Switch to POLLOUT
+		return (true);
+	}
+	return (false);
+}
+
 // PARSE
 // ____________________________________________________________________________
 void Connection::feedParserFromBuffer()
 {
-	size_t offset = 0;
-
-	while (offset < inBuf.size())
+	while (parse_context.read_offset < inBuf.size())
 	{
-		const char *data = inBuf.data();
-		size_t window_size = inBuf.size() - offset;
-
-		ParseStep step = parser.step(parseContext, data, window_size);
-		offset += step.consumed;
+		// 1) Step function
+		ParseStep step = parser.step(parse_context, inBuf.data(), inBuf.size());
+		if (parserStalled(step) == true)
+			break;
 
 		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
 
-		// 1) Handle parse error
-		if (step.status == PARSE_INVALID_METHOD || step.status == PARSE_INVALID_VERSION ||
-			step.status == PARSE_MALFORMED_REQUEST || step.status == PARSE_EXCEED_LIMIT)
+		// 2) Handle parse error
+		if (handleParseError(step))
 		{
-			std::string detail = "Bad request";
-			HttpResponse response = RequestHandler(*this->server).makeError(HttpStatus::STATUS_BAD_REQUEST, detail);
-			outBuf = response.serialize();
-			keepAlive = false;
-			break;
-			loop->update(this); // Want POLLOUT
+			// Optional: compact what was consumed
+			if (parse_context.read_offset > 0)
+			{
+				inBuf.erase(0, parse_context.read_offset);
+				parse_context.read_offset = 0;
+			}
+			connection_state = ConnectionState::WRITING;
+			loop->update(this); // POLLOUT
+			return;
 		}
 
-		// 2) Complete request
+		// 3) Complete request
 		if (step.request_complete)
 		{
-			HttpResponse response = RequestHandler(*this->server).handle(parseContext.request);
+			HttpResponse response = RequestHandler(*server).handle(parse_context.request);
 			outBuf = response.serialize();
 
-			std::cout << "Out Buffer: " << outBuf << std::endl;
-
-			// TODO: Connection::feedParserFromBuffer() → Keep-Alive decision
+			// TODO: Should keep alive?
 			keepAlive = true;
 
-			loop->update(this); // Want POLLOUT
+			if (parse_context.read_offset > 0)
+			{
+				inBuf.erase(0, parse_context.read_offset);
+				parse_context.read_offset = 0;
+			}
 
-			// Prepare pipeline for next request → Leep leftover bytes
-			if (offset < inBuf.size())
-				inBuf.erase(0, offset);
-			else
-				inBuf.clear();
-
-			parseContext = ParseContext(); // Reset state machine
-			offset = 0;
-			continue;
+			connection_state = ConnectionState::WRITING;
+			loop->update(this); // POLLOUT
+			return;
 		}
 
-		// 3) Need more bytes to proceed → stop feeding for now
+		// 3) Need more bytes to proceed → Return to poll() for more bytes
 		if (step.need_more)
 			break;
 	}
-
-	// Drop consumed bytes
-	if (offset > 0 && offset <= inBuf.size())
-		inBuf.erase(0, offset);
 }
 
 // PUBLIC
@@ -103,66 +123,95 @@ void Connection::feedParserFromBuffer()
  * `onReadable()` calles `recv()` and feeds bytes to HttpParser.
  *
  * Notes:
- * 	Readable = client sent data.
+ * 	- Readable = client sent data.
+ * 	- `16kb` buffer.
  */
 void Connection::onReadable()
 {
-	// TODO: Connection::onReadable() what is buffer size?
-	char buf[8192]; // 8kb
-
-	ssize_t n = 0;
-
-	n = ::recv(fd_, buf, sizeof(buf), 0);
-	if (n > 0)
-	{
-		// TODO: Connection::onReadable() What is max time?
-		lastActivityMs = loop->nowMs();
-		inBuf.append(buf, static_cast<size_t>(n));
-		feedParserFromBuffer();
+	if (connection_state != ConnectionState::READING)
 		return;
-	}
-	else if (n == 0)
+
+	static const size_t buf_size = 16 * 1024;
+	char buf[buf_size];
+
+	for (;;)
 	{
-		// Peer closed
-		keepAlive = false;
+		ssize_t n = ::recv(fd_, buf, sizeof(buf), 0);
+		if (n > 0)
+		{
+			// TODO: Connection::onReadable() What is max time?
+			lastActivityMs = loop->nowMs();
+			inBuf.append(buf, static_cast<size_t>(n));
+			feedParserFromBuffer();
+			return;
+		}
+		else if (n == 0)
+		{
+			// Peer closed
+			keepAlive = false;
+			loop->closeLater(this);
+			Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
+			return;
+		}
+
+		// n < 0
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+		{
+			Logger::error("Connection::onReadable() (errno == EAGAIN || errno == EWOULDBLOCK)");
+			continue; // Retry recv()
+		}
+		if (errno == EINTR)
+		{
+			Logger::error("Connection::onReadable() (errno == EINTR)");
+			return; // Nothing to read now, wait for next POLLIN
+		}
+
+		connection_state = ConnectionState::CLOSING;
 		loop->closeLater(this);
-		Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
+		Logger::info("Connection::onReadable() → Reach end of recv");
 		return;
 	}
-
-	// n < 0
-	if (errno == EAGAIN || errno == EWOULDBLOCK)
-	{
-		Logger::error("Connection::onReadable() (errno == EAGAIN || errno == EWOULDBLOCK)");
-		return;
-	}
-	if (errno == EINTR)
-	{
-		Logger::error("Connection::onReadable() (errno == EINTR)");
-		return;
-	}
-
-	// TODO: Connection::onReadable() When should we mark this for closing?
-	loop->closeLater(this);
-	Logger::info("Connection::onReadable() → Reach end of recv");
-	return;
 }
 
 void Connection::onWritable()
 {
-	// TODO: Connection::onWritable()
+	if (connection_state != ConnectionState::WRITING)
+		return;
+
+	if (outBuf.empty())
+	{
+		// Nothing to write
+		loop->update(this);
+		return;
+	}
+
 	ssize_t n = ::send(fd_, outBuf.data(), outBuf.size(), 0);
 	if (n > 0)
 	{
 		outBuf.erase(0, n);
+		if (outBuf.empty())
+		{
+			// Response complete
+			if (keepAlive == false)
+			{
+				loop->closeLater(this);
+				return;
+			}
+
+			// TODO: Reset parser
+			// parser.reset();
+			parse_context = ParseContext();
+			connection_state = ConnectionState::READING;
+			loop->update(this);
+		}
 	}
 	else if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
 	{
-		// Try again later when poll() says POLLOUT
+		// Keep POLLOUT, try onWritable again
 	}
 	else
 	{
-		// Error: close connection
+		// TODO: onWritable() Error → close connection
 	}
 }
 
@@ -173,15 +222,55 @@ void Connection::onWritable()
  */
 short Connection::interest() const
 {
-	const short interest = outBuf.empty() ? POLLIN : POLLIN | POLLOUT;
+	short interest = 0;
 
-	const std::string log = interest == POLLIN ? "POLLIN" : "POLLOUT";
-	Logger::info("Connection::interest() → New interest: " + log);
-	return (interest);
+	switch (connection_state)
+	{
+	case ConnectionState::READING: {
+		Logger::info("Connection::interest() → New interest: POLLIN");
+		return (POLLIN);
+	}
+	case ConnectionState::WRITING: {
+		Logger::info("Connection::interest() → New interest: POLLOUT");
+		return (POLLOUT);
+	}
+	case ConnectionState::CLOSING: {
+		Logger::info("Connection::interest() → New interest: CLOSING");
+		return (0);
+	}
+	}
+	return (0);
 }
 
 void Connection::onHangupOrError(short revents)
 {
-	// TODO: Connection::onHangupOrError()
-	Logger::error("Connection::onHangupOrError → " + std::to_string(revents));
+	connection_state = ConnectionState::CLOSING;
+	if (revents & POLLHUP)
+	{
+		// Hang up
+		Logger::info("Connection::onHangupOrError() → POLLHUP (peer closed)");
+		loop->closeLater(this);
+	}
+
+	if (revents & POLLERR)
+	{
+		int soerr = 0;
+		socklen_t sl = sizeof(soerr);
+		if (::getsockopt(fd(), SOL_SOCKET, SO_ERROR, &soerr, &sl) == 0 && soerr != 0)
+		{
+			Logger::error("Connection::onHangupOrError() → POLLERR: " + std::string(std::strerror(soerr)));
+		}
+		else
+		{
+			Logger::error("Connection::onHangupOrError() → POLLERR (unknown)");
+		}
+	}
+
+	if (revents & POLLNVAL)
+	{
+		// Fd was invalid for polling
+		Logger::error("Connection::onHangupOrError() → POLLNVAL (invalid fd)");
+		loop->closeLater(this);
+		return;
+	}
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handleStartLineAndHeaders.cpp                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/28 20:39:56 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 12:00:44 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handleStartLineAndHeaders.cpp                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/26 14:06:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,33 @@ static bool check_single_header_limit(const char *data, size_t header_end, size_
 	return (true);
 }
 
+static ContentType classifyContentType(const std::string &ct)
+{
+	ContentType contentType = ContentType(ct);
+
+	if (contentType.getType() != UNKONOWN)
+	{
+		if (contentType.getType() == MULTIPART)
+		{
+			const std::string key = "boundary=";
+			std::string::size_type boundary_start = ct.find(key);
+			if (boundary_start != ct.npos)
+			{
+				std::string boundary = ct.substr(boundary_start + key.size());
+				contentType.setBoundary(boundary);
+			}
+		}
+	}
+	return (contentType);
+}
+
 static ParseStep returnFailure(ParseContext &ctx, ParseStep &step, RequestParseStatus status, std::string msg)
 {
 	std::ostringstream oss;
 	oss << "RequestParser::handleStartLineAndHeaders() → " << toStringStatus(status) << ": " << msg;
 	Logger::error(oss.str());
 
-	ctx.phase = ERROR_STATE;
+	ctx.phase = ERROR_PHASE;
 	ctx.request.status = status;
 	step.status = status;
 
@@ -89,7 +109,7 @@ static ParseStep applyTransferEncoding(ParseContext &ctx, std::string te, size_t
 	}
 
 	// How many bytes are still available in this buffer after the headers?
-	const size_t avail = (total_len > consumed_headers) ? (total_len - consumed_headers) : 0;
+	const size_t available = (total_len > consumed_headers) ? (total_len - consumed_headers) : 0;
 
 	ctx.is_chunked = true;
 	ctx.chunk_bytes_remaining = 0;
@@ -104,7 +124,7 @@ static ParseStep applyTransferEncoding(ParseContext &ctx, std::string te, size_t
 	step.request_complete = false;
 	step.consumed = consumed_headers;
 	// If there are bytes after headers, dispatcher can immediately call handleChunkSize()
-	step.need_more = (avail == 0);
+	step.need_more = (available == 0);
 	return (step);
 }
 
@@ -174,32 +194,33 @@ static ParseStep applyContentLength(ParseContext &ctx, std::string cl, size_t co
 ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char *data, size_t len) const
 {
 	ParseStep step;
-
 	Logger::info("RequestParser::handleStartLineAndHeaders()");
 
-	// 1) Find end of header
-	size_t header_end = 0;
-	if (find_header_end(data, len, header_end) == false)
-		return (returnFailure(ctx, step, PARSE_MALFORMED_REQUEST, "Did not find header end"));
+	if (ctx.read_offset > len)
+	{
+		return (returnFailure(ctx, step, PARSE_INTERNAL_ERROR, "read_offset beyond len"));
+	}
 
-	// 2) Check header block size
-	if ((header_end + 4) > ctx.limits.max_header_size)
-		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Header length exceeded"));
-
-	// 3) Find end of start-line
+	// 1) Find Start-Line and Header end
 	size_t sl_end = (size_t)-1;
-	if (find_start_line_end(data, header_end, sl_end) == false)
-		return (returnFailure(ctx, step, PARSE_MALFORMED_REQUEST, "No end start-line"));
+	size_t header_end = 0;
 
-	// Check start-line size
+	if (find_header_end(data, len, header_end) == false)
+		return (returnFailure(ctx, step, PARSE_INCOMPLETE, "Did not find header end"));
+	if (find_start_line_end(data, header_end, sl_end) == false)
+		return (returnFailure(ctx, step, PARSE_INCOMPLETE, "Did not find end of start-line"));
+
+	// 2) Check Start-Line and Header block size
+	if ((header_end + 4) > ctx.limits.max_header_size)
+		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Header length exceeds limits"));
 	if (sl_end > ctx.limits.max_start_line)
 		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Start-line exceeds limits"));
 
-	// 4) Enforce single line header line limit
+	// 3) Enforce single line header line limit
 	if (check_single_header_limit(data, header_end, sl_end, ctx.limits.max_header_line) == false)
 		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Single header line exceeds limits"));
 
-	// 5) Parse Start-Line and Headers
+	// 4) Parse Start-Line and Headers
 	std::string startLine(data, data + sl_end);
 	std::string headerBlock(data + sl_end + 2, data + header_end);
 
@@ -212,9 +233,13 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 	const size_t consumed_headers = header_end + 4;
 	step.consumed = consumed_headers;
 
-	// 6) Decide what to do with `body` based on headers
+	// 5) Decide what to do with `body` based on headers
 	const std::string te = toLower(searchHeader(ctx.request.headers, "transfer-encoding"));
 	const std::string &cl = searchHeader(ctx.request.headers, "content-length");
+
+	// Content Type
+	const std::string ct = searchHeader(ctx.request.headers, "content-type");
+	ctx.request.content_type = classifyContentType(ct);
 
 	// TODO: Treat a message as chunked only if the last coding is chunked.
 	if (!te.empty() && !cl.empty())

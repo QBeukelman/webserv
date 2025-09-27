@@ -6,14 +6,16 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/02 13:52:02 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 13:51:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUESTPARSER_HPP
 #define REQUESTPARSER_HPP
 
+#include "http/models/ContentType.hpp"
 #include "http/models/HttpRequest.hpp"
+#include "http/models/Mime.hpp"
 #include "http/models/ParseContext.hpp"
 #include "log/Logger.hpp"
 
@@ -64,7 +66,8 @@ class RequestParser
 	ParseStep handleChunkSize(ParseContext &, const char *, size_t) const;
 	ParseStep handleChunkData(ParseContext &, const char *, size_t) const;
 	ParseStep handleComplete(ParseContext &) const;
-	ParseStep handleError(ParseContext &) const;
+
+	ParseStep handleError(ParseContext &) const; // TODO: Will remove
 
   public:
 	explicit RequestParser(HttpRequestLimits limits);

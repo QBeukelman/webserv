@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/12 21:58:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/27 10:27:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,19 @@
 #include "serve/EventLoop.hpp"
 #include "serve/IOPollable.hpp"
 
+#include <cstring>
 #include <string>
 #include <sys/socket.h>
 
 class Server;	 // Forward
 class EventLoop; // Forward
+
+enum class ConnectionState
+{
+	READING,
+	WRITING,
+	CLOSING
+};
 
 /*
  * A `Connection` represents an active TCP session with a single client.
@@ -40,8 +48,9 @@ class Connection : public IOPollable
   private:
 	int fd_;
 
-	ParseContext parseContext;
+	ParseContext parse_context;
 	RequestParser parser;
+	ConnectionState connection_state;
 
 	std::string inBuf;
 	std::string outBuf;
@@ -53,6 +62,7 @@ class Connection : public IOPollable
 	EventLoop *loop;	  // To register new connections
 
 	// Parse
+	bool handleParseError(const ParseStep &step);
 	void feedParserFromBuffer();
 
   public:

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/30 15:25:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 10:39:01 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:39:32 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 		return (step);
 	}
 
-	// Bytes available in the current window after the headers (and previous reads)
-	const size_t available = len - ctx.read_offset;
-	if (available == 0)
+	// No bytes in this window
+	if (len == 0)
 	{
 		step.status = PARSE_INCOMPLETE;
 		step.need_more = true;
@@ -40,42 +39,36 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 	}
 
 	// Copy only what fits in the remaining body length
+	const size_t available = len - ctx.read_offset;
 	size_t to_copy = std::min(available, ctx.content_length_remaining);
 
 	// Enforce max body size across calls
 	if (ctx.total_body_bytes + to_copy > ctx.limits.max_body_size)
 	{
-		ctx.phase = ERROR_STATE;
+		ctx.phase = ERROR_PHASE;
 		ctx.last_status = PARSE_EXCEED_LIMIT;
 		step.status = PARSE_EXCEED_LIMIT;
 		step.need_more = false;
-		Logger::info("handleBodyContentLength: Max body size");
+		step.request_complete = false;
+		Logger::error("handleBodyContentLength: Max body size");
 		return (step);
 	}
 
-	// Append the slice starting at read_offset
+	// Append the slice from beginning of this window
 	ctx.request.body.append(data + ctx.read_offset, to_copy);
 	ctx.total_body_bytes += to_copy;
 	ctx.content_length_remaining -= to_copy;
 	ctx.read_offset += to_copy;
+
 	step.consumed = to_copy;
+	step.need_more = (ctx.content_length_remaining > 0);
+	step.request_complete = (ctx.content_length_remaining == 0);
+	step.status = step.request_complete ? PARSE_OK : PARSE_INCOMPLETE;
 
-	// Decide next step
-	if (ctx.content_length_remaining > 0)
+	if (step.request_complete)
 	{
-		// Still need more bytes -> remain in READ_BODY_CONTENT_LENGTH
-		step.status = PARSE_INCOMPLETE;
-		step.need_more = true;
-		step.request_complete = false;
-		return (step);
+		ctx.phase = COMPLETE;
+		ctx.last_status = PARSE_OK;
 	}
-
-	// Body complete
-	ctx.phase = COMPLETE;
-	ctx.request.status = PARSE_OK;
-	step.need_more = false;
-	step.request_complete = true;
-	step.status = PARSE_OK;
-
 	return (step);
 }

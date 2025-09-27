@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:20:19 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/05 14:51:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 11:30:26 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ std::string toStringStatus(RequestParseStatus status)
 	{
 	case PARSE_OK:
 		return "OK";
+	case PARSE_INTERNAL_ERROR:
+		return "Internal server error";
 	case PARSE_INVALID_METHOD:
 		return "Invalid method";
 	case PARSE_INVALID_VERSION:

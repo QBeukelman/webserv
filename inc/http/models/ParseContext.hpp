@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 14:56:11 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/02 14:54:25 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/26 13:44:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@ enum ParserPhase
 	READ_BODY_CONTENT_LENGTH,
 	READ_CHUNK_SIZE,
 	READ_CHUNK_DATA,
+	READ_MULTIPART,
 	COMPLETE,
-	ERROR_STATE
+	ERROR_PHASE
 };
 
 std::string toStringPhase(ParserPhase);
