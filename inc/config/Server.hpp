@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/19 10:43:22 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 09:10:49 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class Server : public IConfigBlock
 	Server(std::string name);
 
 	// Methods
-	Location findLocation(const std::string &requestPath) const;
+	Location findLocation(const std::string &rawPath) const;
 
 	// -- Getters & Setters --
 	// Names

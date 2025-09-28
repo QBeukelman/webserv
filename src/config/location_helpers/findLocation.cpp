@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 14:07:10 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 10:11:07 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,18 @@
 
 static bool has_segment_boundary_match(const std::string &path, const std::string &prefix)
 {
-	if (path.compare(0, prefix.size(), prefix) != 0)
-		return (false);
 	if (prefix.empty())
 		return (false);
-
-	// Ensure that we do not match `/adm` for `/admin`
-	if (prefix[path.size() - 1] == '/')
+	if (prefix == "/")
 		return (true);
 
-	// Either exact length match, or next char in path is a '/'
+	if (path.compare(0, prefix.size(), prefix) != 0)
+		return (false);
+
 	if (path.size() == prefix.size())
 		return (true);
-	return (path.size() > prefix.size() && path[prefix.size()] == '/');
+
+	return (path[prefix.size()] == '/');
 }
 
 // FIND LOCATION
@@ -43,15 +42,24 @@ static bool has_segment_boundary_match(const std::string &path, const std::strin
  * Notes:
  * 		- May return `NULL` → caller must handle fallback.
  */
-Location Server::findLocation(const std::string &requestPath) const
+Location Server::findLocation(const std::string &rawPath) const
 {
+
+	// 1) Normalize path (Ensure leading `/`)
+	std::string normalized_path = rawPath;
+	if (normalized_path.empty() || normalized_path[0] != '/')
+		normalized_path.insert(normalized_path.begin(), '/');
+
+	// 2) Longest prefix match
 	const Location *best = NULL;
 	size_t best_len = 0;
 
 	std::vector<Location>::const_iterator it = locations.begin();
 	while (it != locations.end())
 	{
-		if (has_segment_boundary_match(requestPath, it->path_prefix))
+		std::cout << "Searching location: " << it->path_prefix << " path: " << normalized_path << std::endl;
+
+		if (has_segment_boundary_match(normalized_path, it->path_prefix))
 		{
 			if (it->path_prefix.size() > best_len)
 			{
@@ -61,6 +69,7 @@ Location Server::findLocation(const std::string &requestPath) const
 		}
 		it++;
 	}
+
 	if (best)
 		return (*best);
 	throw LocationNotFoundException();

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 21:22:16 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 09:55:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 	Location location;
 	try
 	{
+		std::cout << "Request path: " << request.path << std::endl;
 		location = server.findLocation(request.path);
 	}
 	catch (Server::LocationNotFoundException &e)

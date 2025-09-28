@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 22:33:58 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 10:12:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,18 @@ static std::string getFileExtension(const std::string &file_path)
 	return (file_path.substr(dot));
 }
 
+static std::string buildFilePath(const Location &location, const std::string &request_path)
+{
+	// 1) Substring path after prefix
+	std::string relative = request_path.substr(location.path_prefix.size());
+
+	// 2) Join it with root
+	std::string file_path = location.getRoot();
+	if (file_path.empty() == false && file_path.back() != '/')
+		file_path.push_back('/');
+	return (file_path + relative);
+}
+
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
@@ -33,7 +45,8 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	}
 
 	// 1) Open file
-	const std::string file_path = location.normalizeDirectory(location.getRoot()) + request.path;
+	const std::string file_path = buildFilePath(location, request.path);
+	std::cout << "File path: " << file_path << std::endl;
 
 	const int fd = open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)

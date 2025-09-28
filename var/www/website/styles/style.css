@@ -1,0 +1,143 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   style.css                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/27 23:57:54 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/28 11:44:25 by quentinbeuk   ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
+* {
+	box-sizing: border-box;
+}
+
+.spaced-section {
+	margin: 3em 0;
+	text-align: center;
+}
+
+.button {
+	all: unset;
+	width: 100%;
+	max-width: 400px;
+	min-width: 400px;
+	padding: 1rem 2rem;
+	box-sizing: border-box;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Inter', sans-serif;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 1rem;
+	margin: 1rem auto;
+	background-color: #000;
+	color: #fff;
+	cursor: pointer;
+}
+
+.back-home-button {
+	display: inline-block;
+	font-family: 'Inter', sans-serif;
+	font-weight: 300;
+	font-size: 1rem;
+	font-weight: 400;
+	color: #111;
+	background-color: transparent;
+	padding: 0.8rem 1.5rem;
+	border-radius: 50px;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	margin-top: 4rem;
+	justify-content: center;
+}
+
+body {
+	font-family: 'Lora', serif;
+	font-weight: 400;
+	color: #333
+}
+
+h1 {
+	font-size: 5rem;
+	font-family: "Special Gothic Expanded One", sans-serif;
+	font-weight: 400;
+}
+
+/* Form page */
+.form-box {
+	width: 100%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	text-align: left;
+	align-items: center;
+}
+
+.form-box label {
+	font-family: 'Lora', serif;
+	font-size: 1rem;
+	text-align: left;
+}
+
+.form-box input[type="text"],
+.form-box input[type="number"] {
+	width: 100%;
+	max-width: 400px;
+	padding: 0.75rem 1rem;
+	font-family: 'Inter', sans-serif;
+	font-size: 1rem;
+	color: #333;
+	border: 2px solid #ccc;
+	background: #fff;
+}
+
+.form-box input[type="text"]:focus,
+.form-box input[type="number"]:focus {
+	border-color: #000;
+	outline: none;
+}
+
+/* Upload page */
+.form-box input[type="file"] {
+	font-family: 'Inter', sans-serif;
+	font-size: 1rem;
+	border: 2px solid #ccc;
+	padding: 0.5rem;
+	background: #fff;
+	cursor: pointer;
+}
+
+.form-box input[type="file"]:focus {
+	border-color: #000;
+	outline: none;
+}
+
+.file-info {
+	margin-top: 0.5rem;
+	font-size: 0.9rem;
+	font-family: 'Lora', serif;
+	color: #555;
+	text-align: center;
+}
+
+/* Records page */
+.records-list {
+	text-align: left;
+	max-width: 600px;
+	margin: 0 auto;
+	font-size: 0.9rem;
+	background: #f9f9f9;
+	padding: 1rem;
+}
+
+.records-list pre {
+	margin: 0;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
