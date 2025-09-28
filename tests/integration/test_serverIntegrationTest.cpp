@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 23:40:09 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 16:05:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,52 @@ TEST_CASE("Server Integration Test: CGI")
 							  .allow(HttpMethod::DELETE)
 							  .upload_location("/var/www/uploads")
 							  .cgi(new_cgi)
+							  .build();
+
+	WebServer webServer(config);
+
+	// Check port
+	unsigned short port = webServer.primaryPort();
+	CHECK(port > 0);
+
+	// std::cout << "=================================================================\n";
+	// std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
+
+	// webServer.run();
+}
+
+TEST_CASE("Server Integration Test: All")
+{
+	TestConfigBuilder builder;
+
+	CGI py;
+	py.extension = ".py";
+	py.executable_path = "/usr/bin/python3";
+	py.working_directory = "/var/www/scripts";
+
+	std::set<HttpMethod> allowed;
+	allowed.insert(HttpMethod::GET);
+	allowed.insert(HttpMethod::POST);
+	allowed.insert(HttpMethod::DELETE);
+
+	// 1) Default site at "/"
+	Location loc_root("/",		   // prefix
+					  "./var/www", // root
+					  false,	   // has_redirects
+					  allowed);
+
+	// 2) CGI under "/scripts"
+	Location loc_scripts("/scripts", "./var/www", false, {HttpMethod::GET, HttpMethod::POST});
+	loc_scripts.addCgi(py);
+
+	// 3) Uploads under "/uploads"
+	Location loc_uploads("/uploads", "./var/www/uploads", false, {HttpMethod::POST, HttpMethod::DELETE});
+	loc_uploads.addUploadDirectory("./var/www/uploads");
+
+	ServerConfig config = builder.listen("127.0.0.1", 8080)
+							  .addLocation(loc_root)
+							  .addLocation(loc_scripts)
+							  .addLocation(loc_uploads)
 							  .build();
 
 	WebServer webServer(config);

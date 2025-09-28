@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 17:38:37 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/08 14:00:12 by hein          ########   odam.nl         */
+/*   Updated: 2025/09/28 14:20:04 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ struct HttpRequestLimits
 	size_t max_start_line = 8 * 1024;
 	size_t max_header_line = 8 * 1024;
 	size_t max_header_size = 64 * 1024; // sum of header lines
-	size_t max_body_size = 8 * 1024 * 1024;
+	size_t max_body_size = 100ULL * 1024 * 1024;
 };
 
 #endif

@@ -87,6 +87,14 @@ curl -X POST \
   http://127.0.0.1:8080/scripts/form.py
 ```
 
+
+## `index.html`
+
+```bash
+curl -v http://127.0.0.1:8080/
+curl -v http://127.0.0.1:8080/index.html
+```
+
 ---
 
 <br/>

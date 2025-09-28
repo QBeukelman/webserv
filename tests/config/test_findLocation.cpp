@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 14:05:59 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 11:08:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 12:03:56 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,5 @@ TEST_CASE("ServerConfig: findLocation() basic matching")
 	CHECK(rootLoc.path_prefix == "/");
 	CHECK(imgLoc.path_prefix == "/images");
 	CHECK(apiLoc.path_prefix == "/api");
-	CHECK_THROWS(serverConfig.getServers()[0].findLocation("/doesnotexist"));
+	CHECK(serverConfig.getServers()[0].findLocation("/doesnotexist").path_prefix == "/");
 }

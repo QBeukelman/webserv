@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Upload File</title>
+
+	<!-- Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+	<!-- Styles -->
+	<link rel="stylesheet" href="../../website/styles/style.css">
+</head>
+
+<body>
+	<div class="spaced-section">
+		<h1>Upload</h1>
+	</div>
+
+	<div class="spaced-section">
+		<form id="upload-form" action="/uploads" method="post" enctype="multipart/form-data" class="form-box">
+			<label for="file">Choose a file</label>
+			<input id="file" name="file" type="file" required>
+			<button type="submit" class="button">Upload</button>
+		</form>
+
+		<p id="file-info" class="file-info"></p>
+
+		<div id="status-message" class="status-message"></div>
+
+		<div class="center-btn">
+			<a href="../../index.html" class="back-home-button">← Back to Home</a>
+		</div>
+	</div>
+
+	<!-- Script -->
+	<script src="../../website/scripts/upload.js" defer></script>
+</body>
+
+</html>
