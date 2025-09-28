@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/28 09:55:11 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 14:41:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
  */
 HttpResponse RequestHandler::handle(const HttpRequest &request) const
 {
+	std::cout << request << std::endl;
+
 	Location location;
 	try
 	{
@@ -91,7 +93,6 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 	HttpResponse response;
 	response.httpStatus = status;
 
-	// TODO: HttpResponse set `content-type` header
 	response.headers["Content-Type"] = "text/html; charset=UTF-8";
 	// TODO: HttpResponse html body
 	response.body = "ERROR\r\n";

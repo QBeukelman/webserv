@@ -20,14 +20,15 @@
 	</div>
 
 	<div class="spaced-section">
-		<form action="/scripts/upload.py" method="post" enctype="multipart/form-data" class="form-box">
+		<form id="upload-form" action="/uploads" method="post" enctype="multipart/form-data" class="form-box">
 			<label for="file">Choose a file</label>
 			<input id="file" name="file" type="file" required>
-
 			<button type="submit" class="button">Upload</button>
 		</form>
 
 		<p id="file-info" class="file-info"></p>
+
+		<div id="status-message" class="status-message"></div>
 
 		<div class="center-btn">
 			<a href="../../index.html" class="back-home-button">← Back to Home</a>
@@ -35,7 +36,7 @@
 	</div>
 
 	<!-- Script -->
-	<script src="../../website/scripts/upload.js"></script>
+	<script src="../../website/scripts/upload.js" defer></script>
 </body>
 
 </html>

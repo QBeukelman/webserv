@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 22:34:14 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 14:04:08 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 	}
 
 	// Write to file
-	ssize_t written = ::write(file.getFd(), raw_data.data(), body.size());
-	if (written < 0 || static_cast<size_t>(written) != body.size())
+	ssize_t written = ::write(file.getFd(), raw_data.data(), raw_data.size());
+	if (written < 0 || static_cast<size_t>(written) != raw_data.size())
 	{
 		Logger::error("RequestHandler::handlePost() → Writing failed, wrote: " + std::to_string(written) + " bytes");
 		return (makeError(STATUS_INTERNAL_ERROR, "Upload write failed"));

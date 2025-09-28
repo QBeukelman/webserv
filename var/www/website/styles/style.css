@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 23:57:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 11:44:25 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/28 14:33:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,4 +140,24 @@ h1 {
 	margin: 0;
 	white-space: pre-wrap;
 	word-wrap: break-word;
+}
+
+.status-message {
+	margin-top: 1rem;
+	font-family: 'Inter', sans-serif;
+	font-size: 1rem;
+	font-weight: 500;
+	text-align: center;
+}
+
+.status-message.success {
+	color: #107c10;
+}
+
+.status-message.error {
+	color: #c50f1f;
+}
+
+.status-message.warn {
+	color: #8a4700;
 }

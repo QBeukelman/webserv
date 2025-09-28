@@ -6,20 +6,23 @@
 #    By: quentinbeukelman <quentinbeukelman@stud      +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/09/27 13:55:40 by quentinbeuk   #+#    #+#                  #
-#    Updated: 2025/09/28 11:59:26 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/09/28 14:12:21 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-#!/usr/bin/env python3
-import os, sys, json, urllib.parse, datetime
+
+import os, sys, json, urllib.parse, datetime, cgi
 
 # ==== Config ====
 DATA_DIR  = "var/www/data"
 DATA_FILE = os.path.join(DATA_DIR, "records.jsonl")  # one JSON object per line
-MAX_POST_BYTES = 1_000_000
+MAX_POST_BYTES = 1_000_000  # ~1MB
 
-def print_headers():
-    print("Content-Type: text/html\r\n\r\n", end="")
+# ==== Helpers ====
+def respond(status="200 OK", ctype="text/html"):
+    print(f"Status: {status}")
+    print(f"Content-Type: {ctype}")
+    print()  # end of headers
 
 def html_escape(s: str) -> str:
     return (s.replace("&","&amp;").replace("<","&lt;")
@@ -30,16 +33,6 @@ def ensure_data_dir():
         os.makedirs(DATA_DIR, exist_ok=True)
     except Exception:
         pass
-
-def read_post_body():
-    try:
-        length = int(os.environ.get("CONTENT_LENGTH", 0))
-    except ValueError:
-        length = 0
-    if length < 0: length = 0
-    if length > MAX_POST_BYTES:
-        length = MAX_POST_BYTES
-    return sys.stdin.read(length)
 
 def parse_form_qs(qs: str) -> dict:
     return urllib.parse.parse_qs(qs, keep_blank_values=True, strict_parsing=False)
@@ -92,7 +85,7 @@ def render_records(title: str, records: list):
         ts = html_escape(rec.get("ts",""))
         print(f"<li><strong>{ts}</strong><ul>")
         for k, v in rec.items():
-            if k == "ts": 
+            if k == "ts":
                 continue
             vals = v if isinstance(v, list) else [v]
             for val in vals:
@@ -100,26 +93,73 @@ def render_records(title: str, records: list):
         print("</ul></li>")
     print("</ol>")
 
+def parse_post_name_age():
+    """
+    Parse POST body using cgi.FieldStorage (works for urlencoded and multipart).
+    Returns fields dict limited to two keys: 'name' and 'age', each as a list of values.
+    """
+    form = cgi.FieldStorage(fp=sys.stdin, environ=os.environ, keep_blank_values=True)
+
+    fields = {}
+    # Only keep two fields (ignore any files/other fields)
+    name_vals = []
+    age_vals  = []
+
+    # FieldStorage lets us query lists directly (works for both encodings)
+    try:
+        name_vals = form.getlist("name")
+    except Exception:
+        name_vals = []
+    try:
+        age_vals = form.getlist("age")
+    except Exception:
+        age_vals = []
+
+    if name_vals:
+        fields["name"] = name_vals
+    if age_vals:
+        fields["age"]  = age_vals
+
+    return fields
+
+# ==== Main ====
 def main():
-    print_headers()
     method = os.environ.get("REQUEST_METHOD", "GET").upper()
 
     if method == "POST":
-        body = read_post_body()
-        fields = parse_form_qs(body)
+        # Optional global cap from CONTENT_LENGTH (server should set it)
+        try:
+            clen = int(os.environ.get("CONTENT_LENGTH", "0") or 0)
+        except ValueError:
+            clen = 0
+        if clen > MAX_POST_BYTES:
+            respond("413 Payload Too Large")
+            print("<h2>Payload too large</h2>")
+            print('<p><a href="/scripts/form.py">Back</a></p>')
+            return
+
+        fields = parse_post_name_age()
+
+        # Persist only the two fields
         saved = save_record(fields)
+
+        respond("200 OK", "text/html")
         print("<h2>POST saved</h2>")
-        print("<p>Stored the following fields:</p><ul>")
-        for k, vals in fields.items():
-            for v in vals:
-                print(f"<li>{html_escape(k)} = {html_escape(v)}</li>")
-        print("</ul>")
-        print("<p><a href=\"/scripts/form.py\">View recent records</a></p>")
+        if fields:
+            print("<p>Stored the following fields:</p><ul>")
+            for k, vals in fields.items():
+                for v in vals:
+                    print(f"<li>{html_escape(k)} = {html_escape(v)}</li>")
+            print("</ul>")
+        else:
+            print("<p><em>No name/age fields were provided.</em></p>")
+
+        print('<p><a href="/scripts/form.py">View recent records</a></p>')
 
     elif method == "GET":
+        respond("200 OK", "text/html")
         filters = parse_form_qs(os.environ.get("QUERY_STRING", ""))
         records = load_records()
-
         if filters:
             filtered = [r for r in records if record_matches(r, filters)]
             render_records("GET records (filtered)", filtered[-20:])
@@ -127,6 +167,7 @@ def main():
             render_records("GET recent records", records[-20:])
 
     else:
+        respond("405 Method Not Allowed", "text/html")
         print(f"<h2>Unsupported method: {html_escape(method)}</h2>")
 
 if __name__ == "__main__":
