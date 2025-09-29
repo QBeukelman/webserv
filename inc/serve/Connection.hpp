@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 22:05:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 08:10:55 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ class Connection : public IOPollable
 	std::string inBuf;
 	std::string outBuf;
 
-	bool keepAlive;
-	unsigned long lastActivityMs;
+	bool keep_alive;
+	unsigned long last_activity_ms;
 	unsigned short port;
 
 	const Server *server; // Which server this listener serves

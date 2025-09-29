@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:33:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 17:22:47 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 09:08:10 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "http/models/Mime.hpp"
 #include "http/models/ParseContext.hpp"
 #include "log/Logger.hpp"
+#include "utils/utils.hpp"
 
 #include <cstddef>
 #include <iostream>

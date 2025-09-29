@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 10:20:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 14:21:45 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 08:35:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,6 @@ std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 	// out << "\n------- BODY -------\n"
 	// 	<< "Body: " << req.body << "\n"
 	// 	<< std::endl;
-	return (out);
-}
-
-std::string HttpRequest::toLower(const std::string &s) const
-{
-	std::string out;
-	out.reserve(s.size());
-	for (size_t i = 0; i < s.size(); ++i)
-		out.push_back(std::tolower(static_cast<unsigned char>(s[i])));
 	return (out);
 }
 

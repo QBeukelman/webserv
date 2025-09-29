@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/28 14:41:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 08:10:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 	Location location;
 	try
 	{
-		std::cout << "Request path: " << request.path << std::endl;
 		location = server.findLocation(request.path);
 	}
 	catch (Server::LocationNotFoundException &e)
@@ -94,7 +93,8 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 	response.httpStatus = status;
 
 	response.headers["Content-Type"] = "text/html; charset=UTF-8";
-	// TODO: HttpResponse html body
+
+	// TODO: ERROR body -> Error page
 	response.body = "ERROR\r\n";
 	response.headers["Content-Length"] = std::to_string(response.body.size());
 
