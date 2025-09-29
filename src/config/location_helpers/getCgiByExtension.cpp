@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 14:18:03 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 22:35:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:02:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ std::optional<CGI> Location::getCgiByExtension(const std::string &requestPath) c
 
 	if (extenstion.empty())
 	{
-		Logger::info("Location::getCgiByExtension() → No file extension found");
 		return (std::nullopt);
 	}
 

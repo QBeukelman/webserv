@@ -6,53 +6,25 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 14:04:08 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:21:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestHandler.hpp"
 
-HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
+/*
+ * Used for uploads
+ */
+HttpResponse RequestHandler::handleMultipartPost(const HttpRequest &request, const Location &location) const
 {
-	// Allowed methods
-	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
-
-	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
-	{
-		Logger::info("RequestHandler::handlePost() → Starting CGI");
-		return (handleCgi(request, location, *cgi));
-	}
-
-	// Allowed uploads
-	if (location.allow_uploads == false || location.upload_dir.empty())
-		return (makeError(STATUS_FORBIDDEN, "Uploads not allowed on this Location"));
-	if (location.hasUploadsDir(location.normalizeDirectory(location.upload_dir)) == false)
-	{
-		return (makeError(STATUS_INTERNAL_ERROR, "Upload directory missing, server misconfiguration"));
-	}
-
-	// Check body size
-	const std::string &body = request.body;
-	if (body.empty())
-	{
-		Logger::error("RequestHandler::handlePost() → Body is empty");
-		return (makeError(STATUS_BAD_REQUEST, "Request body is empty"));
-	}
-
-	// File Upload
-	MultipartFile multipartFile;
-	if (request.content_type.getType() == ContentTypeKind::MULTIPART)
-	{
-		multipartFile = composeMultiPartData(request);
-	}
+	MultipartFile multipartFile = composeMultiPartData(request);
 
 	// Make a file
 	const std::string file_name = multipartFile.name + multipartFile.mime.getExtension();
 	File file = generateUploadFile(location.normalizeDirectory(location.upload_dir), file_name);
 
 	const std::string raw_data =
-		request.content_type.getType() == ContentTypeKind::MULTIPART ? multipartFile.data : body.data();
+		request.content_type.getType() == ContentTypeKind::MULTIPART ? multipartFile.data : request.body.data();
 
 	if (file.getFd() <= 0)
 	{
@@ -69,10 +41,60 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 	}
 
 	// Generate response
-	Logger::info("RequestHandler::handlePost() → Post accepted: wrote " + std::to_string(body.size()) + " bytes");
+	Logger::info("RequestHandler::handlePost() → Post accepted: wrote " + std::to_string(raw_data.size()) + " bytes");
 	HttpResponse response;
 	response.httpStatus = STATUS_CREATED;
-	response.headers["Content-Length"] = "0";
+	response.headers[KEY_CONTENT_LENGTH] = "0";
 	response.headers["Location"] = file.getName();
+
+	return (response);
+}
+
+HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
+{
+	// Allowed methods
+	if (isMethodAllowed(request, location) == false)
+		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
+
+	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
+	{
+		Logger::info("RequestHandler::handlePost() → Starting CGI");
+		return (handleCgi(request, location, *cgi));
+	}
+	Logger::info("Location::handlePost() → No CGI");
+
+	// Allowed uploads
+	if (location.allow_uploads == false || location.upload_dir.empty())
+		return (makeError(STATUS_FORBIDDEN, "Uploads not allowed on this Location"));
+	if (location.hasUploadsDir(location.normalizeDirectory(location.upload_dir)) == false)
+	{
+		return (makeError(STATUS_INTERNAL_ERROR, "Upload directory missing, server misconfiguration"));
+	}
+
+	// Check body size
+	if (request.body.empty())
+	{
+		Logger::error("RequestHandler::handlePost() → Body is empty");
+		return (makeError(STATUS_BAD_REQUEST, "Request body is empty"));
+	}
+
+	// File Upload / Multipart
+	if (request.content_type.getType() == ContentTypeKind::MULTIPART)
+	{
+		return (handleMultipartPost(request, location));
+	}
+
+	// Do nothing with request
+	Logger::info("RequestHandler::handlePost() → Will do nothing with request [200]");
+
+	std::string message = "OK\n";
+	message += "len=" + std::to_string(request.body.size()) + "\n";
+
+	HttpResponse response;
+	response.httpStatus = STATUS_OK; // 200
+	response.headers[KEY_CONTENT_TYPE] = "text/plain; charset=UTF-8";
+	response.body = message;
+	response.headers[KEY_CONTENT_LENGTH] = std::to_string(response.body.size());
+
 	return (response);
 }

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 16:41:52 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:09:08 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,11 @@ class RequestHandler
   private:
 	const Server &server;
 
+	// Post helpers
 	HttpResponse handleCgi(const HttpRequest &, const Location &, const CGI &) const;
+	HttpResponse handleMultipartPost(const HttpRequest &, const Location &) const;
+
+	// Handlers
 	HttpResponse handleGet(const HttpRequest &, const Location &) const;
 	HttpResponse handlePost(const HttpRequest &, const Location &) const;
 	HttpResponse handleDelete(const HttpRequest &, const Location &) const;

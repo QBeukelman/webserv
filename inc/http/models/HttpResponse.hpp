@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:09:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/29 09:06:08 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:15:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 #include <map>
 #include <ostream>
 #include <string>
+
+#define KEY_CONTENT_LENGTH "Content-Length"
+#define KEY_CONTENT_TYPE "Content-Type"
 
 class HttpResponse
 {

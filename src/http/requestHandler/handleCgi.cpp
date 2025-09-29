@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 16:38:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 09:03:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:18:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,10 @@ static HttpResponse makeCgiResponse(const std::string &raw)
 	}
 
 	response.body = body;
-	if (response.headers.find("Content-Length") == response.headers.end())
-		response.headers["Content-Length"] = std::to_string(body.size());
-	if (response.headers.find("Content-Type") == response.headers.end())
-		response.headers["Content-Type"] = "text/html";
+	if (response.headers.find(KEY_CONTENT_LENGTH) == response.headers.end())
+		response.headers[KEY_CONTENT_LENGTH] = std::to_string(body.size());
+	if (response.headers.find(KEY_CONTENT_TYPE) == response.headers.end())
+		response.headers[KEY_CONTENT_TYPE] = "text/html";
 
 	return (response);
 }
@@ -102,8 +102,8 @@ static std::vector<std::string> buildEnv(const HttpRequest &request, const std::
 	pushEnv(env, "SCRIPT_FILENAME", script);
 	pushEnv(env, "SCRIPT_NAME", request.path);
 
-	if (request.searchHeader("Content-Type").empty() == false)
-		pushEnv(env, "CONTENT_TYPE", request.searchHeader("Content-Type"));
+	if (request.searchHeader(KEY_CONTENT_TYPE).empty() == false)
+		pushEnv(env, "CONTENT_TYPE", request.searchHeader(KEY_CONTENT_TYPE));
 	if (request.body.empty() == false)
 		pushEnv(env, "CONTENT_LENGTH", std::to_string(request.body.size()));
 
