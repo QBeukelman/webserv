@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 10:07:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 22:04:37 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 09:06:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@
 #include "HttpMethod.hpp"
 #include "RequestParseStatus.hpp"
 #include "http/models/ContentType.hpp"
+#include "utils/utils.hpp"
 
 #include <iostream>
 #include <map>
 #include <string>
 
-/*
-	HttpResponse: Immutable once parsed
-*/
 class HttpRequest
 {
   public:
@@ -38,9 +36,7 @@ class HttpRequest
 	std::map<std::string, std::string> headers;
 	RequestParseStatus status = RequestParseStatus::PARSE_INCOMPLETE;
 
-	std::string toLower(const std::string &s) const;
-
-	// Headers
+	// Search headers
 	std::string searchHeader(const std::string &key) const;
 	std::string getHostName() const;
 	unsigned short getHostPort() const;

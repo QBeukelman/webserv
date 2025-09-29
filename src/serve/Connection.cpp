@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 22:06:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 08:41:06 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // CONSTRUCTOR
 // ____________________________________________________________________________
 Connection::Connection(int clientFd, const Server *server, EventLoop *loop, unsigned short port)
-	: fd_(clientFd), port(port), parser(parse_context.limits), keepAlive(false), lastActivityMs(0), loop(loop),
+	: fd_(clientFd), port(port), parser(parse_context.limits), keep_alive(false), last_activity_ms(0), loop(loop),
 	  server(server)
 {
 	Logger::info("Connection::Connection(" + std::to_string(clientFd) + ")");
@@ -60,7 +60,7 @@ bool Connection::handleParseError(const ParseStep &step)
 
 		HttpResponse response = RequestHandler(*this->server).makeError(st, "Bad request");
 		outBuf = response.serialize();
-		keepAlive = false;
+		keep_alive = false;
 		loop->update(this); // Switch to POLLOUT
 		return (true);
 	}
@@ -78,7 +78,7 @@ void Connection::feedParserFromBuffer()
 		if (parserStalled(step) == true)
 			break;
 
-		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
+		Logger::debug("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
 
 		// 2) Handle parse error
 		if (handleParseError(step))
@@ -100,8 +100,15 @@ void Connection::feedParserFromBuffer()
 			HttpResponse response = RequestHandler(*server).handle(parse_context.request);
 			outBuf = response.serialize();
 
-			// TODO: Should keep alive?
-			keepAlive = true;
+			// HTTP/1.1) default keep alive
+			if (response.searchHeader("Content-Length").empty())
+			{
+				Logger::info(
+					"Connection::feedParserFromBuffer() → Response missing [Content-Length]. Keep alive false");
+				keep_alive = false;
+			}
+			else
+				keep_alive = true;
 
 			if (parse_context.read_offset > 0)
 			{
@@ -146,7 +153,7 @@ void Connection::onReadable()
 		if (n > 0)
 		{
 			// TODO: Connection::onReadable() What is max time?
-			lastActivityMs = loop->nowMs();
+			last_activity_ms = loop->nowMs();
 			inBuf.append(buf, static_cast<size_t>(n));
 			feedParserFromBuffer();
 			return;
@@ -154,7 +161,7 @@ void Connection::onReadable()
 		else if (n == 0)
 		{
 			// Peer closed
-			keepAlive = false;
+			keep_alive = false;
 			loop->closeLater(this);
 			Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
 			return;
@@ -198,14 +205,11 @@ void Connection::onWritable()
 		if (outBuf.empty())
 		{
 			// Response complete
-			if (keepAlive == false)
+			if (keep_alive == false)
 			{
 				loop->closeLater(this);
 				return;
 			}
-
-			// TODO: Reset parser
-			// parser.reset();
 			parse_context = ParseContext();
 			connection_state = ConnectionState::READING;
 			loop->update(this);
