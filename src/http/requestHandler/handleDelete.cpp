@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:48 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 11:24:59 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:16:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Loca
 
 	HttpResponse response;
 	response.httpStatus = HttpStatus::STATUS_NO_CONTENT;
-	response.headers["Content-Length"] = "0";
+	response.headers[KEY_CONTENT_LENGTH] = "0";
 
 	return (response);
 }

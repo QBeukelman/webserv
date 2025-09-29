@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 09:17:41 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 11:16:02 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 11:31:34 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,5 +148,6 @@ ParseStep RequestParser::handleChunkSize(ParseContext &ctx, const char *data, si
 
 	step.status = PARSE_INCOMPLETE;
 	step.need_more = true;
+
 	return (step);
 }

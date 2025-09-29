@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/29 08:10:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:18:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,11 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 	HttpResponse response;
 	response.httpStatus = status;
 
-	response.headers["Content-Type"] = "text/html; charset=UTF-8";
+	response.headers[KEY_CONTENT_TYPE] = "text/html; charset=UTF-8";
 
 	// TODO: ERROR body -> Error page
 	response.body = "ERROR\r\n";
-	response.headers["Content-Length"] = std::to_string(response.body.size());
+	response.headers[KEY_CONTENT_LENGTH] = std::to_string(response.body.size());
 
 	return (response);
 }

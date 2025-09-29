@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 09:07:42 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 11:11:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 
 	if (!te.empty())
 	{
-		Logger::info("RequestParser::handleStartLineAndHeaders() → Apply transfer encoding");
+		Logger::info("RequestParser::handleStartLineAndHeaders() → Apply transfer encoding: Chunked");
 		return (applyTransferEncoding(ctx, te, consumed_headers, len));
 	}
 

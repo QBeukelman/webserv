@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 10:12:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 13:16:49 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 
 	response.httpStatus = STATUS_OK;
 	response.body = body;
-	response.headers["Content-Length"] = std::to_string(body.size());
-	response.headers["Content-type"] = mime.getTypeString(getFileExtension(file_path));
+	response.headers[KEY_CONTENT_LENGTH] = std::to_string(body.size());
+	response.headers[KEY_CONTENT_TYPE] = mime.getTypeString(getFileExtension(file_path));
 	return (response);
 }

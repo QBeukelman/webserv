@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/29 09:05:17 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 14:02:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ TEST_CASE("Server Integration Test: CGI")
 TEST_CASE("Server Integration Test: All")
 {
 	TestConfigBuilder builder;
+	Logger::setLogLevel(LOG_LEVEL_DEBUG);
+	Logger::setUseColors(true);
 
 	CGI py;
 	py.extension = ".py";

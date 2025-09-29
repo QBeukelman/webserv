@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 08:41:06 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/29 11:47:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,15 +74,20 @@ void Connection::feedParserFromBuffer()
 	while (parse_context.read_offset < inBuf.size())
 	{
 		// 1) Step function
+		size_t before = parse_context.read_offset;
 		ParseStep step = parser.step(parse_context, inBuf.data(), inBuf.size());
 		if (parserStalled(step) == true)
 			break;
 
-		Logger::debug("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
+		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
+		Logger::debug("Connection::feedParserFromBuffer() → Feeding step, read (" +
+					  std::to_string(parse_context.read_offset) + "/" + std::to_string(inBuf.size()) + ")");
 
 		// 2) Handle parse error
 		if (handleParseError(step))
 		{
+			Logger::info("Connection::feedParserFromBuffer() → Will handle parse error");
+
 			// Optional: compact what was consumed
 			if (parse_context.read_offset > 0)
 			{
@@ -97,6 +102,8 @@ void Connection::feedParserFromBuffer()
 		// 3) Complete request
 		if (step.request_complete)
 		{
+			Logger::info("Connection::feedParserFromBuffer() → Step Complete!");
+
 			HttpResponse response = RequestHandler(*server).handle(parse_context.request);
 			outBuf = response.serialize();
 
@@ -123,7 +130,14 @@ void Connection::feedParserFromBuffer()
 
 		// 3) Need more bytes to proceed → Return to poll() for more bytes
 		if (step.need_more)
-			break;
+		{
+			if (parse_context.read_offset == before || parse_context.read_offset >= inBuf.size())
+			{
+				Logger::info("Connection::feedParserFromBuffer() → Need more bytes from recv(), breaking");
+				break;
+			}
+			continue;
+		}
 	}
 }
 
