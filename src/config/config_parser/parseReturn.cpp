@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   parseAllowMethods.cpp                              :+:    :+:            */
+/*   parseReturn.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/17 12:16:07 by hein          ########   odam.nl         */
+/*   Created: 2025/08/29 12:24:24 by hein          #+#    #+#                 */
+/*   Updated: 2025/09/30 11:48:24 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
-void ConfigParser::parseAllowMethod(Location &Location, TokenStream &token)
+void ConfigParser::parseReturn(Location &location, TokenStream &token)
 {
-	Logger::debug("Parsing Allowed Method");
+	Logger::debug("Parsing Return");
 }
