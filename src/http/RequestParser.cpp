@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:50:01 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/29 11:07:34 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 08:52:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ ParseStep RequestParser::step(ParseContext &ctx, const char *data, size_t len) c
 	ParseStep step;
 
 	Logger::debug("RequestParser::step() → Phase: " + toStringPhase(ctx.phase));
-	std::cout << "Data:\n" << data << std::endl;
-	std::cout << "Offset: " << ctx.read_offset << std::endl;
 
 	switch (ctx.phase)
 	{

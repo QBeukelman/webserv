@@ -2,15 +2,6 @@
 
 #include <iostream>
 
-namespace
-{
-const std::string RED = "\033[31m";
-const std::string YELLOW = "\033[33m";
-const std::string BLUE = "\033[34m";
-const std::string MAGENTA = "\033[35m";
-const std::string STYLE_RESET = "\033[0m";
-} // namespace
-
 LogLevel Logger::_level = LOG_LEVEL_INFO;
 bool Logger::_useColors = true;
 
@@ -65,13 +56,15 @@ void Logger::info(const std::string &msg)
 
 void Logger::debug(const std::string &msg)
 {
-	if (Logger::_useColors)
-		std::cerr << MAGENTA;
 	if (Logger::_level >= LOG_LEVEL_DEBUG)
+	{
+		if (Logger::_useColors)
+			std::cerr << MAGENTA;
 		std::cerr << "DEBUG: ";
-	if (Logger::_useColors)
-		std::cerr << STYLE_RESET;
-	std::cerr << msg << std::endl;
+		if (Logger::_useColors)
+			std::cerr << STYLE_RESET;
+		std::cerr << msg << std::endl;
+	}
 }
 
 std::string Logger::join(const std::string &s1, const std::string &s2)

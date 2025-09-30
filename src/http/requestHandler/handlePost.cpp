@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 13:21:29 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 13:46:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 
 	std::string message = "OK\n";
 	message += "len=" + std::to_string(request.body.size()) + "\n";
+	message += "body=" + request.body + "\n";
 
 	HttpResponse response;
 	response.httpStatus = STATUS_OK; // 200

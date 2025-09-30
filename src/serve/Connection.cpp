@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 11:47:05 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 08:54:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void Connection::feedParserFromBuffer()
 		if (parserStalled(step) == true)
 			break;
 
-		Logger::info("Connection::feedParserFromBuffer() → Step: " + toStringStatus(step.status));
 		Logger::debug("Connection::feedParserFromBuffer() → Feeding step, read (" +
 					  std::to_string(parse_context.read_offset) + "/" + std::to_string(inBuf.size()) + ")");
 

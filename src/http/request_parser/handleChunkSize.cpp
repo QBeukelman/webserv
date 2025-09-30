@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 09:17:41 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 11:31:34 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 09:08:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ ParseStep RequestParser::handleChunkSize(ParseContext &ctx, const char *data, si
 	}
 	else
 	{
+		Logger::debug("RequestParser::handleChunkSize() → Size for chunk: " + std::to_string(size_val));
 		ctx.chunk_bytes_remaining = size_val;
 		ctx.phase = READ_CHUNK_DATA; // Next: read exactly size_val bytes + CRLF
 	}

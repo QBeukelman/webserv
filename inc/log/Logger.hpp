@@ -6,7 +6,7 @@
 /*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/18 14:51:32 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/09/09 11:34:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 08:21:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,15 @@
 
 #include <sstream>
 #include <string>
+
+namespace
+{
+const std::string RED = "\033[31m";
+const std::string YELLOW = "\033[33m";
+const std::string BLUE = "\033[34m";
+const std::string MAGENTA = "\033[35m";
+const std::string STYLE_RESET = "\033[0m";
+} // namespace
 
 enum LogLevel
 {

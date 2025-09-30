@@ -64,8 +64,10 @@ curl -v -X POST http://127.0.0.1:8080/uploads \
 ```bash
 # POST
 curl -v -X POST http://127.0.0.1:8080/uploads \
+  -H "Transfer-Encoding: chunked" \
   -F "file=@tests/test_files/cat.png;type=image/png" \
-  -F "title=Image_1"
+  -F "title=Image_1" \
+  --no-buffer
 
 # GET
 curl -v http://127.0.0.1:8080/uploads/Image_1.png --output "Image_1.png"
@@ -93,6 +95,21 @@ curl -X POST \
 ```bash
 curl -v http://127.0.0.1:8080/
 curl -v http://127.0.0.1:8080/index.html
+```
+
+
+## `chunked`
+
+```bash
+{ printf 'POST /uploads HTTP/1.1\r\n'
+  printf 'Host: 127.0.0.1:8080\r\n'
+  printf 'Transfer-Encoding: chunked\r\n'
+  printf '\r\n'
+  printf '9\r\nWikipedia\r\n'
+  printf '9\r\nMore text\r\n'
+  printf '0\r\n\r\n'
+} | nc 127.0.0.1 8080
+
 ```
 
 ---

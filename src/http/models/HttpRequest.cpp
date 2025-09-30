@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 10:20:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 11:50:06 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 13:44:16 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,7 @@ std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 
 	printHeaders(out, req.headers);
 
-	out << "\n------- BODY -------\n"
-		<< "Body: " << req.body << "\n"
-		<< std::endl;
+	// out << "\n------- BODY -------\n" << req.body << "\n" << std::endl;
 
 	out << STYLE_RESET;
 	return (out);
