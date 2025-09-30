@@ -6,19 +6,20 @@
 #    By: quentinbeukelman <quentinbeukelman@stud      +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/09/27 13:55:40 by quentinbeuk   #+#    #+#                  #
-#    Updated: 2025/09/28 14:12:21 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/09/30 14:12:53 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-
 import os, sys, json, urllib.parse, datetime, cgi
 
-# ==== Config ====
+# CONFIG
+# ____________________________________________________________________________
 DATA_DIR  = "var/www/data"
-DATA_FILE = os.path.join(DATA_DIR, "records.jsonl")  # one JSON object per line
-MAX_POST_BYTES = 1_000_000  # ~1MB
+DATA_FILE = os.path.join(DATA_DIR, "records.jsonl")
+MAX_POST_BYTES = 1_000_000  # 1MB
 
-# ==== Helpers ====
+# HELPERS
+# ____________________________________________________________________________
 def respond(status="200 OK", ctype="text/html"):
     print(f"Status: {status}")
     print(f"Content-Type: {ctype}")
@@ -94,18 +95,12 @@ def render_records(title: str, records: list):
     print("</ol>")
 
 def parse_post_name_age():
-    """
-    Parse POST body using cgi.FieldStorage (works for urlencoded and multipart).
-    Returns fields dict limited to two keys: 'name' and 'age', each as a list of values.
-    """
     form = cgi.FieldStorage(fp=sys.stdin, environ=os.environ, keep_blank_values=True)
 
     fields = {}
-    # Only keep two fields (ignore any files/other fields)
     name_vals = []
     age_vals  = []
 
-    # FieldStorage lets us query lists directly (works for both encodings)
     try:
         name_vals = form.getlist("name")
     except Exception:
@@ -122,12 +117,12 @@ def parse_post_name_age():
 
     return fields
 
-# ==== Main ====
+# MAIN
+# ____________________________________________________________________________
 def main():
     method = os.environ.get("REQUEST_METHOD", "GET").upper()
 
     if method == "POST":
-        # Optional global cap from CONTENT_LENGTH (server should set it)
         try:
             clen = int(os.environ.get("CONTENT_LENGTH", "0") or 0)
         except ValueError:
@@ -139,8 +134,6 @@ def main():
             return
 
         fields = parse_post_name_age()
-
-        # Persist only the two fields
         saved = save_record(fields)
 
         respond("200 OK", "text/html")

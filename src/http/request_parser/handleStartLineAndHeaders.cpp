@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 11:11:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 08:53:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,6 @@ static ParseStep applyContentLength(ParseContext &ctx, std::string cl, size_t co
 ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char *data, size_t len) const
 {
 	ParseStep step;
-	Logger::info("RequestParser::handleStartLineAndHeaders()");
 
 	if (ctx.read_offset > len)
 	{

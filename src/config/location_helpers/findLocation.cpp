@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 14:04:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 10:11:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 14:10:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ Location Server::findLocation(const std::string &rawPath) const
 	std::vector<Location>::const_iterator it = locations.begin();
 	while (it != locations.end())
 	{
-		std::cout << "Searching location: " << it->path_prefix << " path: " << normalized_path << std::endl;
+		Logger::debug("Searching location: " + it->path_prefix + " path: " + normalized_path);
 
 		if (has_segment_boundary_match(normalized_path, it->path_prefix))
 		{

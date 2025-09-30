@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   records.js                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/30 13:51:45 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/30 13:51:46 by quentinbeuk   ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 document.addEventListener("DOMContentLoaded", () => {
 	const recordsList = document.getElementById("records-list");
 

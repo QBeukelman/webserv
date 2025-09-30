@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   form.js                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/30 13:51:35 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/30 13:51:37 by quentinbeuk   ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 document.addEventListener("DOMContentLoaded", () => {
 	const form = document.querySelector(".form-box");
 	const messageDiv = document.getElementById("form-message");

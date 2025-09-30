@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 23:57:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 14:33:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 14:14:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ h1 {
 	font-weight: 400;
 }
 
-/* Form page */
+/* FORM */
+/* ____________________________________________________________________________ */
 .form-box {
 	width: 100%;
 	margin: 0 auto;
@@ -103,7 +104,8 @@ h1 {
 	outline: none;
 }
 
-/* Upload page */
+/* UPLOADS */
+/* ____________________________________________________________________________ */
 .form-box input[type="file"] {
 	font-family: 'Inter', sans-serif;
 	font-size: 1rem;
@@ -126,7 +128,8 @@ h1 {
 	text-align: center;
 }
 
-/* Records page */
+/* RECORDS */
+/* ____________________________________________________________________________ */
 .records-list {
 	text-align: left;
 	max-width: 600px;

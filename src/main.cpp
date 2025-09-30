@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 09:26:29 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 10:01:27 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.cpp                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/09/30 08:39:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,21 +52,28 @@ int main(int argc, char **argv)
 	// Getting path to the config from arguments
 	const std::string pathToConfig = getConfigPath(argc, argv);
 	if (pathToConfig == "")
+	{
+		Logger::error("Error with path to Configuration file");
 		return (1);
+	}
+
+	ServerConfig serverConfig;
 
 	// Parse config and run server
 	try
 	{
-		ConfigParser parser;
-		ServerConfig config = parser.parse(pathToConfig);
-
-		WebServer webServer(config);
-		webServer.run();
+		ConfigParser configParser;
+		serverConfig = configParser.parse(pathToConfig);
 	}
 	catch (const std::exception &ex)
 	{
-		Logger::error(std::string("An exception occured: ") + ex.what());
-		return 1;
+		Logger::error(std::string("Failed to parse Configuration file: ") + ex.what());
+		return (1);
 	}
-	return 0;
+
+	// Run server
+	WebServer webServer(serverConfig);
+	webServer.run();
+
+	return (0);
 }

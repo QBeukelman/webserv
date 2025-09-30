@@ -1,7 +1,18 @@
-// ../../website/scripts/upload.js
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   upload.js                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/30 13:51:54 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/09/30 13:59:43 by quentinbeuk   ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 document.addEventListener("DOMContentLoaded", () => {
 	const form = document.getElementById("upload-form");
-	const statusEl = document.getElementById("status-message");
+	const statusEl = document.getElementById("upload-message");
 
 	if (!form) {
 		console.error("upload.js: #upload-form not found");
@@ -9,13 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	form.addEventListener("submit", async (e) => {
-		e.preventDefault(); // <-- stops the page navigation
+		e.preventDefault();
 
 		const formData = new FormData(form);
 
-		// Optional: reset message
-		statusEl.textContent = "Uploading…";
-		statusEl.className = "status-message pending";
+		statusEl.textContent = "Uploading...";
+		statusEl.className = "status-message";
 
 		try {
 			const res = await fetch(form.action, {
