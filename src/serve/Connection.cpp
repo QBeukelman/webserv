@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 08:54:30 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 14:18:06 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 // CONSTRUCTOR
 // ____________________________________________________________________________
 Connection::Connection(int clientFd, const Server *server, EventLoop *loop, unsigned short port)
-	: fd_(clientFd), port(port), parser(parse_context.limits), keep_alive(false), last_activity_ms(0), loop(loop),
-	  server(server)
+	: fd_(clientFd), port(port), parser(parse_context.limits), keep_alive(false), loop(loop), server(server),
+	  last_activity(std::chrono::steady_clock::now()), keep_alive_pending(false)
 {
 	Logger::info("Connection::Connection(" + std::to_string(clientFd) + ")");
 
@@ -34,11 +34,25 @@ int Connection::fd() const
 	return (this->fd_);
 }
 
+// GETTERS & SETTERS
+// ____________________________________________________________________________
 unsigned short Connection::getPort() const
 {
 	return (this->port);
 }
 
+ConnectionState Connection::getConnectionState() const
+{
+	return (this->connection_state);
+}
+
+bool Connection::getKeepAlivePending() const
+{
+	return (this->keep_alive_pending);
+}
+
+// PARSER
+// ____________________________________________________________________________
 static bool parserStalled(const ParseStep &step)
 {
 	if (step.consumed == 0 && !step.need_more && !step.request_complete && step.status != PARSE_INVALID_METHOD &&
@@ -65,6 +79,82 @@ bool Connection::handleParseError(const ParseStep &step)
 		return (true);
 	}
 	return (false);
+}
+
+// TIME OUT
+// ____________________________________________________________________________
+void Connection::updateActivityNow(void)
+{
+	this->last_activity = std::chrono::steady_clock::now();
+}
+
+static std::chrono::milliseconds phaseLimitMs(const Connection &connection)
+{
+	if (connection.getConnectionState() == ConnectionState::READING && !connection.getKeepAlivePending())
+		return std::chrono::milliseconds(READ_IDLE_MS);
+	if (connection.getConnectionState() == ConnectionState::WRITING)
+		return std::chrono::milliseconds(WRITE_IDLE_MS);
+	if (connection.getConnectionState() == ConnectionState::READING && connection.getKeepAlivePending())
+		return std::chrono::milliseconds(KEEPALIVE_IDLE_MS);
+	return (std::chrono::milliseconds(READ_IDLE_MS));
+}
+
+/*
+ * Given the current time, how many milliseconds remain before this connection should timeout.
+ */
+int Connection::remainingMsUntilTimeout(std::chrono::steady_clock::time_point now) const
+{
+	std::chrono::milliseconds limit = phaseLimitMs(*this);
+	std::chrono::steady_clock::time_point deadline = this->last_activity + limit;
+
+	if (now >= deadline)
+		return (0);
+
+	std::chrono::steady_clock::duration remaining = deadline - now;
+	return (static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(remaining).count()));
+}
+
+bool Connection::hasTimedOut(std::chrono::steady_clock::time_point now) const
+{
+	return (this->remainingMsUntilTimeout(now) == 0);
+}
+
+int Connection::timeBudgetMs(std::chrono::steady_clock::time_point now) const
+{
+	return (this->remainingMsUntilTimeout(now));
+}
+
+void Connection::onTimeout()
+{
+	// 1) Client started sending request, but never finished
+	if (connection_state == ConnectionState::READING && !keep_alive_pending)
+	{
+		// Request not fully received
+		HttpResponse response = RequestHandler(*server).makeError(STATUS_REQUEST_TIMEOUT, "Request timeout");
+		outBuf = response.serialize();
+		keep_alive = false;
+		connection_state = ConnectionState::WRITING;
+		loop->update(this);
+		return;
+	}
+
+	// 2) Idle between requests
+	if (connection_state == ConnectionState::READING && keep_alive_pending)
+	{
+		keep_alive = false;
+		connection_state = ConnectionState::CLOSING;
+		loop->closeLater(this);
+		return;
+	}
+
+	// 3) Timeout while writing response
+	if (connection_state == ConnectionState::WRITING)
+	{
+		keep_alive = false;
+		connection_state = ConnectionState::CLOSING;
+		loop->closeLater(this);
+		return;
+	}
 }
 
 // PARSE
@@ -165,8 +255,8 @@ void Connection::onReadable()
 		ssize_t n = ::recv(fd_, buf, sizeof(buf), 0);
 		if (n > 0)
 		{
-			// TODO: Connection::onReadable() What is max time?
-			last_activity_ms = loop->nowMs();
+			this->updateActivityNow(); // Made progress, update timer
+
 			inBuf.append(buf, static_cast<size_t>(n));
 			feedParserFromBuffer();
 			return;
@@ -206,26 +296,46 @@ void Connection::onWritable()
 
 	if (outBuf.empty())
 	{
-		// Nothing to write
-		loop->update(this);
-		return;
+		if (keep_alive)
+		{
+			// Nothing to write, switch phase
+			keep_alive_pending = true;
+			connection_state = ConnectionState::READING;
+			this->updateActivityNow();
+			loop->update(this);
+			return;
+		}
+		else
+		{
+			connection_state = ConnectionState::CLOSING;
+			loop->closeLater(this);
+		}
 	}
 
 	ssize_t n = ::send(fd_, outBuf.data(), outBuf.size(), 0);
 	if (n > 0)
 	{
+		this->updateActivityNow(); // Made progress, update timer
+
 		outBuf.erase(0, n);
 		if (outBuf.empty())
 		{
 			// Response complete
 			if (keep_alive == false)
 			{
+				connection_state = ConnectionState::CLOSING;
 				loop->closeLater(this);
 				return;
 			}
-			parse_context = ParseContext();
-			connection_state = ConnectionState::READING;
-			loop->update(this);
+			if (keep_alive == true)
+			{
+				// Reset connection
+				parse_context = ParseContext();
+				keep_alive_pending = true;
+				connection_state = ConnectionState::READING;
+				this->updateActivityNow();
+				loop->update(this);
+			}
 		}
 	}
 	else if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))

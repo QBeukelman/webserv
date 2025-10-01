@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   generateUploadFile.cpp                             :+:    :+:            */
+/*   IOPollable.cpp                                     :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2025/09/19 11:42:45 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 09:31:07 by quentinbeuk   ########   odam.nl         */
+/*   Created: 2025/10/01 14:25:32 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/01 14:27:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "http/RequestHandler.hpp"
+#include "serve/IOPollable.hpp"
 
-/*
- * Returns:
- * 	- An open File with `name` and `fd`.
- *  - `-1` on failure.
- */
-const File RequestHandler::generateUploadFile(const std::string &upload_dir, const std::string file_name) const
+IOPollable::~IOPollable()
 {
-	const std::string file_path = upload_dir + "/" + file_name;
-	const int fd = open(file_path.data(), O_WRONLY | O_CREAT, 0644);
-	return (File(file_path, fd));
+}
+
+int IOPollable::timeBudgetMs(std::chrono::steady_clock::time_point now) const
+{
+	(void)now;
+	return (INT_MAX);
+}
+
+void IOPollable::onTimeout()
+{
+	onHangupOrError(POLLHUP);
 }

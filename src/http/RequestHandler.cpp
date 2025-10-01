@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/30 14:52:59 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 13:26:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,11 @@ RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
  * 	6) Error & Keep-Alive:
  * 		Keep alive or close based on request headers.
  */
-HttpResponse RequestHandler::handle(const HttpRequest &request) const
+HttpResponse RequestHandler::handle(const HttpRequest &request)
 {
 	std::cout << request << std::endl;
+
+	std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_OUT);
 
 	Location location;
 	try
@@ -54,6 +56,9 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 		Logger::error(Logger::join("RequestHandler::handle → ", e.what()));
 		return (makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found"));
 	}
+
+	if (std::chrono::steady_clock::now() > deadline)
+		return makeError(HttpStatus::STATUS_SERVICE_UNAVAILABLE, "Processing timeout");
 
 	switch (request.method)
 	{

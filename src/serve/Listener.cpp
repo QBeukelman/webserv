@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 22:08:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 13:16:59 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,8 +218,8 @@ void Listener::onWritable()
 
 void Listener::onHangupOrError(short revents)
 {
-	// TODO: Listener::onHangupOrError().
 	Logger::error("Listener::onHangupOrError → " + std::to_string(revents));
+	loop->closeLater(this);
 }
 
 // GETTERS & SETTERS

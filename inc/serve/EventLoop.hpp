@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   EventLoop.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 12:14:45 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 11:23:39 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   EventLoop.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/01 14:35:17 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "log/Logger.hpp"
 #include "serve/IOPollable.hpp"
 
+#include <chrono>
+#include <climits>
 #include <map>
 #include <poll.h>
 #include <sys/time.h>
@@ -32,6 +34,7 @@ class EventLoop
 	std::vector<IOPollable *> pendingClose;
 
 	void willClosePending();
+	int computePollTimeoutMs() const;
 
   public:
 	EventLoop();
@@ -45,11 +48,9 @@ class EventLoop
 	void remove(int fd);
 	void closeLater(IOPollable *handler);
 
-	// Utils
-	unsigned long nowMs() const;
-
 	// Main loop
 	void run(void);
+	void checkTimeouts(void);
 	void stop(void);
 };
 

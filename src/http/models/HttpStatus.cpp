@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:23:10 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 19:48:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 13:22:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ const char *reasonPhrase(HttpStatus code)
 		return "Not Found";
 	case STATUS_METHOD_NOT_ALLOWED:
 		return "Method Not Allowed";
+	case STATUS_REQUEST_TIMEOUT:
+		return "Request timeout";
 	case STATUS_PAYLOAD_TOO_LARGE:
 		return "Payload Too Large";
 
@@ -112,6 +114,8 @@ HttpStatus toHttpStatus(int code)
 		return STATUS_NOT_FOUND;
 	case 405:
 		return STATUS_METHOD_NOT_ALLOWED;
+	case 408:
+		return STATUS_REQUEST_TIMEOUT;
 	case 413:
 		return STATUS_PAYLOAD_TOO_LARGE;
 
