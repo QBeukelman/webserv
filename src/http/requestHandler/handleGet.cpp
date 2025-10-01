@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 13:16:49 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 15:27:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 
 	// 1) Open file
 	const std::string file_path = buildFilePath(location, request.path);
-	std::cout << "File path: " << file_path << std::endl;
 
 	const int fd = open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)

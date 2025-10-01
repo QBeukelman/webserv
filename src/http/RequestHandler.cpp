@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/29 13:18:19 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 14:52:59 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,26 +77,4 @@ HttpResponse RequestHandler::handle(const HttpRequest &request) const
 const bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
 {
 	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
-}
-
-// PUBLIC
-// ____________________________________________________________________________
-// ==== Handlers ====
-HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
-{
-	// Log error
-	Logger::error("RequestHandler::makeError() → " + detail + " → [" + std::to_string(status) + "] " +
-				  reasonPhrase(status));
-
-	// Create error response
-	HttpResponse response;
-	response.httpStatus = status;
-
-	response.headers[KEY_CONTENT_TYPE] = "text/html; charset=UTF-8";
-
-	// TODO: ERROR body -> Error page
-	response.body = "ERROR\r\n";
-	response.headers[KEY_CONTENT_LENGTH] = std::to_string(response.body.size());
-
-	return (response);
 }
