@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 23:54:23 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 14:20:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,30 @@ EventLoop::EventLoop() : handlers(std::map<int, IOPollable *>())
 std::vector<pollfd> EventLoop::getPollFds(void) const
 {
 	return (this->pfds);
+}
+
+// TIME OUT
+// ____________________________________________________________________________
+int EventLoop::computePollTimeoutMs() const
+{
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	int min_ms = INT_MAX;
+
+	for (std::map<int, IOPollable *>::const_iterator it = handlers.begin(); it != handlers.end(); ++it)
+	{
+		const IOPollable *h = it->second;
+		int ms = h->timeBudgetMs(now); // INT_MAX means "no timer"
+		if (ms < min_ms)
+			min_ms = ms;
+	}
+
+	if (min_ms == INT_MAX)
+		return (-1); // block until an event arrives
+
+	if (min_ms < 0)
+		min_ms = 0; // deadline already passed → fire ASAP
+
+	return (min_ms);
 }
 
 // REGISTRATION
@@ -106,17 +130,6 @@ void EventLoop::closeLater(IOPollable *handler)
 
 // UTILS
 // ____________________________________________________________________________
-unsigned long EventLoop::nowMs() const
-{
-	struct timeval tv;
-	::gettimeofday(&tv, NULL);
-
-	// Convert seconds + microseconds = milliseconds
-	unsigned long sec = static_cast<unsigned long>(tv.tv_sec) * 1000ul;
-	unsigned long usec = static_cast<unsigned long>(tv.tv_usec) / 1000ul;
-	return (sec + usec);
-}
-
 void EventLoop::willClosePending()
 {
 	if (pendingClose.empty())
@@ -174,9 +187,12 @@ void EventLoop::run(void)
 		}
 
 		// 2) Poll
-		int n = ::poll(&pfds[0], pfds.size(), -1);
+		int timeout_ms = computePollTimeoutMs();
+		int n = ::poll(&pfds[0], pfds.size(), timeout_ms);
 		if (n == 0)
 		{
+			checkTimeouts();
+			willClosePending();
 			Logger::error("EventLoop::run() → Poll timed out");
 			continue;
 		}
@@ -221,9 +237,33 @@ void EventLoop::run(void)
 			}
 		}
 
-		// 4) Cleanup defferred closes
+		// 4) Timeout sweep
+		checkTimeouts();
+
+		// 5) Cleanup defferred closes
 		willClosePending();
 	}
+}
+
+/*
+ * Scan all active handlers (Connections, Listeners)
+ * and checks if any of them has run out of time.
+ */
+void EventLoop::checkTimeouts()
+{
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	std::vector<IOPollable *> to_timeout;
+	to_timeout.reserve(handlers.size());
+
+	for (std::map<int, IOPollable *>::iterator it = handlers.begin(); it != handlers.end(); ++it)
+	{
+		IOPollable *h = it->second;
+		if (h->timeBudgetMs(now) == 0)
+			to_timeout.push_back(h);
+	}
+
+	for (std::size_t i = 0; i < to_timeout.size(); ++i)
+		to_timeout[i]->onTimeout();
 }
 
 void EventLoop::stop(void)

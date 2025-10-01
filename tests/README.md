@@ -103,3 +103,47 @@ curl -X POST \
 
 ## 408 Request Time-out
 
+```bash
+# Commit to sending large request but only send 2 bytes
+curl -v http://127.0.0.1:8080/uploads \
+  -H "Content-Length: 1000000" \
+  --data-binary @<(printf 'hi')
+
+# Sleep between chunks
+{ 
+  printf 'POST /upload HTTP/1.1\r\n'
+  printf 'Host: 127.0.0.1:8080\r\n'
+  printf 'Transfer-Encoding: chunked\r\n'
+  printf 'Content-Type: text/plain\r\n'
+  printf '\r\n'
+
+  printf '4\r\nWiki\r\n'      # 4-byte chunk
+  sleep 12
+  printf '5\r\npedia\r\n'     # 5-byte chunk
+  sleep 12
+  printf '0\r\n\r\n'          # end of chunks
+} | nc 127.0.0.1 8080
+
+```
+
+
+<br/>
+
+---
+
+<br/>
+<br/>
+
+
+# 5xx
+
+### 503 Service Unavailable
+
+```bash
+
+```
+
+
+<br/>
+
+---

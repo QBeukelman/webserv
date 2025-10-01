@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 15:27:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 11:19:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	for (;;)
 	{
 		ssize_t n = ::read(fd, buf, sizeof(buf));
+
 		if (n > 0)
 			body.append(buf, static_cast<size_t>(n));
 		else if (n == 0)
