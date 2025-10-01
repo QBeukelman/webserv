@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 14:20:01 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:20:32 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ static void printAllowedMethods(const std::set<HttpMethod> allowed_methods)
 
 // SET PARSED DATA
 // ____________________________________________________________________________
-
 void Location::setRoot(const std::string &root)
 {
 	this->root = root;
@@ -71,12 +70,17 @@ void Location::setRoot(const std::string &root)
 
 bool Location::addIndexFile(const std::string &index)
 {
-	if (std::find(indexFiles.begin(), indexFiles.end(), index) != indexFiles.end())
+	if (std::find(index_files.begin(), index_files.end(), index) != index_files.end())
 	{
 		return (false);
 	}
-	indexFiles.push_back(index);
+	index_files.push_back(index);
 	return (true);
+}
+
+std::vector<std::string> Location::getIndexFiles(void) const
+{
+	return (this->index_files);
 }
 
 // GETTERS
