@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/19 08:47:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 08:58:11 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class ConfigParser
 
 	// Shared Directives //
 
-	template <typename T> void parseRoot(T &container, TokenStream &token);
+	template <typename T> void parseRoot(T &container, TokenStream &tokenStream);
 	template <typename T> void parseIndex(T &container, TokenStream &tokenStream);
 
 	std::map<std::string_view, ServerHandler> serverHandlers;

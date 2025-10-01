@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 14:30:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 10:37:35 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/CGI.hpp"
+#include "config/models/Redirection.hpp"
 #include "http/models/HttpMethod.hpp"
 #include "log/Logger.hpp"
 
@@ -43,6 +44,8 @@ class Location : public IConfigBlock
 	unsigned int directiveFlags;
 	std::string root;
 	std::vector<std::string> indexFiles;
+	Redirection redirect;
+	bool autoindex;
 
 	const std::string getFileExtenstion(const std::string &request_path) const;
 
@@ -71,6 +74,14 @@ class Location : public IConfigBlock
 	std::string normalizeDirectory(std::string directory) const;
 
 	std::string getPath() const;
+
+	// Returns
+
+	void setReturn(const Redirection &redirect);
+
+	// Autoindex
+
+	void setAutoindex(const bool autoindex);
 
 	// IConfigBlock overrides
 	void setRoot(const std::string &root); /* override */

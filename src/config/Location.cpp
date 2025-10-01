@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 14:20:01 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 10:38:23 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 // INIT
 // ____________________________________________________________________________
 Location::Location()
-	: path_prefix(""), root(""), has_redirects(false), allowed_methods(std::set<HttpMethod>()), allow_uploads(false)
+	: path_prefix(""), root(""), has_redirects(false), allowed_methods(std::set<HttpMethod>()), allow_uploads(false),
+	  autoindex(false)
 {
 }
 
@@ -77,6 +78,16 @@ bool Location::addIndexFile(const std::string &index)
 	}
 	indexFiles.push_back(index);
 	return (true);
+}
+
+void Location::setReturn(const Redirection &redirect)
+{
+	this->redirect = redirect;
+}
+
+void Location::setAutoindex(const bool autoindex)
+{
+	this->autoindex = autoindex;
 }
 
 // GETTERS
