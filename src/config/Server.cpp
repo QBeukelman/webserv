@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/19 09:37:00 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:21:12 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,16 +97,16 @@ void Server::setRoot(const std::string &root)
 // ===== Index Files =====
 std::vector<std::string> Server::getIndexFiles(void) const
 {
-	return (this->indexFiles);
+	return (this->index_files);
 }
 
 bool Server::addIndexFile(const std::string &index)
 {
-	if (std::find(indexFiles.begin(), indexFiles.end(), index) != indexFiles.end())
+	if (std::find(index_files.begin(), index_files.end(), index) != index_files.end())
 	{
 		return (false);
 	}
-	indexFiles.push_back(index);
+	index_files.push_back(index);
 	return (true);
 }
 

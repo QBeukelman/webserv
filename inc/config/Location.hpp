@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 14:30:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:20:41 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Location : public IConfigBlock
   private:
 	unsigned int directiveFlags;
 	std::string root;
-	std::vector<std::string> indexFiles;
+	std::vector<std::string> index_files;
 
 	const std::string getFileExtenstion(const std::string &request_path) const;
 
@@ -50,6 +50,7 @@ class Location : public IConfigBlock
 	Location();
 	Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods);
 
+	// TODO: Location -> Make fields private
 	std::string path_prefix; // e.g. "/static/" or "/upload"
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
@@ -76,7 +77,8 @@ class Location : public IConfigBlock
 	void setRoot(const std::string &root); /* override */
 	std::string getRoot(void) const;	   /* override */
 
-	bool addIndexFile(const std::string &index); /* override */
+	bool addIndexFile(const std::string &index);		/* override */
+	std::vector<std::string> getIndexFiles(void) const; /* override */
 
 	void markDirective(unsigned int directive);		  /* override */
 	bool hasDirective(unsigned int directive);		  /* override */

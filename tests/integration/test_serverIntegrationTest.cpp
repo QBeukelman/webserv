@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 14:30:34 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 17:00:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ TEST_CASE("Server Integration Test: All")
 					  "./var/www", // root
 					  false,	   // has_redirects
 					  allowed);
+	loc_root.addIndexFile("index.html");
 
 	// 2) CGI under "/scripts"
 	Location loc_scripts("/scripts", "./var/www", false, {HttpMethod::GET, HttpMethod::POST});

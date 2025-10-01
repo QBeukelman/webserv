@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/28 09:10:49 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:21:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Server : public IConfigBlock
 	std::vector<std::string> names;
 	std::vector<ListenEndpoint> listens;
 	std::vector<Location> locations;
-	std::vector<std::string> indexFiles;
+	std::vector<std::string> index_files;
 	std::string root;
 	std::vector<ErrorPage> errorPages;
 	HttpRequestLimits limits;
