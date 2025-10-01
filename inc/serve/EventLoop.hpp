@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 12:14:01 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 14:35:17 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "serve/IOPollable.hpp"
 
 #include <chrono>
+#include <climits>
 #include <map>
 #include <poll.h>
 #include <sys/time.h>

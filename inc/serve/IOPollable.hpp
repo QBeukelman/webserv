@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 15:13:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 14:28:11 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 14:34:21 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define IOPOLLABLE_HPP
 
 #include <chrono>
+#include <climits>
 #include <poll.h>
 
 /*
