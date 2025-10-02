@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerConfig.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/03 13:38:14 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/09/17 09:04:36 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   ServerConfig.cpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/03 13:38:14 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/02 10:19:03 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,17 @@ void ServerConfig::addServer(const Server &server)
 	Logger::debug("Adding server to server config");
 
 	servers.push_back(server);
+}
+
+void ServerConfig::incrementDepth(void)
+{
+	++bracketDepth;
+}
+void ServerConfig::decrementDepth(void)
+{
+	--bracketDepth;
+}
+bool ServerConfig::depthProperlyClosed(void)
+{
+	return (bracketDepth == 0);
 }

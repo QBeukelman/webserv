@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/02 09:43:28 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/02 10:39:07 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ ConfigParser::ConfigParser()
 					  {"error_page", &ConfigParser::parseErrorPage},
 					  {"location", &ConfigParser::parseLocation}};
 
-	locationHandlers = {{"allowed_methods", &ConfigParser::parseAllowMethod},
+	locationHandlers = {{"allow_methods", &ConfigParser::parseAllowMethod},
 						{"root", &ConfigParser::parseRoot<Location>},
 						{"index", &ConfigParser::parseIndex<Location>},
 						{"autoindex", &ConfigParser::parseAutoIndex},
@@ -69,6 +69,7 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 		std::string token = tokenStream.next();
 		if (token == "server")
 		{
+			config.incrementDepth();
 			parseServer(server, tokenStream);
 		}
 		else
@@ -79,6 +80,7 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 		if (server.requiredDirectives(NAME | LISTEN) && server.hasDirective(ROOT | LOCATION))
 		{
 			config.addServer(server);
+			config.decrementDepth();
 		}
 		else
 		{
@@ -171,14 +173,16 @@ ServerConfig ConfigParser::parse(const std::string &path)
 	}
 	catch (const EndOfFileException &e)
 	{
-		exit(1);
+		if (!config.depthProperlyClosed())
+		{
+			throw std::runtime_error("EOF reached, but Server Block was not closed properly. Missing [ } ]");
+		}
 	}
 	catch (const std::exception &e)
 	{
 		throw;
 	}
 
-	// validate config
-
+	exit(1);
 	return (config);
 }
