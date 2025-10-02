@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   test_serverIntegrationTest.cpp                     :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 17:00:47 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   test_serverIntegrationTest.cpp                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/15 09:06:45 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/02 10:39:01 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ TEST_CASE("Server Integration Test: All")
 					  "./var/www", // root
 					  false,	   // has_redirects
 					  allowed);
-	loc_root.addIndexFile("index.html");
+	// loc_root.addIndexFile("index.html");
+	loc_root.setAutoindex(true);
 
 	// 2) CGI under "/scripts"
 	Location loc_scripts("/scripts", "./var/www", false, {HttpMethod::GET, HttpMethod::POST});
@@ -77,10 +78,17 @@ TEST_CASE("Server Integration Test: All")
 						 {HttpMethod::POST, HttpMethod::GET, HttpMethod::DELETE});
 	loc_uploads.addUploadDirectory("./var/www/uploads");
 
+	// 4) Redirect
+	Redirect redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "./var/www");
+	Location loc_redirect("/redirect", "./var/www/redirect", true,
+						  {HttpMethod::POST, HttpMethod::GET, HttpMethod::DELETE});
+	loc_redirect.setRedirect(redirect);
+
 	ServerConfig config = builder.listen("127.0.0.1", 8080)
 							  .addLocation(loc_root)
 							  .addLocation(loc_scripts)
 							  .addLocation(loc_uploads)
+							  .addLocation(loc_redirect)
 							  .build();
 
 	WebServer webServer(config);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handleGet.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 15:26:05 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handleGet.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/23 08:26:52 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/10/02 10:23:38 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,16 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	// 2) If directory -> try indexes
 	if (isDirectory(file_path))
 	{
+		// 2.1) Search for indexes
 		std::string index_path = selectIndexFile(file_path, location.getIndexFiles());
 		if (index_path.empty())
-			return (makeError(STATUS_FORBIDDEN, "No index file in directory"));
+		{
+			// 2.2) Try Auto-Index
+			if (location.getAutoindex() == true)
+				return (generateAutoIndexResponse(file_path));
+			else
+				return (makeError(STATUS_FORBIDDEN, "No index file in directory"));
+		}
 
 		Logger::info("RequestHandler::handleGet() → Using index file, found directory as path");
 		file_path = index_path; // Serve an index file

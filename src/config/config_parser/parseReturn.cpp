@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 12:24:24 by hein              #+#    #+#             */
-/*   Updated: 2025/10/02 09:01:32 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/10/02 10:27:09 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,23 @@
 #include "config/config_parser/TokenStream.hpp"
 #include "log/Logger.hpp"
 
-static unsigned short validateReturnCode(const std::string &token, TokenStream &tokenStream)
+static HttpStatus validateReturnCode(const std::string &token, TokenStream &tokenStream)
 {
 	if (!isDigitString(token))
 	{
 		tokenStream.throwError("Found non numeric value in the Return code");
 	}
 
-	unsigned short code = std::stoi(token);
+	HttpStatus code = toHttpStatus(std::stoi(token));
 
-	if (code < 300 && code > 500)
+	if (code != 301 && code != 302 && code != 303 && code != 304 && code != 307)
 	{
-		tokenStream.throwError("Return code is outside of supported range [ 300 - 500 ]");
+		tokenStream.throwError("Return code is not supported [ 301 - 302 - 303 - 304 - 307 ]");
 	}
 	return (code);
 }
 
-static void validateArgumentCount(const std::size_t &argumentCount, unsigned short &code, TokenStream &tokenStream)
+static void validateArgumentCount(const std::size_t &argumentCount, HttpStatus &code, TokenStream &tokenStream)
 {
 	if (code < 400 && argumentCount != 2)
 	{
@@ -43,7 +43,7 @@ static void validateArgumentCount(const std::size_t &argumentCount, unsigned sho
 	}
 }
 
-static void validateRedirection(const std::string &token, TokenStream &tokenStream)
+static void validateRedirect(const std::string &token, TokenStream &tokenStream)
 {
 	if (!(token.size() >= 1 && token.compare(0, 1, "/") == 0) &&
 		!(token.size() >= 7 && token.compare(0, 7, "http://") == 0) &&
@@ -64,7 +64,7 @@ void ConfigParser::parseReturn(Location &location, TokenStream &tokenStream)
 		tokenStream.throwError("Return directive cannot be combined with any other location directives");
 	}
 
-	Redirection redirect;
+	Redirect redirect;
 
 	tokenStream.removeValidSemicolon();
 
@@ -72,15 +72,15 @@ void ConfigParser::parseReturn(Location &location, TokenStream &tokenStream)
 
 	std::string token = tokenStream.next();
 
-	redirect.code = validateReturnCode(token, tokenStream);
+	redirect.httpStatus = validateReturnCode(token, tokenStream);
 
-	validateArgumentCount(argumentCount, redirect.code, tokenStream);
+	validateArgumentCount(argumentCount, redirect.httpStatus, tokenStream);
 
-	if (redirect.code < 400)
+	if (redirect.httpStatus < 400)
 	{
 		token = tokenStream.next();
 
-		validateRedirection(token, tokenStream);
+		validateRedirect(token, tokenStream);
 
 		redirect.path = token;
 	}

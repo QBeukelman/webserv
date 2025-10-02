@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   RequestHandler.hpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 15:12:44 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   RequestHandler.hpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 12:25:32 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/02 10:14:56 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,11 @@ class RequestHandler
   private:
 	const Server &server;
 
-	// Post helpers
+	// Helpers
 	HttpResponse handleCgi(const HttpRequest &, const Location &, const CGI &) const;
 	HttpResponse handleMultipartPost(const HttpRequest &, const Location &) const;
+	HttpResponse generateRedirectResponse(const Location &) const;
+	HttpResponse generateAutoIndexResponse(const std::string &) const;
 
 	// Handlers
 	HttpResponse handleGet(const HttpRequest &, const Location &) const;
@@ -68,6 +70,7 @@ class RequestHandler
 	// Handlers
 	HttpResponse handle(const HttpRequest &request);
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
+	std::string makeHtmlPageHeader(void) const;
 };
 
 #endif

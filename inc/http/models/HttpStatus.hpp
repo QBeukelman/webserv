@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpStatus.hpp                                     :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/02 15:13:02 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 13:21:36 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpStatus.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:13:02 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/10/02 10:28:10 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 enum HttpStatus
 {
+	STATUS_NONE = 0,
+
 	// 1xx Informational
 	STATUS_CONTINUE = 100,
 	STATUS_SWITCHING_PROTOCOL = 101,
