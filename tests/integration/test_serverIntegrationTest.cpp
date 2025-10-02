@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/30 14:07:16 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 17:00:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,61 +45,6 @@ TEST_CASE("Server Integration Test: Connect to Listener")
 	::close(cfd);
 }
 
-TEST_CASE("Server Integration Test: POST(upload), GET, DELETE")
-{
-	TestConfigBuilder builder;
-
-	ServerConfig config = builder.listen("127.0.0.1", 8080)
-							  .new_root("/var/www")
-							  .new_prefix("/uploads")
-							  .allow(HttpMethod::GET)
-							  .allow(HttpMethod::POST)
-							  .allow(HttpMethod::DELETE)
-							  .upload_location("/var/www/uploads")
-							  .build();
-	WebServer webServer(config);
-
-	// Check port
-	unsigned short port = webServer.primaryPort();
-	CHECK(port > 0);
-
-	// std::cout << "=================================================================\n";
-	// std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
-
-	// webServer.run();
-}
-
-TEST_CASE("Server Integration Test: CGI")
-{
-	TestConfigBuilder builder;
-
-	CGI new_cgi;
-	new_cgi.extension = ".py";
-	new_cgi.executable_path = "/usr/bin/python3";
-	new_cgi.working_directory = "/var/www/scripts";
-
-	ServerConfig config = builder.listen("127.0.0.1", 8080)
-							  .new_root("/var/www")
-							  .new_prefix("/scripts")
-							  .allow(HttpMethod::GET)
-							  .allow(HttpMethod::POST)
-							  .allow(HttpMethod::DELETE)
-							  .upload_location("/var/www/uploads")
-							  .cgi(new_cgi)
-							  .build();
-
-	WebServer webServer(config);
-
-	// Check port
-	unsigned short port = webServer.primaryPort();
-	CHECK(port > 0);
-
-	// std::cout << "=================================================================\n";
-	// std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
-
-	// webServer.run();
-}
-
 TEST_CASE("Server Integration Test: All")
 {
 	TestConfigBuilder builder;
@@ -121,13 +66,15 @@ TEST_CASE("Server Integration Test: All")
 					  "./var/www", // root
 					  false,	   // has_redirects
 					  allowed);
+	loc_root.addIndexFile("index.html");
 
 	// 2) CGI under "/scripts"
 	Location loc_scripts("/scripts", "./var/www", false, {HttpMethod::GET, HttpMethod::POST});
 	loc_scripts.addCgi(py);
 
 	// 3) Uploads under "/uploads"
-	Location loc_uploads("/uploads", "./var/www/uploads", false, {HttpMethod::POST, HttpMethod::DELETE});
+	Location loc_uploads("/uploads", "./var/www/uploads", false,
+						 {HttpMethod::POST, HttpMethod::GET, HttpMethod::DELETE});
 	loc_uploads.addUploadDirectory("./var/www/uploads");
 
 	ServerConfig config = builder.listen("127.0.0.1", 8080)

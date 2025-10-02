@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 16:38:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 13:18:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 11:20:52 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,7 @@ HttpResponse RequestHandler::handleCgi(const HttpRequest &request, const Locatio
 	for (;;)
 	{
 		ssize_t n = ::read(outPipe[IO_READ], buf, sizeof(buf));
+
 		if (n > 0)
 			raw.append(buf, n);
 		else

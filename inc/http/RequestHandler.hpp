@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/29 13:09:08 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:12:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,16 @@
 #include "log/Logger.hpp"
 
 #include <cerrno>
+#include <chrono>
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <sys/stat.h>
 #include <unistd.h>
 
-#define MAX_UPLOAD_FILES 10000
+#define TIME_OUT 10
 
 class RequestHandler
 {
@@ -64,7 +66,7 @@ class RequestHandler
 	explicit RequestHandler(const Server &);
 
 	// Handlers
-	HttpResponse handle(const HttpRequest &request) const;
+	HttpResponse handle(const HttpRequest &request);
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
 };
 

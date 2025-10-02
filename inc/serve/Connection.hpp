@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 08:10:55 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 13:51:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,14 @@
 #include "serve/EventLoop.hpp"
 #include "serve/IOPollable.hpp"
 
+#include <chrono>
 #include <cstring>
 #include <string>
 #include <sys/socket.h>
+
+#define READ_IDLE_MS 5000
+#define WRITE_IDLE_MS 5000
+#define KEEPALIVE_IDLE_MS 5000
 
 class Server;	 // Forward
 class EventLoop; // Forward
@@ -56,11 +61,18 @@ class Connection : public IOPollable
 	std::string outBuf;
 
 	bool keep_alive;
-	unsigned long last_activity_ms;
 	unsigned short port;
 
 	const Server *server; // Which server this listener serves
 	EventLoop *loop;	  // To register new connections
+
+	// Timeout
+	std::chrono::steady_clock::time_point last_activity;
+	bool keep_alive_pending;
+
+	void updateActivityNow(void);
+	int remainingMsUntilTimeout(std::chrono::steady_clock::time_point now) const;
+	bool hasTimedOut(std::chrono::steady_clock::time_point now) const;
 
 	// Parse
 	bool handleParseError(const ParseStep &step);
@@ -69,7 +81,14 @@ class Connection : public IOPollable
   public:
 	Connection(int clientFd, const Server *server, EventLoop *loop, unsigned short port);
 
+	// Getters & Setters
 	unsigned short getPort() const;
+	ConnectionState getConnectionState() const;
+	bool getKeepAlivePending() const;
+
+	// Timeout
+	int timeBudgetMs(std::chrono::steady_clock::time_point now) const;
+	void onTimeout();
 
 	// IOPollable
 	int fd() const;

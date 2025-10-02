@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 13:16:49 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:26:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ static std::string getFileExtension(const std::string &file_path)
 	return (file_path.substr(dot));
 }
 
+// RESOLVE FILE PATH
+// ____________________________________________________________________________
 static std::string buildFilePath(const Location &location, const std::string &request_path)
 {
 	// 1) Substring path after prefix
@@ -33,6 +35,36 @@ static std::string buildFilePath(const Location &location, const std::string &re
 	return (file_path + relative);
 }
 
+static bool isDirectory(const std::string &path)
+{
+	struct stat st{};
+	if (::stat(path.c_str(), &st) != 0)
+		return (false);
+	return (S_ISDIR(st.st_mode));
+}
+
+static std::string joinPath(std::string base, std::string name)
+{
+	if (!base.empty() && base.back() != '/')
+		base.push_back('/');
+	if (!name.empty() && name.front() == '/')
+		name.erase(name.begin());
+	return (base + name);
+}
+
+static std::string selectIndexFile(const std::string &directory, const std::vector<std::string> &index_files)
+{
+	for (const std::string &file : index_files)
+	{
+		std::string joined_path = joinPath(directory, file);
+		if (::access(joined_path.c_str(), R_OK) == 0)
+			return (joined_path);
+	}
+	return ("");
+}
+
+// GET
+// ____________________________________________________________________________
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
 	if (isMethodAllowed(request, location) == false)
@@ -44,10 +76,22 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 		return (handleCgi(request, location, *cgi));
 	}
 
-	// 1) Open file
-	const std::string file_path = buildFilePath(location, request.path);
-	std::cout << "File path: " << file_path << std::endl;
+	// 1) Resolve filepath
+	std::string file_path = buildFilePath(location, request.path);
+	Logger::debug("RequestHandler::handleGet() → Will open file with path: " + file_path);
 
+	// 2) If directory -> try indexes
+	if (isDirectory(file_path))
+	{
+		std::string index_path = selectIndexFile(file_path, location.getIndexFiles());
+		if (index_path.empty())
+			return (makeError(STATUS_FORBIDDEN, "No index file in directory"));
+
+		Logger::info("RequestHandler::handleGet() → Using index file, found directory as path");
+		file_path = index_path; // Serve an index file
+	}
+
+	// 3) Open file
 	const int fd = open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)
 	{
@@ -55,13 +99,14 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 		return (makeError(STATUS_NOT_FOUND, "Could not find file"));
 	}
 
-	// 2) Read file
+	// 4) Read file
 	std::string body;
 	char buf[4096];
 
 	for (;;)
 	{
 		ssize_t n = ::read(fd, buf, sizeof(buf));
+
 		if (n > 0)
 			body.append(buf, static_cast<size_t>(n));
 		else if (n == 0)

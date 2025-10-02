@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 23:57:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 14:14:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/09/30 15:09:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ h1 {
 	outline: none;
 }
 
-.file-info {
+.text-body {
 	margin-top: 0.5rem;
 	font-size: 0.9rem;
 	font-family: 'Lora', serif;

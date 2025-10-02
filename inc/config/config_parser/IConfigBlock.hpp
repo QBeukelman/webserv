@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 09:45:40 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/19 10:01:08 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 15:24:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define ICONFIGBLOCK_HPP
 
 #include <string>
+#include <vector>
 
 class IConfigBlock
 {
@@ -28,6 +29,7 @@ class IConfigBlock
 
 	// Index files
 	virtual bool addIndexFile(const std::string &index) = 0;
+	virtual std::vector<std::string> getIndexFiles(void) const = 0;
 
 	// Directive bitmask helpers
 	virtual void markDirective(unsigned int directive) = 0;
