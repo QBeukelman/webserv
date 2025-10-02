@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/19 09:18:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/02 09:43:28 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ ConfigParser::ConfigParser()
 						{"index", &ConfigParser::parseIndex<Location>},
 						{"autoindex", &ConfigParser::parseAutoIndex},
 						{"return", &ConfigParser::parseReturn},
-						{"upload_store", &ConfigParser::parseUpload}};
+						{"upload_store", &ConfigParser::parseUpload},
+						{"cgi", &ConfigParser::parseCgi}};
 }
 
 // FIND INDEX
@@ -75,7 +76,14 @@ void ConfigParser::parseGlobal(ServerConfig &config, TokenStream &tokenStream)
 			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
 		}
 
-		config.addServer(server);
+		if (server.requiredDirectives(NAME | LISTEN) && server.hasDirective(ROOT | LOCATION))
+		{
+			config.addServer(server);
+		}
+		else
+		{
+			tokenStream.throwError("Server Block was closed without the minimum required directives");
+		}
 	}
 }
 
@@ -100,17 +108,21 @@ void ConfigParser::parseServer(Server &server, TokenStream &tokenStream)
 
 		token = tokenStream.next();
 	}
-
-	if (server.requiredDirectives(NAME | LISTEN | ROOT))
-	{
-		std::cout << server << std::endl;
-	}
-	exit(1);
 }
 
 void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
 {
 	Location newLocation;
+
+	tokenStream.validateMinimumArguments(1);
+
+	std::string prefix = tokenStream.next();
+
+	if (!newLocation.setValidatedPrefix(prefix))
+	{
+		tokenStream.throwError(
+			"Location Prefix should be a absolute path and consist of alphanumeric characters or [ . - _ / ]");
+	}
 
 	tokenStream.expectOpenBracket(tokenStream.next());
 
@@ -130,6 +142,19 @@ void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
 		}
 
 		token = tokenStream.next();
+	}
+
+	if (newLocation.hasDirective(RETURN | ROOT | CGI_PY | CGI_PHP))
+	{
+		if (!server.addLocation(newLocation))
+		{
+			tokenStream.throwError("Duplicate Location Prefix Path is not allowed");
+		}
+		server.markDirective(LOCATION);
+	}
+	else
+	{
+		tokenStream.throwError("Locationblock was closed without meaningful Directive present");
 	}
 }
 
