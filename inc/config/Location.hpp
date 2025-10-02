@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Location.hpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 14:49:13 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 10:03:58 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Location.hpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/02 12:08:52 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@
 #include <optional>
 #include <ostream>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <sys/stat.h>
 #include <vector>
-#include <stdexcept>
 
 /*
  * Configuration block that defines how a certain URL path (or prefix) should be handled.
@@ -58,6 +58,11 @@ class Location : public IConfigBlock
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
 	std::map<std::string, CGI> cgis; // Key is same as file extension `.py`. Including `.`
+
+	// Location Prefix
+
+	bool setValidatedPrefix(std::string &prefix);
+	const std::string &getPrefix() const;
 
 	// Uploads
 	bool allow_uploads;
