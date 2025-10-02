@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/02 12:09:40 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/02 16:48:02 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 // ____________________________________________________________________________
 Location::Location()
 	: path_prefix(""), root(""), has_redirects(false), allowed_methods(std::set<HttpMethod>()), allow_uploads(false),
-	  autoindex(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/"))
+	  autoindex(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/")), directiveFlags(0)
 {
 }
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parseReturn.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/29 12:24:24 by hein              #+#    #+#             */
-/*   Updated: 2025/10/02 10:27:09 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   parseReturn.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/29 12:24:24 by hein          #+#    #+#                 */
+/*   Updated: 2025/10/02 20:16:10 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,34 @@ static HttpStatus validateReturnCode(const std::string &token, TokenStream &toke
 
 	if (code != 301 && code != 302 && code != 303 && code != 304 && code != 307)
 	{
-		tokenStream.throwError("Return code is not supported [ 301 - 302 - 303 - 304 - 307 ]");
+		tokenStream.throwError("Return code is not supported. Expected [ 301 - 302 - 303 - 304 - 307 ]");
 	}
 	return (code);
 }
 
 static void validateArgumentCount(const std::size_t &argumentCount, HttpStatus &code, TokenStream &tokenStream)
 {
-	if (code < 400 && argumentCount != 2)
+	if (code < 400)
 	{
-		tokenStream.throwError("Unexpected amount of arguments. Expected [ 2 ]");
+		if (argumentCount != 2)
+		{
+			tokenStream.throwError("Unexpected amount of arguments. Expected [ 2 ]");
+		}
+		return;
 	}
-	else if (argumentCount != 1)
+	if (code > 399)
 	{
-		tokenStream.throwError("Unexpected amount of arguments. Expected [ 1 ]");
+		if (argumentCount != 1)
+		{
+			tokenStream.throwError("Unexpected amount of arguments. Expected [ 1 ]");
+		}
 	}
 }
 
 static void validateRedirect(const std::string &token, TokenStream &tokenStream)
 {
 	if (!(token.size() >= 1 && token.compare(0, 1, "/") == 0) &&
+		!(token.size() >= 2 && token.compare(0, 2, "./") == 0) &&
 		!(token.size() >= 7 && token.compare(0, 7, "http://") == 0) &&
 		!(token.size() >= 8 && token.compare(0, 8, "https://") == 0))
 	{

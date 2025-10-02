@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/01 13:51:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/01 16:55:20 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/02 19:41:44 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ static void validateExtension(const std::string &extension, TokenStream &tokenSt
 
 static void validateExecutablePath(const std::string &executable, TokenStream &tokenStream)
 {
-	if (executable.front() != '/')
+	if (executable.front() != '/' && (executable.compare(0, 2, "./") != 0))
 	{
-		tokenStream.throwError("Executable path must be absolute. Starting with [ / ]");
+		tokenStream.throwError("Executable path must start with either [ / ] or [ ./ ]");
 	}
 	if (!std::filesystem::exists(executable))
 	{
@@ -63,9 +63,9 @@ static void validateExecutablePath(const std::string &executable, TokenStream &t
 
 static void validateWorkingDirectory(const std::string &workingDirectory, TokenStream &tokenStream)
 {
-	if (workingDirectory.front() != '/')
+	if (workingDirectory.front() != '/' && (workingDirectory.compare(0, 2, "./") != 0))
 	{
-		tokenStream.throwError("Path to Working Directory must be absolute. Starting with [ / ]");
+		tokenStream.throwError("Path to Working Directory must start with either [ / ] or [ ./ ]");
 	}
 	if (!std::filesystem::exists(workingDirectory))
 	{
