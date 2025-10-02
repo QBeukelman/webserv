@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handleGet.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/23 08:26:52 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 10:23:38 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handleGet.cpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/02 20:38:26 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	}
 
 	// 3) Open file
-	const int fd = open(file_path.c_str(), O_RDONLY);
+	const int fd = ::open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)
 	{
 		Logger::error("RequestHandler::handleGet() → Could not open file: " + file_path);

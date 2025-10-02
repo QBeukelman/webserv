@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/02 12:10:24 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/02 20:23:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ bool Server::addErrorPage(const ErrorPage &errorPage)
 {
 	for (auto it : errorPages)
 	{
-		if (it.code == errorPage.code)
+		if (it.httpStatus == errorPage.httpStatus)
 		{
 			return (false);
 		}
@@ -214,7 +214,7 @@ std::ostream &operator<<(std::ostream &os, Server &server)
 	os << "\nErrorPages: ";
 	for (const auto &errorPage : server.getErrorPages())
 	{
-		os << errorPage.code << "-" << errorPage.path << " ";
+		os << errorPage.httpStatus << "-" << errorPage.path << " ";
 	}
 
 	os << "\nMax Body Size " << server.getLimits().max_body_size;
