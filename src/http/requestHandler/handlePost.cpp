@@ -1,16 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handlePost.cpp                                     :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 11:19:46 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handlePost.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/23 08:26:56 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/10/02 11:52:51 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestHandler.hpp"
+
+static bool shouldAppendFileExtension(const std::string &name)
+{
+	if (name.find('.') == std::string::npos)
+		return (true);
+	return (false);
+}
 
 /*
  * Used for uploads
@@ -20,7 +27,10 @@ HttpResponse RequestHandler::handleMultipartPost(const HttpRequest &request, con
 	MultipartFile multipartFile = composeMultiPartData(request);
 
 	// Make a file
-	const std::string file_name = multipartFile.name + multipartFile.mime.getExtension();
+	std::string file_name = multipartFile.name;
+	if (shouldAppendFileExtension(multipartFile.name) == true)
+		file_name = multipartFile.name + multipartFile.mime.getExtension();
+
 	File file = generateUploadFile(location.normalizeDirectory(location.upload_dir), file_name);
 
 	const std::string raw_data =
