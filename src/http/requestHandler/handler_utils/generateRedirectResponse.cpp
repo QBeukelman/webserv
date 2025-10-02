@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   makeError.cpp                                      :+:      :+:    :+:   */
+/*   generateRedirectResponse.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 14:52:51 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 10:17:24 by qbeukelm         ###   ########.fr       */
+/*   Created: 2025/10/02 09:22:20 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/02 10:23:19 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestHandler.hpp"
 
-static std::string makeHtmlBody(const std::string htmlHeader, HttpStatus status, const std::string detail)
+static std::string makeHtmlBody(const std::string &htmlHeader, HttpStatus status, const std::string &redirect_path)
 {
 	std::ostringstream oss;
 
@@ -26,7 +26,7 @@ static std::string makeHtmlBody(const std::string htmlHeader, HttpStatus status,
 
 	oss << "<h1>" << std::to_string(status) << "</h1>";
 
-	oss << "<p>" << detail << "." << "</p>";
+	oss << "<p>Redirecting to <a href=\"" << redirect_path << "\">" << redirect_path << "</a></p>\n";
 
 	oss << "<div class=\"center-btn\">";
 	oss << "<a href=\"../../index.html\" class=\"back-home-button\">← Back to Home</a>";
@@ -40,18 +40,14 @@ static std::string makeHtmlBody(const std::string htmlHeader, HttpStatus status,
 	return (oss.str());
 }
 
-HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
+HttpResponse RequestHandler::generateRedirectResponse(const Location &location) const
 {
-	// Log error
-	Logger::error("RequestHandler::makeError() → " + detail + " → [" + std::to_string(status) + "] " +
-				  reasonPhrase(status));
-
-	// Create error response
 	HttpResponse response;
-	response.httpStatus = status;
 
-	response.headers[KEY_CONTENT_TYPE] = "text/html; charset=UTF-8";
-	response.body = makeHtmlBody(makeHtmlPageHeader(), status, detail);
+	response.headers["Location"] = location.getRedirect().path;
+	response.headers["Content-Type"] = "text/html; charset=UTF-8";
+
+	response.body = makeHtmlBody(makeHtmlPageHeader(), location.getRedirect().httpStatus, location.getRedirect().path);
 	response.headers[KEY_CONTENT_LENGTH] = std::to_string(response.body.size());
 
 	return (response);

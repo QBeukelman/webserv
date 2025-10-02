@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   TestConfigBuilder.hpp                              :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/15 08:59:53 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/27 15:03:57 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   TestConfigBuilder.hpp                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/15 08:59:53 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/02 09:50:16 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@ struct TestConfigBuilder
 	std::string path_prefix;
 	std::string root_dir;
 	bool has_redirects;
+	Redirect redirect;
 	std::set<HttpMethod> allowed;
 	std::string upload_loc;
 	CGI cgi_local;
 
 	TestConfigBuilder()
-		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/tmp"), has_redirects(false)
+		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/tmp"), has_redirects(false),
+		  redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/"))
 	{
 	}
 
@@ -54,9 +56,14 @@ struct TestConfigBuilder
 		path_prefix = prefix;
 		return (*this);
 	}
-	TestConfigBuilder &redirects(bool on)
+	TestConfigBuilder &new_has_redirects(bool on)
 	{
 		has_redirects = on;
+		return (*this);
+	}
+	TestConfigBuilder &new_redirect(Redirect redirect_param)
+	{
+		redirect = redirect_param;
 		return (*this);
 	}
 	TestConfigBuilder &allow(HttpMethod m)

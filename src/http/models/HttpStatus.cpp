@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpStatus.cpp                                     :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/02 15:23:10 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 13:22:19 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpStatus.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:23:10 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/10/02 10:29:04 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@ const char *reasonPhrase(HttpStatus code)
 {
 	switch (code)
 	{
+
+	case STATUS_NONE:
+		return "None";
+
 	// 1xx Informational
 	case STATUS_CONTINUE:
 		return "Continue";
@@ -77,6 +81,9 @@ HttpStatus toHttpStatus(int code)
 {
 	switch (code)
 	{
+	case 0:
+		return STATUS_NONE;
+
 	// 1xx Informational
 	case 100:
 		return STATUS_CONTINUE;

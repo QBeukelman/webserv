@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   RequestHandler.cpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 13:26:29 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   RequestHandler.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/02 09:39:22 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ HttpResponse RequestHandler::handle(const HttpRequest &request)
 
 	std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_OUT);
 
+	// 1) Validate location
 	Location location;
 	try
 	{
@@ -59,6 +60,10 @@ HttpResponse RequestHandler::handle(const HttpRequest &request)
 
 	if (std::chrono::steady_clock::now() > deadline)
 		return makeError(HttpStatus::STATUS_SERVICE_UNAVAILABLE, "Processing timeout");
+
+	// 2) Handle redirects
+	if (location.has_redirects)
+		return (generateRedirectResponse(location));
 
 	switch (request.method)
 	{

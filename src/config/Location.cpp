@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 09:04:06 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/10/02 10:26:42 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 // ____________________________________________________________________________
 Location::Location()
 	: path_prefix(""), root(""), has_redirects(false), allowed_methods(std::set<HttpMethod>()), allow_uploads(false),
-	  autoindex(false)
+	  autoindex(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/"))
 {
 }
 
 Location::Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods)
 	: path_prefix(path_prefix), root(root), has_redirects(has_redirects), allowed_methods(allowed_methods),
-	  allow_uploads(false)
+	  allow_uploads(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/"))
 {
 }
 
@@ -101,9 +101,14 @@ std::string Location::getPath() const
 
 // REDIRECTS
 // ____________________________________________________________________________
-void Location::setRedirect(const Redirection &redirect)
+void Location::setRedirect(const Redirect &redirect)
 {
 	this->redirect = redirect;
+}
+
+Redirect Location::getRedirect(void) const
+{
+	return (this->redirect);
 }
 
 // PATH
@@ -118,6 +123,11 @@ void Location::setRoot(const std::string &root)
 void Location::setAutoindex(const bool autoindex)
 {
 	this->autoindex = autoindex;
+}
+
+bool Location::getAutoindex(void) const
+{
+	return (this->autoindex);
 }
 
 // (OVERRIDE) ROOT
