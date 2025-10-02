@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   WebServer.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 12:14:18 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 10:19:03 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   WebServer.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/08 12:14:18 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/02 20:59:28 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class WebServer
   private:
 	const ServerConfig config;
 	std::vector<Listener> listeners;
-	std::map<int, const Server *> fdToServer;
+	std::map<int, const Server *> fdToServer; // TODO: Remove
 	EventLoop loop;
 
 	void initListeners();

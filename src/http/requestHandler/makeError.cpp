@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   makeError.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 14:52:51 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 10:17:24 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   makeError.cpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/30 14:52:51 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/02 20:55:14 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,54 @@ static std::string makeHtmlBody(const std::string htmlHeader, HttpStatus status,
 	return (oss.str());
 }
 
-HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) const
+static std::string findErrorPage(const std::vector<ErrorPage> &errorPages, const HttpStatus &status)
+{
+	ErrorPage errorPage;
+
+	for (const auto &e : errorPages)
+	{
+		// Found error page
+		if (e.httpStatus == status)
+			errorPage = e;
+		if (&e == &errorPages.back())
+		{
+			// No matching error page found
+			Logger::info("RequestHandler::makeError() → Did not find matching error page in Server");
+			return ("");
+		}
+	}
+
+	// Found error page → try to open it
+	const int fd = ::open(errorPage.path.c_str(), O_RDONLY);
+	if (fd < 0)
+	{
+		Logger::info("RequestHandler::makeError() → Could not open error page from Server: " + errorPage.path);
+		return ("");
+	}
+
+	std::string errorPageBody;
+	char buf[4096];
+	for (;;)
+	{
+		size_t n = ::read(fd, buf, sizeof(buf));
+
+		if (n > 0)
+			errorPageBody.append(buf, n);
+		else if (n == 0)
+			break;
+		else if (n < 0)
+		{
+			if (errno == EINTR)
+				continue;
+			::close(fd);
+		}
+	}
+	::close(fd);
+
+	return (errorPageBody);
+}
+
+HttpResponse RequestHandler::makeError(const HttpStatus status, std::string detail) const
 {
 	// Log error
 	Logger::error("RequestHandler::makeError() → " + detail + " → [" + std::to_string(status) + "] " +
@@ -49,8 +96,20 @@ HttpResponse RequestHandler::makeError(HttpStatus status, std::string detail) co
 	// Create error response
 	HttpResponse response;
 	response.httpStatus = status;
-
 	response.headers[KEY_CONTENT_TYPE] = "text/html; charset=UTF-8";
+
+	// Use error page from config
+	const std::string serverErrorPage = findErrorPage(server.getErrorPages(), status);
+	if (serverErrorPage.empty() == false)
+	{
+		Logger::info("RequestHandler::makeError() → Returning error page from Server");
+
+		response.body = serverErrorPage;
+		response.headers[KEY_CONTENT_LENGTH] = std::to_string(response.body.size());
+		return (response);
+	}
+
+	// Generate default error page
 	response.body = makeHtmlBody(makeHtmlPageHeader(), status, detail);
 	response.headers[KEY_CONTENT_LENGTH] = std::to_string(response.body.size());
 
