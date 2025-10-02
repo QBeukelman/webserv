@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:25:07 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/30 12:08:11 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/01 10:41:12 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <filesystem>
 #include <unistd.h>
 
-static void validateUploadPath(std::string &token, TokenStream &tokenStream)
+static void validateUploadPath(const std::string &token, TokenStream &tokenStream)
 {
 	if (!std::filesystem::exists(token))
 	{
@@ -38,14 +38,14 @@ void ConfigParser::parseUpload(Location &location, TokenStream &tokenStream)
 {
 	if (location.hasDirective(UPLOAD))
 	{
-		tokenStream.throwError("Duplicate Uploads in a Location are not allowed");
+		tokenStream.throwError("Duplicate Upload store directive is are not allowed");
 	}
 
 	tokenStream.removeValidSemicolon();
 
 	tokenStream.validateExpectedArguments(1);
 
-	std::string token = tokenStream.next();
+	const std::string token = tokenStream.next();
 
 	validateUploadPath(token, tokenStream);
 

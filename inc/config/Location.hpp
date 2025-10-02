@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Location.hpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 15:20:41 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Location.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 14:49:13 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/10/02 09:01:53 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "config/config_parser/IConfigBlock.hpp"
 #include "config/models/CGI.hpp"
+#include "config/models/Redirection.hpp"
 #include "http/models/HttpMethod.hpp"
 #include "log/Logger.hpp"
 
@@ -43,6 +44,8 @@ class Location : public IConfigBlock
 	unsigned int directiveFlags;
 	std::string root;
 	std::vector<std::string> index_files;
+	Redirection redirect;
+	bool autoindex;
 
 	const std::string getFileExtenstion(const std::string &request_path) const;
 
@@ -50,7 +53,6 @@ class Location : public IConfigBlock
 	Location();
 	Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods);
 
-	// TODO: Location -> Make fields private
 	std::string path_prefix; // e.g. "/static/" or "/upload"
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
@@ -72,6 +74,12 @@ class Location : public IConfigBlock
 	std::string normalizeDirectory(std::string directory) const;
 
 	std::string getPath() const;
+
+	// Redirects
+	void setRedirect(const Redirection &redirect);
+
+	// Autoindex
+	void setAutoindex(const bool autoindex);
 
 	// IConfigBlock overrides
 	void setRoot(const std::string &root); /* override */

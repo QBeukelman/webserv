@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/17 09:51:56 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/30 11:47:01 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/01 08:56:56 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ enum DirectiveFlags
 	INDEX = 1 << 3,
 	ERRORPAGE = 1 << 4,
 	MAXBODYSIZE = 1 << 5,
-	UPLOAD = 1 << 6
+	UPLOAD = 1 << 6,
+	RETURN = 1 << 7,
+	ALLOWED = 1 << 8,
+	AUTOINDEX = 1 << 9
 };
 
 #endif
