@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:52:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/28 09:10:49 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/01 23:21:11 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Server : public IConfigBlock
 
 	// Location
 	std::vector<Location> getLocations(void) const;
-	void addLocation(const Location &location);
+	bool addLocation(const Location &location);
 	void setLocations(const std::vector<Location> &);
 
 	// Index files

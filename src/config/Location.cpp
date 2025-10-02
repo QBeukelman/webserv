@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 10:38:23 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/01 23:23:23 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,32 @@ Location::Location(std::string path_prefix, std::string root, bool has_redirects
 bool Location::hasMethod(const HttpMethod method) const
 {
 	return (allowed_methods.find(method) != allowed_methods.end());
+}
+
+bool Location::setValidatedPrefix(std::string &prefix)
+{
+	if (prefix.empty() || prefix.front() != '/')
+	{
+		return (false);
+	}
+	for (char c : prefix)
+	{
+		if (!isalnum(static_cast<unsigned char>(c)) && c != '.' && c != '-' && c != '_' && c != '/')
+		{
+			return (false);
+		}
+	}
+	while (prefix.size() > 1 && prefix.back() == '/')
+	{
+		prefix.pop_back();
+	}
+	this->path_prefix = prefix;
+	return (true);
+}
+
+const std::string &Location::getPrefix() const
+{
+	return (this->path_prefix);
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 10:37:35 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/01 23:23:13 by hein          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ class Location : public IConfigBlock
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
 	std::map<std::string, CGI> cgis; // Key is same as file extension `.py`. Including `.`
+
+	// Location Prefix
+
+	bool setValidatedPrefix(std::string &prefix);
+	const std::string &getPrefix() const;
 
 	// Uploads
 	bool allow_uploads;
