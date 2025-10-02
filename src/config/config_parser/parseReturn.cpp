@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   parseReturn.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: hein <hein@student.codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/29 12:24:24 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/01 10:40:32 by hein          ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   parseReturn.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/29 12:24:24 by hein              #+#    #+#             */
+/*   Updated: 2025/10/02 09:01:32 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void ConfigParser::parseReturn(Location &location, TokenStream &tokenStream)
 		redirect.path = token;
 	}
 
-	location.setReturn(redirect);
+	location.setRedirect(redirect);
 
 	location.markDirective(RETURN);
 }

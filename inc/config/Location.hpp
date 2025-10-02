@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 08:54:16 by qbeukelm         ###   ########.fr       */
+/*   Updated: 2025/10/02 09:01:53 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ class Location : public IConfigBlock
 	Location();
 	Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods);
 
-	// TODO: Location -> Make fields private
 	std::string path_prefix; // e.g. "/static/" or "/upload"
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
@@ -76,12 +75,10 @@ class Location : public IConfigBlock
 
 	std::string getPath() const;
 
-	// Returns
-
-	void setReturn(const Redirection &redirect);
+	// Redirects
+	void setRedirect(const Redirection &redirect);
 
 	// Autoindex
-
 	void setAutoindex(const bool autoindex);
 
 	// IConfigBlock overrides
