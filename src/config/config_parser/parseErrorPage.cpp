@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:22:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/02 19:42:05 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/03 09:31:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <filesystem>
 #include <unistd.h>
 
-static unsigned short validateErrorCode(std::string &token, TokenStream &tokenStream)
+static HttpStatus validateErrorCode(std::string &token, TokenStream &tokenStream)
 {
 	if (!isDigitString(token))
 	{
@@ -31,7 +31,7 @@ static unsigned short validateErrorCode(std::string &token, TokenStream &tokenSt
 	{
 		tokenStream.throwError("Error Code is out of standard HTML Error range [ 300 - 599 ]");
 	}
-	return (code);
+	return (toHttpStatus(code));
 }
 
 static void validateErrorPage(std::string &token, TokenStream &tokenStream)
@@ -64,7 +64,7 @@ void ConfigParser::parseErrorPage(Server &server, TokenStream &tokenStream)
 
 	std::string token = tokenStream.next();
 
-	newErrorPage.code = validateErrorCode(token, tokenStream);
+	newErrorPage.httpStatus = validateErrorCode(token, tokenStream);
 
 	token = tokenStream.next();
 
