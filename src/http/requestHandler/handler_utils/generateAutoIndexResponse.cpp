@@ -1,48 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   generateAutoIndexResponse.cpp                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/02 09:52:50 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/10/02 10:36:39 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   generateAutoIndexResponse.cpp                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/10/02 09:52:50 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/03 15:13:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestHandler.hpp"
-
-static std::vector<std::string> generateDirectoryListing(const std::string &current_directory)
-{
-	std::vector<std::string> entries;
-
-	DIR *directory = opendir(current_directory.c_str());
-	if (directory == NULL)
-		throw std::runtime_error("Could not open directory: " + current_directory);
-
-	struct dirent *entry;
-	while ((entry = readdir(directory)) != NULL)
-	{
-		std::string name = entry->d_name;
-		if (name == "." || name == "..")
-			continue;
-
-		// Check if it is a directory
-		std::string fullPath = current_directory + "/" + name;
-		struct stat st;
-		if (stat(fullPath.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
-		{
-			name += "/";
-		}
-
-		entries.push_back(name);
-	}
-	closedir(directory);
-
-	// Alphabetical order
-	std::sort(entries.begin(), entries.end());
-	return (entries);
-}
 
 static std::string makeHtmlBody(const std::string &htmlHeader, const std::vector<std::string> entries,
 								const std::string &path)
@@ -83,15 +51,40 @@ HttpResponse RequestHandler::generateAutoIndexResponse(const std::string &file_p
 {
 	std::vector<std::string> entries;
 
-	try
+	DIR *directory = opendir(file_path.c_str());
+	if (!directory)
 	{
-		entries = generateDirectoryListing(file_path);
-	}
-	catch (std::exception &e)
-	{
-		// TODO: Make error
+		if (errno == ENOENT || ENOTDIR)
+			return (makeError(STATUS_NOT_FOUND, "Could not find auto index file"));
+		if (errno == EACCES || EPERM)
+			return (makeError(STATUS_FORBIDDEN, "Could not access auto index file"));
+		else
+			return (makeError(STATUS_INTERNAL_ERROR, "Could not open auto index file"));
 	}
 
+	struct dirent *entry;
+	while ((entry = readdir(directory)) != NULL)
+	{
+		std::string name = entry->d_name;
+		if (name == "." || name == "..")
+			continue;
+
+		// Check if it is a directory
+		std::string fullPath = file_path + "/" + name;
+		struct stat st;
+		if (stat(fullPath.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			name += "/";
+		}
+
+		entries.push_back(name);
+	}
+	closedir(directory);
+
+	// Alphabetical order
+	std::sort(entries.begin(), entries.end());
+
+	// Generate response
 	HttpResponse response;
 	response.httpStatus = HttpStatus::STATUS_OK; // 200
 
