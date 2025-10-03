@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/30 14:52:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/02 20:55:14 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 11:19:33 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ static std::string findErrorPage(const std::vector<ErrorPage> &errorPages, const
 	{
 		// Found error page
 		if (e.httpStatus == status)
+		{
 			errorPage = e;
+			break;
+		}
 		if (&e == &errorPages.back())
 		{
 			// No matching error page found
