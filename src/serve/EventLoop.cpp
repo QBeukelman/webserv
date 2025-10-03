@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 14:20:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 11:24:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,6 @@ void EventLoop::run(void)
 		{
 			checkTimeouts();
 			willClosePending();
-			Logger::error("EventLoop::run() → Poll timed out");
 			continue;
 		}
 		if (n < 0)

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/30 13:51:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 13:59:43 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 11:28:15 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			if (res.ok) {
-				statusEl.textContent = "Upload successful!";
+				statusEl.textContent = "[201] Upload successful.";
 				statusEl.className = "status-message success";
 			} else {
 				statusEl.textContent = `Upload failed (${res.status})`;

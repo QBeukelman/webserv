@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/30 13:51:35 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 13:51:37 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 11:27:34 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			if (response.ok) {
-				messageDiv.textContent = "Success! Your form was submitted.";
+				messageDiv.textContent = "[200] Form successfully submitted.";
 				messageDiv.className = "status-message success";
 			} else {
 				messageDiv.textContent = "Failed to submit form.";
