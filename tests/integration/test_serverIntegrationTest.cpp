@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/02 21:01:31 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 15:16:06 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,8 @@ TEST_CASE("Server Integration Test: All")
 	unsigned short port = webServer.primaryPort();
 	CHECK(port > 0);
 
-	std::cout << "=================================================================\n";
-	std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
+	// std::cout << "=================================================================\n";
+	// std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
 
 	// webServer.run();
 }

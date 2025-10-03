@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:48 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 11:20:00 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 14:55:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ HttpResponse RequestHandler::handleDelete(const HttpRequest &request, const Loca
 
 	if (access(file_path.c_str(), F_OK) != 0)
 	{
-		Logger::error("RequestHandler::handleDelete → Forbidden path");
+		Logger::error("RequestHandler::handleDelete → Count not access file");
 		return (makeError(STATUS_FORBIDDEN, "Forbidden path"));
 	}
 
 	if (::remove(file_path.c_str()) != 0)
 	{
 		Logger::error("RequestHandler::handleDelete → Could not delete file");
-		return (makeError(STATUS_INTERNAL_ERROR, "Could not delete file"));
+		return (makeError(errorFromErrno(errno), "Could not delete file"));
 	}
 
 	Logger::info("RequestHandler::handleDelete() → Delete successful");

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 11:12:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 14:55:27 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,4 +87,18 @@ HttpResponse RequestHandler::handle(const HttpRequest &request)
 const bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
 {
 	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
+}
+
+/*
+ * STATUS_FORBIDDEN `403`
+ * STATUS_NOT_FOUND `404`
+ * STATUS_INTERNAL_ERROR `500`
+ */
+HttpStatus RequestHandler::errorFromErrno(int error) const
+{
+	if (error == EACCES)
+		return (STATUS_FORBIDDEN); // 403
+	if (error == ENOENT || error == ENOTDIR)
+		return (STATUS_NOT_FOUND);	// 404
+	return (STATUS_INTERNAL_ERROR); // 500
 }

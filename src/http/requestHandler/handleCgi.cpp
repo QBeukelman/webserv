@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 16:38:54 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 11:20:52 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 14:53:21 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,21 +137,37 @@ static char **makeArgv(const std::string &exc_path, const std::string &script, s
 	return (&ptrs[0]);
 }
 
+static std::string joinPaths(std::string root, std::string relative_path)
+{
+	if (!root.empty() && root[root.size() - 1] != '/')
+		root.push_back('/');
+	while (!relative_path.empty() && relative_path[0] == '/')
+		relative_path.erase(0, 1);
+	return (root + relative_path);
+}
+
 // CGI
 // ____________________________________________________________________________
 HttpResponse RequestHandler::handleCgi(const HttpRequest &request, const Location &location, const CGI &cgi) const
 {
 
 	// 1) Resolve paths
-	const std::string root = location.normalizeDirectory(location.getRoot());
-	const std::string script = root + request.path;
+	const std::string script = joinPaths(location.getRoot(), request.path);
 
 	// 2) Check access
+	// X_OK: Test for execute permission
+	// R_OK: Test for read permission
 	if (::access(script.c_str(), R_OK) != 0)
-		return (makeError(STATUS_FOUND, "RequestHandler::handleCgi() → Could not access cgi file: " + script));
+		return (makeError(errorFromErrno(errno), "RequestHandler::handleCgi() → Could not access cgi file: " + script));
+	if (::access(cgi.executable_path.c_str(), X_OK) != 0)
+		return (
+			makeError(errorFromErrno(errno),
+					  "RequestHandler::handleCgi() → Could not access cgi executable_path: " + cgi.executable_path));
 
 	// 3) Choose working directory
-	const std::string working_dir = cgi.working_directory.empty() ? root : cgi.working_directory;
+	std::string working_dir = script.substr(0, script.find_last_of('/'));
+	if (working_dir[0] == '.')
+		working_dir.erase(0, 1);
 
 	// 4) Create pipes
 	int inPipe[2], outPipe[2];

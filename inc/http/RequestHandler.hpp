@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestHandler.hpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 12:25:32 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/10/02 10:14:56 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestHandler.hpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/03 14:53:08 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class RequestHandler
 	HttpResponse handleMultipartPost(const HttpRequest &, const Location &) const;
 	HttpResponse generateRedirectResponse(const Location &) const;
 	HttpResponse generateAutoIndexResponse(const std::string &) const;
+	HttpStatus errorFromErrno(int error) const;
 
 	// Handlers
 	HttpResponse handleGet(const HttpRequest &, const Location &) const;
