@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 10:20:05 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 13:44:16 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 10:10:58 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 {
 	const std::string LIGHT_GRAY = "\033[37m";
-	const std::string STYLE_RESET = "\033[0m";
+	const std::string RESET_STYLE = "\033[0m";
 
 	const bool has_boundary = !req.content_type.getBoundary().empty();
 
@@ -42,7 +42,7 @@ std::ostream &operator<<(std::ostream &out, const HttpRequest &req)
 
 	// out << "\n------- BODY -------\n" << req.body << "\n" << std::endl;
 
-	out << STYLE_RESET;
+	out << RESET_STYLE;
 	return (out);
 }
 

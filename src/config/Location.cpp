@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/02 16:48:02 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/03 10:43:56 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@ Location::Location(std::string path_prefix, std::string root, bool has_redirects
 	: path_prefix(path_prefix), root(root), has_redirects(has_redirects), allowed_methods(allowed_methods),
 	  allow_uploads(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/"))
 {
+}
+
+// ALLOWED METHODS
+// ____________________________________________________________________________
+void Location::addAllowedMethod(const HttpMethod &method)
+{
+	this->allowed_methods.insert(method);
 }
 
 // PUBLIC

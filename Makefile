@@ -6,7 +6,7 @@
 #    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/09/27 14:34:18 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/10/03 10:46:30 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,9 +55,8 @@ all: $(NAME)
 $(NAME): $(OBJECTS)
 	@echo "$(BLUE)\nLinking $(NAME)...$(RESET)"
 	@$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
-	@mkdir $(UPLOADS_DIRECTORY)
+	@mkdir -p $(UPLOADS_DIRECTORY)
 	@echo "$(GREEN)\nDone\n$(RESET)"
-# TODO: Makefile: Only make upload directory if it does not exist
 
 # Build + run unit tests
 test: $(TEST_BIN)

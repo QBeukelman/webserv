@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 13:16:59 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 10:10:58 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,18 @@ short Listener::interest() const
 	return (POLLIN);
 }
 
+// LOGGING
+// ____________________________________________________________________________
+static void logListnerCreated(const std::string &ip, unsigned int port)
+{
+	std::ostringstream oss;
+	std::cout << LIGHT_GRAY << "====================================================\n";
+	oss << "Listner created → ";
+	oss << UNDERLINE << "http://" << ip << ":" << port << "/" << RESET_STYLE;
+	Logger::success(oss.str());
+	std::cout << LIGHT_GRAY << "====================================================\n";
+}
+
 // PRIVATE
 // ____________________________________________________________________________
 /*
@@ -123,12 +135,9 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
 
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY); // 0.0.0.0, all interfaces
-	addr.sin_port = htons(port);			  // convert to network byte order
+	addr.sin_port = htons(port);			  // Convert to network byte order
 
-	// TODO: How to use ip?
-	std::ostringstream oss;
-	oss << "Listener created for IP: " << ip << " PORT: " << port;
-	Logger::info(oss.str());
+	logListnerCreated(ip, port);
 
 	if (::bind(fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0)
 	{
