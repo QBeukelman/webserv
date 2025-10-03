@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 14:57:51 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/02 20:23:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 10:39:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ std::vector<Location> Server::getLocations(void) const
 
 bool Server::addLocation(const Location &location)
 {
+
 	for (auto it = locations.cbegin(); it != locations.cend(); ++it)
 	{
 		if (it->getPrefix() == location.getPrefix())
@@ -82,6 +83,7 @@ bool Server::addLocation(const Location &location)
 			return (false);
 		}
 	}
+
 	this->locations.push_back(location);
 	return (true);
 }

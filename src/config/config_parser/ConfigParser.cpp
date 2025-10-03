@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/02 22:48:21 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/03 10:08:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ ServerConfig ConfigParser::parse(const std::string &path)
 		throw;
 	}
 
-	std::cout << "parsed succesful" << std::endl;
+	Logger::info("Config parse complete");
 
 	return (config);
 }

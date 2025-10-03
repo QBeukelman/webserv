@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RequestHandler.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/19 13:13:04 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/10/02 09:39:22 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   RequestHandler.cpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/03 10:17:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,5 +86,12 @@ HttpResponse RequestHandler::handle(const HttpRequest &request)
  */
 const bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
 {
+	std::cout << "Searhing Allowed Methods: " << std::endl;
+
+	for (const auto &m : location.allowed_methods)
+	{
+		std::cout << toStringMethod(m) << std::endl;
+	}
+
 	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
 }
