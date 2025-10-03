@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:22:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/02 20:28:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/03 09:31:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ static HttpStatus validateErrorCode(std::string &token, TokenStream &tokenStream
 
 static void validateErrorPage(std::string &token, TokenStream &tokenStream)
 {
-	if (token.front() != '/')
+	if (token.front() != '/' && (token.compare(0, 2, "./") != 0))
 	{
-		tokenStream.throwError("Error Page path must be absolute. Starting with [ / ]");
+		tokenStream.throwError("Error Page path must start with either [ / ] or [ ./ ]");
 	}
 	if (!std::filesystem::exists(token))
 	{
