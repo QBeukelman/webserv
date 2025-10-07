@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 14:53:08 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:25:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "config/Location.hpp"
 #include "config/ServerConfig.hpp"
+#include "config/models/CgiConfig.hpp"
 #include "http/RequestParser.hpp"
 #include "http/models/File.hpp"
 #include "http/models/HttpMethod.hpp"
@@ -24,6 +25,7 @@
 #include "http/models/MultipartFile.hpp"
 #include "http/models/RequestParseStatus.hpp"
 #include "log/Logger.hpp"
+#include "serve/CgiProcess.hpp"
 
 #include <cerrno>
 #include <chrono>
@@ -37,13 +39,26 @@
 
 #define TIME_OUT 10
 
+struct DispatchResult
+{
+	enum Kind
+	{
+		DISPACTH_STATIC,
+		DISPACTH_CGI
+	} kind;
+
+	HttpResponse response;
+	CgiConfig cgi;
+	Location location;
+};
+
 class RequestHandler
 {
   private:
 	const Server &server;
 
 	// Helpers
-	HttpResponse handleCgi(const HttpRequest &, const Location &, const CGI &) const;
+	HttpResponse handleCgi(const HttpRequest &, const Location &, const CgiConfig &) const;
 	HttpResponse handleMultipartPost(const HttpRequest &, const Location &) const;
 	HttpResponse generateRedirectResponse(const Location &) const;
 	HttpResponse generateAutoIndexResponse(const std::string &) const;
@@ -69,6 +84,7 @@ class RequestHandler
 	explicit RequestHandler(const Server &);
 
 	// Handlers
+	DispatchResult dispatch(const HttpRequest &request) const;
 	HttpResponse handle(const HttpRequest &request);
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
 	std::string makeHtmlPageHeader(void) const;

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 14:55:27 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:26:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,27 @@ HttpStatus RequestHandler::errorFromErrno(int error) const
 	if (error == ENOENT || error == ENOTDIR)
 		return (STATUS_NOT_FOUND);	// 404
 	return (STATUS_INTERNAL_ERROR); // 500
+}
+
+DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
+{
+	Location location;
+	try
+	{
+		location = server.findLocation(request.path);
+	}
+	catch (Server::LocationNotFoundException &e)
+	{
+		Logger::error(Logger::join("RequestHandler::handle → ", e.what()));
+		return {DispatchResult::DISPACTH_STATIC, makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found")};
+	}
+
+	if (isMethodAllowed(request, location) == false)
+		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_METHOD_NOT_ALLOWED, "method not allowed")};
+
+	if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))
+		return {DispatchResult::DISPACTH_CGI, HttpResponse{}, found_cgi.value(), location};
+
+	HttpResponse response = RequestHandler(this->server).handle(request);
+	return {DispatchResult::DISPACTH_STATIC, response, {}, location};
 }

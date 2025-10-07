@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 14:35:17 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 10:49:39 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class EventLoop
 
 	void willClosePending();
 	int computePollTimeoutMs() const;
+	size_t findPfdIndex(int fd) const;
 
   public:
 	EventLoop();
@@ -46,6 +47,7 @@ class EventLoop
 	void add(IOPollable *handler);
 	void update(IOPollable *handler);
 	void remove(int fd);
+	void remove(IOPollable *handler);
 	void closeLater(IOPollable *handler);
 
 	// Main loop

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/03 10:43:56 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:26:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ const std::string &Location::getPrefix() const
  * Notes:
  * 	- Ignores duplicate keys.
  */
-void Location::addCgi(const CGI &cgi)
+void Location::addCgi(const CgiConfig &cgi)
 {
 	if (cgis.find(cgi.extension) == cgis.end())
 	{

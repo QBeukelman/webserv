@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   CGI.cpp                                            :+:    :+:            */
+/*   CgiConfig.cpp                                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "config/models/CGI.hpp"
+#include "config/models/CgiConfig.hpp"
 
-std::ostream &operator<<(std::ostream &out, std::optional<CGI> &cgi)
+std::ostream &operator<<(std::ostream &out, std::optional<CgiConfig> &cgi)
 {
-	out << "=== CGI ===\n"
+	out << "=== CgiConfig ===\n"
 		<< "Extension: " << cgi->extension << "\nExecutable path: " << cgi->executable_path
 		<< "\nWorking directory: " << cgi->working_directory;
 	return (out);

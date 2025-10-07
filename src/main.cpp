@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 10:23:02 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:39:23 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ static std::string getConfigPath(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	// Setting logging level
-	Logger::setLogLevel(LOG_LEVEL_DEBUG); // Most verbose level
-	Logger::setUseColors(true);			  // Turns colors on; Turn them off if you want to redirect the logs to file
+	// Logging Level
+	Logger::setLogLevel(LOG_LEVEL_INFO);
+	Logger::setUseColors(true);
 
 	// Getting path to the config from arguments
 	const std::string pathToConfig = getConfigPath(argc, argv);

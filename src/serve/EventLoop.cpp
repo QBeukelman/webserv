@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 11:24:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 11:22:13 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,28 +57,26 @@ int EventLoop::computePollTimeoutMs() const
  */
 void EventLoop::add(IOPollable *h)
 {
-	int fd = h->fd();
-	if (fd < 0)
-	{
-		Logger::error("EventLoop::add() → Invalid fd");
+	if (!h)
 		return;
-	}
+	const int fd = h->fd();
+	const short ev = h->interest();
+	if (fd < 0 || ev == 0)
+		return;
 
-	if (handlers.find(fd) != handlers.end())
+	if (handlers.count(fd))
 	{
-		Logger::error("EventLoop::add → fd already registered: " + std::to_string(fd));
+		handlers[fd] = h;
+		size_t idx = findPfdIndex(fd);
+		if (idx != static_cast<size_t>(-1))
+			pfds[idx].events = ev;
+		else
+			pfds.push_back(pollfd{fd, ev, 0});
 		return;
 	}
 
 	handlers[fd] = h;
-
-	struct pollfd pfd;
-	pfd.fd = fd;
-	pfd.events = h->interest();
-	pfd.revents = 0;
-	pfds.push_back(pfd);
-
-	Logger::info("EventLoop::add → registered fd " + std::to_string(fd));
+	pfds.push_back(pollfd{fd, ev, 0});
 }
 
 /*
@@ -90,29 +88,85 @@ void EventLoop::add(IOPollable *h)
  */
 void EventLoop::update(IOPollable *handler)
 {
-	const int fd = handler->fd();
-	for (size_t i = 0; i < pfds.size(); i++)
+	if (!handler)
+		return;
+	int oldFd = -1;
+	for (std::map<int, IOPollable *>::iterator it = handlers.begin(); it != handlers.end(); ++it)
 	{
-		if (pfds[i].fd == fd)
+		if (it->second == handler)
 		{
-			pfds[i].events = handler->interest();
+			oldFd = it->first;
 			break;
 		}
 	}
+
+	const int newFd = handler->fd();
+	const short ev = handler->interest();
+
+	if (oldFd == -1)
+	{
+		if (newFd >= 0 && ev != 0)
+			add(handler);
+		return;
+	}
+
+	if (ev == 0)
+	{
+		remove(oldFd);
+		return;
+	}
+	if (newFd != oldFd)
+	{
+		remove(oldFd);
+		if (newFd >= 0)
+			add(handler);
+		return;
+	}
+
+	size_t idx = findPfdIndex(oldFd);
+	if (idx != static_cast<size_t>(-1))
+		pfds[idx].events = ev;
 }
 
 void EventLoop::remove(int fd)
 {
-	for (size_t i = 0; i < pfds.size(); ++i)
+	handlers.erase(fd);
+	size_t idx = findPfdIndex(fd);
+	if (idx != static_cast<size_t>(-1))
 	{
-		if (pfds[i].fd == fd)
+		size_t last = pfds.size() - 1;
+		if (idx != last)
+			std::swap(pfds[idx], pfds[last]);
+		pfds.pop_back();
+	}
+}
+
+void EventLoop::remove(IOPollable *handler)
+{
+	if (!handler)
+		return;
+
+	int fd = -1;
+	for (std::map<int, IOPollable *>::iterator it = handlers.begin(); it != handlers.end(); ++it)
+	{
+		if (it->second == handler)
 		{
-			pfds.erase(pfds.begin() + i);
+			fd = it->first;
 			break;
 		}
 	}
-	handlers.erase(fd);
-	::close(fd);
+	if (fd != -1)
+		remove(fd);
+}
+
+size_t EventLoop::findPfdIndex(int fd) const
+{
+	for (size_t i = 0; i < pfds.size(); ++i)
+	{
+		if (pfds[i].fd == fd)
+			return (i);
+	}
+	return (static_cast<size_t>(-1));
 }
 
 /*
@@ -179,9 +233,10 @@ void EventLoop::run(void)
 
 	while (true)
 	{
-		// 1) UB Guard
+		// 1) Nothing to poll
 		if (pfds.empty())
 		{
+			checkTimeouts();
 			willClosePending();
 			continue;
 		}
@@ -201,45 +256,72 @@ void EventLoop::run(void)
 			continue;
 		}
 
-		// 3) Dispatch events
-		size_t pfd_count = pfds.size();
-		for (size_t i = 0; i < pfd_count; i++)
+		// 3) Dispatch fds that reported events
+		int processed = 0;
+		for (size_t i = 0; i < pfds.size() && processed < n;)
 		{
-			const int fd = pfds[i].fd;
-			const short re = pfds[i].revents;
-			if (!re)
+			pollfd entry = pfds[i];
+			if (entry.revents == 0)
+			{
+				// No entry
+				++i;
 				continue;
+			}
+			++processed;
 
-			auto it = handlers.find(fd);
+			// Find handler
+			auto it = handlers.find(entry.fd);
 			if (it == handlers.end() || it->second == NULL)
 			{
-				Logger::error("EventLoop: no handler for fd " + std::to_string(fd));
+				remove(entry.fd);
 				continue;
 			}
 			IOPollable *h = it->second;
 
+			// Dispatch
+			short re = entry.revents;
 			if (re & (POLLERR | POLLHUP | POLLNVAL))
 			{
 				Logger::info("EventLoop::run() → onHangupOrError()");
 				h->onHangupOrError(re);
+			}
+			else
+			{
+				if (re & POLLIN)
+				{
+					Logger::info("EventLoop::run() → onReadable()");
+					h->onReadable();
+				}
+				if (re & POLLOUT)
+				{
+					Logger::info("EventLoop::run() → onWritable()");
+					h->onWritable();
+				}
+			}
+
+			// Refresh interest
+			auto it_after = handlers.find(entry.fd);
+			if (it_after == handlers.end())
+			{
 				continue;
 			}
-			if (re & POLLIN)
+
+			short next = h->interest();
+			const int current_fd = h->fd();
+
+			if (next == 0 || current_fd != entry.fd)
 			{
-				Logger::info("EventLoop::run() → onReadable()");
-				h->onReadable();
+				remove(entry.fd);
+				continue;
 			}
-			if (re & POLLOUT)
+			else
 			{
-				Logger::info("EventLoop::run() → onWritable()");
-				h->onWritable();
+				pfds[i].events = next;
+				++i;
 			}
 		}
 
-		// 4) Timeout sweep
 		checkTimeouts();
-
-		// 5) Cleanup defferred closes
 		willClosePending();
 	}
 }

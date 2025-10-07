@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 13:51:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 16:18:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 #include "http/models/HttpResponse.hpp"
 #include "http/models/ParseContext.hpp"
 #include "log/Logger.hpp"
+#include "serve/CgiProcess.hpp"
 #include "serve/EventLoop.hpp"
 #include "serve/IOPollable.hpp"
 
 #include <chrono>
 #include <cstring>
+#include <memory>
 #include <string>
 #include <sys/socket.h>
 
@@ -52,6 +54,7 @@ class Connection : public IOPollable
 {
   private:
 	int fd_;
+	std::unique_ptr<CgiProcess> cgi_;
 
 	ParseContext parse_context;
 	RequestParser parser;
@@ -85,10 +88,14 @@ class Connection : public IOPollable
 	unsigned short getPort() const;
 	ConnectionState getConnectionState() const;
 	bool getKeepAlivePending() const;
+	void setCgi(std::unique_ptr<CgiProcess> new_cgi);
 
 	// Timeout
 	int timeBudgetMs(std::chrono::steady_clock::time_point now) const;
 	void onTimeout();
+
+	// Make CGI response
+	void setResponseAndSwitchToWriting(HttpResponse &&);
 
 	// IOPollable
 	int fd() const;
