@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/03 10:42:18 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:30:56 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #define LOCATION_HPP
 
 #include "config/config_parser/IConfigBlock.hpp"
-#include "config/models/CGI.hpp"
+#include "config/models/CgiConfig.hpp"
 #include "config/models/Redirect.hpp"
 #include "http/models/HttpMethod.hpp"
 #include "log/Logger.hpp"
@@ -57,7 +57,7 @@ class Location : public IConfigBlock
 	std::string path_prefix; // e.g. "/static/" or "/upload"
 	bool has_redirects;
 	std::set<HttpMethod> allowed_methods;
-	std::map<std::string, CGI> cgis; // Key is same as file extension `.py`. Including `.`
+	std::map<std::string, CgiConfig> cgis; // Key is same as file extension `.py`. Including `.`
 
 	// Allowed Methods
 	void addAllowedMethod(const HttpMethod &);
@@ -73,8 +73,8 @@ class Location : public IConfigBlock
 	bool hasMethod(const HttpMethod) const;
 
 	// CGI
-	std::optional<CGI> getCgiByExtension(const std::string &requestPath) const;
-	void addCgi(const CGI &cgi);
+	std::optional<CgiConfig> getCgiByExtension(const std::string &requestPath) const;
+	void addCgi(const CgiConfig &cgi);
 
 	// Uploads
 	void addUploadDirectory(const std::string dir);

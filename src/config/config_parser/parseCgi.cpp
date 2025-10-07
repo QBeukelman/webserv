@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/01 13:51:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/02 19:41:44 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/07 15:26:12 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ static void validateWorkingDirectory(const std::string &workingDirectory, TokenS
 void ConfigParser::parseCgi(Location &location, TokenStream &tokenStream)
 {
 
-	CGI cgi;
+	CgiConfig cgi;
 
 	tokenStream.removeValidSemicolon();
 

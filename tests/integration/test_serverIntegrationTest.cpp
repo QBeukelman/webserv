@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 15:16:06 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:27:27 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ TEST_CASE("Server Integration Test: All")
 	Logger::setLogLevel(LOG_LEVEL_DEBUG);
 	Logger::setUseColors(true);
 
-	CGI py;
+	CgiConfig py;
 	py.extension = ".py";
 	py.executable_path = "/usr/bin/python3";
 	py.working_directory = "/var/www/scripts";

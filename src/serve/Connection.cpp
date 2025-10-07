@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/01 14:18:06 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:44:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ ConnectionState Connection::getConnectionState() const
 bool Connection::getKeepAlivePending() const
 {
 	return (this->keep_alive_pending);
+}
+
+void Connection::setCgi(std::unique_ptr<CgiProcess> new_cgi)
+{
+	cgi_ = std::move(new_cgi);
 }
 
 // PARSER
@@ -169,8 +174,8 @@ void Connection::feedParserFromBuffer()
 		if (parserStalled(step) == true)
 			break;
 
-		Logger::debug("Connection::feedParserFromBuffer() → Feeding step, read (" +
-					  std::to_string(parse_context.read_offset) + "/" + std::to_string(inBuf.size()) + ")");
+		Logger::info("Connection::feedParserFromBuffer() → Feeding step, read (" +
+					 std::to_string(parse_context.read_offset) + "/" + std::to_string(inBuf.size()) + ")");
 
 		// 2) Handle parse error
 		if (handleParseError(step))
@@ -193,28 +198,45 @@ void Connection::feedParserFromBuffer()
 		{
 			Logger::info("Connection::feedParserFromBuffer() → Step Complete!");
 
-			HttpResponse response = RequestHandler(*server).handle(parse_context.request);
-			outBuf = response.serialize();
+			DispatchResult dispatch = RequestHandler(*server).dispatch(parse_context.request);
 
-			// HTTP/1.1) default keep alive
-			if (response.searchHeader("Content-Length").empty())
+			if (dispatch.kind == dispatch.DISPACTH_STATIC)
 			{
-				Logger::info(
-					"Connection::feedParserFromBuffer() → Response missing [Content-Length]. Keep alive false");
-				keep_alive = false;
-			}
-			else
-				keep_alive = true;
+				Logger::info("Connection::feedParserFromBuffer() → Dispatch STATIC");
 
-			if (parse_context.read_offset > 0)
+				outBuf = dispatch.response.serialize();
+				// HTTP/1.1) default keep alive
+				if (dispatch.response.searchHeader("Content-Length").empty())
+				{
+					Logger::info(
+						"Connection::feedParserFromBuffer() → Response missing [Content-Length]. Keep alive false");
+					keep_alive = false;
+				}
+				else
+					keep_alive = true;
+
+				if (parse_context.read_offset > 0)
+				{
+					inBuf.erase(0, parse_context.read_offset);
+					parse_context.read_offset = 0;
+				}
+
+				connection_state = ConnectionState::WRITING;
+				loop->update(this); // POLLOUT
+				return;
+			}
+			if (dispatch.kind == dispatch.DISPACTH_CGI)
 			{
-				inBuf.erase(0, parse_context.read_offset);
-				parse_context.read_offset = 0;
+				Logger::info("Connection::feedParserFromBuffer() → Dispatch CGI");
+				auto cgi =
+					std::make_unique<CgiProcess>(loop, this, parse_context.request, dispatch.location, dispatch.cgi);
+				if (!cgi->start())
+				{
+					Logger::error("Connection::feedParserFromBuffer() → CGI failed to start [500]");
+					// TODO: Connection makeError() [500]
+				}
+				this->setCgi(std::move(cgi));
 			}
-
-			connection_state = ConnectionState::WRITING;
-			loop->update(this); // POLLOUT
-			return;
 		}
 
 		// 3) Need more bytes to proceed → Return to poll() for more bytes
@@ -268,18 +290,6 @@ void Connection::onReadable()
 			loop->closeLater(this);
 			Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
 			return;
-		}
-
-		// n < 0
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-		{
-			Logger::error("Connection::onReadable() (errno == EAGAIN || errno == EWOULDBLOCK)");
-			continue; // Retry recv()
-		}
-		if (errno == EINTR)
-		{
-			Logger::error("Connection::onReadable() (errno == EINTR)");
-			return; // Nothing to read now, wait for next POLLIN
 		}
 
 		connection_state = ConnectionState::CLOSING;
@@ -337,14 +347,6 @@ void Connection::onWritable()
 				loop->update(this);
 			}
 		}
-	}
-	else if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
-	{
-		// Keep POLLOUT, try onWritable again
-	}
-	else
-	{
-		// TODO: onWritable() Error → close connection
 	}
 }
 
@@ -406,4 +408,14 @@ void Connection::onHangupOrError(short revents)
 		loop->closeLater(this);
 		return;
 	}
+}
+
+void Connection::setResponseAndSwitchToWriting(HttpResponse &&response)
+{
+	// prepareKeepAliveHeaders(response);
+	outBuf = response.serialize();
+	connection_state = ConnectionState::WRITING;
+
+	if (loop)
+		loop->update(this);
 }

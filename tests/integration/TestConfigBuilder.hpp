@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   TestConfigBuilder.hpp                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 08:59:53 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/10/02 09:50:16 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   TestConfigBuilder.hpp                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/15 08:59:53 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/07 15:27:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ struct TestConfigBuilder
 	Redirect redirect;
 	std::set<HttpMethod> allowed;
 	std::string upload_loc;
-	CGI cgi_local;
+	CgiConfig cgi_local;
 
 	TestConfigBuilder()
 		: server("Test Server"), rootAdded(false), path_prefix("/"), root_dir("/tmp"), has_redirects(false),
@@ -81,7 +81,7 @@ struct TestConfigBuilder
 		upload_loc = upload;
 		return (*this);
 	}
-	TestConfigBuilder &cgi(CGI new_cgi)
+	TestConfigBuilder &cgi(CgiConfig new_cgi)
 	{
 		cgi_local = new_cgi;
 		return (*this);

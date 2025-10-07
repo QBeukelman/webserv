@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/27 14:18:03 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/29 13:02:00 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 15:26:18 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ const std::string Location::getFileExtenstion(const std::string &request_path) c
 
 // CGI
 // ____________________________________________________________________________
-std::optional<CGI> Location::getCgiByExtension(const std::string &requestPath) const
+std::optional<CgiConfig> Location::getCgiByExtension(const std::string &requestPath) const
 {
 	const std::string extenstion = getFileExtenstion(requestPath);
 
@@ -31,7 +31,7 @@ std::optional<CGI> Location::getCgiByExtension(const std::string &requestPath) c
 		return (std::nullopt);
 	}
 
-	std::map<std::string, CGI>::const_iterator it = cgis.find(extenstion);
+	std::map<std::string, CgiConfig>::const_iterator it = cgis.find(extenstion);
 	if (it == cgis.end())
 		return (std::nullopt); // Not found
 

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/03 14:57:04 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/06 14:53:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,14 @@ static std::string selectIndexFile(const std::string &directory, const std::vect
 // ____________________________________________________________________________
 HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Location &location) const
 {
-	if (isMethodAllowed(request, location) == false)
-		return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet()"));
+	// if (isMethodAllowed(request, location) == false)
+	// 	return (makeError(STATUS_METHOD_NOT_ALLOWED, "handleGet()"));
 
-	if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
-	{
-		Logger::info("RequestHandler::handleGet() → Starting CGI");
-		return (handleCgi(request, location, *cgi));
-	}
+	// if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
+	// {
+	// 	Logger::info("RequestHandler::handleGet() → Starting CGI");
+	// 	return (handleCgi(request, location, *cgi));
+	// }
 
 	// 1) Resolve filepath
 	std::string file_path = buildFilePath(location, request.path);
