@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 10:08:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:24:55 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ ConfigParser::ConfigParser()
 						{"autoindex", &ConfigParser::parseAutoIndex},
 						{"return", &ConfigParser::parseReturn},
 						{"upload_store", &ConfigParser::parseUpload},
-						{"cgi", &ConfigParser::parseCgi}};
+						{"cgi", &ConfigParser::parseCgi},
+						{"client_max_body_size", &ConfigParser::parseMaxBody}};
 }
 
 // FIND INDEX
@@ -138,15 +139,15 @@ void ConfigParser::parseLocation(Server &server, TokenStream &tokenStream)
 		{
 			(this->*(index->second))(newLocation, tokenStream);
 		}
-		else
-		{
-			tokenStream.throwError("Found unknown Directive [ " + token + " ]");
-		}
+		// else
+		// {
+		// 	tokenStream.throwError("Found unknown Directive [ " + token + " ]");
+		// }
 
 		token = tokenStream.next();
 	}
 
-	if (newLocation.hasDirective(RETURN | ROOT | CGI_PY | CGI_PHP))
+	if (newLocation.hasDirective(RETURN | ROOT | CGI))
 	{
 		if (!server.addLocation(newLocation))
 		{

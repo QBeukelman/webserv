@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:27 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/01 13:51:26 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/07 18:30:19 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class ConfigParser
 	void parseReturn(Location &location, TokenStream &tokenStream);
 	void parseUpload(Location &location, TokenStream &tokenStream);
 	void parseCgi(Location &location, TokenStream &tokenStream);
+	void parseMaxBody(Location &location, TokenStream &tokenStream);
 
 	// Shared Directives //
 

@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:23:45 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/19 10:39:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:48:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 #include <cstddef> // std::size_t
 #include <limits>  // std::numeric_limits
 
-// TODO: Max Body Size -> Prefer Limits obj
-#define MIN_BODY_SIZE 100ULL * 1024
+#define MIN_BODY_SIZE 1
 #define MAX_BODY_SIZE 1ULL * 1024 * 1024 * 1024
 
 static const std::size_t findMultiplier(std::string &token, TokenStream &tokenStream)
@@ -63,11 +62,11 @@ static std::size_t validateMaxBodySize(std::string &token, TokenStream &tokenStr
 
 	if ((maxBody > std::numeric_limits<size_t>::max() / multiplier) || maxBody * multiplier > MAX_BODY_SIZE)
 	{
-		tokenStream.throwError("Maximum Body is higher than the limit of [ 2G ]");
+		tokenStream.throwError("Maximum Body is higher than the limit of [ 2GB ]");
 	}
 	else if (maxBody * multiplier < MIN_BODY_SIZE)
 	{
-		tokenStream.throwError("Maximum Body is lower than the limit of [ 1M ]");
+		tokenStream.throwError("Maximum Body is lower than the limit of [ 1 ]");
 	}
 
 	return (maxBody);
@@ -93,4 +92,26 @@ void ConfigParser::parseMaxBody(Server &server, TokenStream &tokenStream)
 	server.setMaxBodySize(static_cast<size_t>(maxBody * multiplier));
 
 	server.markDirective(MAXBODYSIZE);
+}
+
+void ConfigParser::parseMaxBody(Location &location, TokenStream &tokenStream)
+{
+	if (location.hasDirective(MAXBODYSIZE))
+	{
+		tokenStream.throwError("Duplicate client_max_body_size is not allowed");
+	}
+
+	tokenStream.removeValidSemicolon();
+
+	tokenStream.validateExpectedArguments(1);
+
+	std::string token = tokenStream.next();
+
+	std::size_t multiplier = findMultiplier(token, tokenStream);
+
+	std::size_t maxBody = validateMaxBodySize(token, tokenStream, multiplier);
+
+	location.setMaxBodySize(static_cast<size_t>(maxBody * multiplier));
+
+	location.markDirective(MAXBODYSIZE);
 }

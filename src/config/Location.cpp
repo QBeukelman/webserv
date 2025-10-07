@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 15:26:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:44:15 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,14 @@
 // ____________________________________________________________________________
 Location::Location()
 	: path_prefix(""), root(""), has_redirects(false), allowed_methods(std::set<HttpMethod>()), allow_uploads(false),
-	  autoindex(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/")), directiveFlags(0)
+	  autoindex(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/")), directiveFlags(0),
+	  limits(HttpRequestLimits{})
 {
 }
 
 Location::Location(std::string path_prefix, std::string root, bool has_redirects, std::set<HttpMethod> allowed_methods)
 	: path_prefix(path_prefix), root(root), has_redirects(has_redirects), allowed_methods(allowed_methods),
-	  allow_uploads(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/"))
+	  allow_uploads(false), redirect(Redirect(HttpStatus::STATUS_MOVED_PERMANENTLY, "/")), limits(HttpRequestLimits{})
 {
 }
 
@@ -161,6 +162,18 @@ void Location::setAutoindex(const bool autoindex)
 bool Location::getAutoindex(void) const
 {
 	return (this->autoindex);
+}
+
+// LIMITS
+// ____________________________________________________________________________
+void Location::setMaxBodySize(size_t size)
+{
+	this->limits.max_body_size = size;
+}
+
+size_t Location::getMaxBodySize() const
+{
+	return (this->limits.max_body_size);
 }
 
 // (OVERRIDE) ROOT
