@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 15:26:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:45:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,9 @@ DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 
 	if (isMethodAllowed(request, location) == false)
 		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_METHOD_NOT_ALLOWED, "method not allowed")};
+
+	if (request.body.size() > location.getMaxBodySize())
+		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_PAYLOAD_TOO_LARGE, "request body is too long")};
 
 	if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))
 		return {DispatchResult::DISPACTH_CGI, HttpResponse{}, found_cgi.value(), location};

@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/01 13:51:39 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/07 15:26:12 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:10:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,18 @@
 
 static void validateExtension(const std::string &extension, TokenStream &tokenStream, Location &location)
 {
-	if (extension == ".py")
+	if (extension.size() <= 1)
+		tokenStream.throwError("Invalid cgi extension [ " + extension + "]");
+
+	if (extension[0] != '.')
+		tokenStream.throwError("Invalid cgi extension [ " + extension + "]");
+
+	for (const auto &cgi : location.cgis)
 	{
-		if (location.hasDirective(CGI_PY))
-		{
-			tokenStream.throwError("Duplicate cgi directive with [ .py ] extension is not allowed");
-		}
-		location.markDirective(CGI_PY);
-		return;
+		if (cgi.first == extension)
+			tokenStream.throwError("Duplicate cgi directive with [ " + extension + " ] extension is not allowed");
 	}
-	if (extension == ".php")
-	{
-		if (location.hasDirective(CGI_PHP))
-		{
-			tokenStream.throwError("Duplicate cgi directive with [ .php ] extension is not allowed");
-		}
-		location.markDirective(CGI_PHP);
-		return;
-	}
-	tokenStream.throwError("Found invalid cgi extension argument [ " + extension + " ]");
+	location.markDirective(CGI);
 }
 
 static void validateExecutablePath(const std::string &executable, TokenStream &tokenStream)

@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/11 09:39:08 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 10:56:47 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 17:34:27 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,9 @@ void ConfigParser::parseAllowMethod(Location &location, TokenStream &tokenStream
 			tokenStream.throwError("Method may contain only capital letters [ " + method_token + " ]");
 
 		// Is method valid
-		if (method_token != "GET" && method_token != "POST" && method_token != "DELETE")
+		if (method_token != "GET" && method_token != "POST" && method_token != "PUT" && method_token != "DELETE" &&
+			method_token != "HEAD" && method_token != "OPTIONS" && method_token != "TRACE" &&
+			method_token != "CONNECT" && method_token != "PATCH")
 			tokenStream.throwError("Found an unsupported Method [ " + method_token + " ]");
 
 		location.addAllowedMethod(toMethod(method_token));

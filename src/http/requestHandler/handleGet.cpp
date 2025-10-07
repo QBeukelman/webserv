@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 16:10:04 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:41:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,8 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 		else if (n < 0)
 		{
 			// Read failed
-			if (errno == EINTR)
-				continue;
+			// if (errno == EINTR)
+			// 	continue;
 			Logger::error("RequestHandler::handleGet() → Read failed: " + std::string(std::strerror(errno)));
 			::close(fd);
 			return (makeError(STATUS_INTERNAL_ERROR, "Read error"));

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 15:30:56 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 18:43:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "config/models/CgiConfig.hpp"
 #include "config/models/Redirect.hpp"
 #include "http/models/HttpMethod.hpp"
+#include "http/models/HttpRequestLimits.hpp"
 #include "log/Logger.hpp"
 
 #include <algorithm>
@@ -47,6 +48,8 @@ class Location : public IConfigBlock
 	std::vector<std::string> index_files;
 	Redirect redirect;
 	bool autoindex;
+
+	HttpRequestLimits limits;
 
 	const std::string getFileExtenstion(const std::string &request_path) const;
 
@@ -90,6 +93,10 @@ class Location : public IConfigBlock
 	// Autoindex
 	void setAutoindex(const bool autoindex);
 	bool getAutoindex(void) const;
+
+	// Limits
+	void setMaxBodySize(size_t size);
+	size_t getMaxBodySize() const;
 
 	// IConfigBlock overrides
 	void setRoot(const std::string &root); /* override */
