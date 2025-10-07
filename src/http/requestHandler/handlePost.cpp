@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/06 14:54:09 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 16:10:12 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,6 @@ HttpResponse RequestHandler::handleMultipartPost(const HttpRequest &request, con
 
 HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Location &location) const
 {
-	// Allowed methods
-	// if (isMethodAllowed(request, location) == false)
-	// 	return (makeError(STATUS_METHOD_NOT_ALLOWED, "handlePost()"));
-
-	// if (std::optional<CGI> cgi = location.getCgiByExtension(request.path))
-	// {
-	// 	Logger::info("RequestHandler::handlePost() → Starting CGI");
-	// 	return (handleCgi(request, location, *cgi));
-	// }
-	// Logger::info("Location::handlePost() → No CGI");
-
 	// Allowed uploads
 	if (location.allow_uploads == false || location.upload_dir.empty())
 		return (makeError(STATUS_FORBIDDEN, "Uploads not allowed on this Location"));
