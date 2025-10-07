@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 10:57:41 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 16:18:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 #include <chrono>
 #include <cstring>
+#include <memory>
 #include <string>
 #include <sys/socket.h>
 

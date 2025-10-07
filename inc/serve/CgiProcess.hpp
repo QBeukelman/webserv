@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/06 11:54:18 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 15:35:50 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/07 16:18:04 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <sys/wait.h>
