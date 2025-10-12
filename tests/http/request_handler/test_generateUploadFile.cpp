@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/19 11:56:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 11:13:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:53:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ static void deleteFile(const File file)
 
 TEST_CASE("RequestHandler: generateUploadFile")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Request
 	HttpRequest request;
 

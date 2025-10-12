@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:42:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 18:44:15 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 11:00:43 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ std::string Location::getPath() const
 void Location::setRedirect(const Redirect &redirect)
 {
 	this->redirect = redirect;
+	this->has_redirects = true;
 }
 
 Redirect Location::getRedirect(void) const

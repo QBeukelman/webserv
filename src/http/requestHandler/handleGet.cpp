@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 18:41:24 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:43:39 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,18 @@ static std::string getFileExtension(const std::string &file_path)
 static std::string buildFilePath(const Location &location, const std::string &request_path)
 {
 	// 1) Substring path after prefix
-	std::string relative = request_path.substr(location.path_prefix.size());
+	std::string path_prefix = location.path_prefix;
+
+	// if (path_prefix.back() != '/')
+	// 	path_prefix.push_back('/');
+	std::string relative = request_path.substr(path_prefix.size());
 
 	// 2) Join it with root
-	std::string file_path = location.getRoot();
-	if (file_path.empty() == false && file_path.back() != '/')
-		file_path.push_back('/');
-	return (file_path + relative);
+	std::string root = location.getRoot();
+
+	if (root.empty() == false && root.back() != '/')
+		root.push_back('/');
+	return (root + relative);
 }
 
 static bool isDirectory(const std::string &path)
@@ -74,6 +79,8 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	// 2) If directory -> try indexes
 	if (isDirectory(file_path))
 	{
+		Logger::info("RequestHandler::handleGet → File path is Directory");
+
 		// 2.1) Search for indexes
 		std::string index_path = selectIndexFile(file_path, location.getIndexFiles());
 		if (index_path.empty())
@@ -81,8 +88,6 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 			// 2.2) Try Auto-Index
 			if (location.getAutoindex() == true)
 				return (generateAutoIndexResponse(file_path));
-			else
-				return (makeError(STATUS_FORBIDDEN, "No index file in directory"));
 		}
 
 		Logger::info("RequestHandler::handleGet() → Using index file, found directory as path");
@@ -111,9 +116,6 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 			break;
 		else if (n < 0)
 		{
-			// Read failed
-			// if (errno == EINTR)
-			// 	continue;
 			Logger::error("RequestHandler::handleGet() → Read failed: " + std::string(std::strerror(errno)));
 			::close(fd);
 			return (makeError(STATUS_INTERNAL_ERROR, "Read error"));

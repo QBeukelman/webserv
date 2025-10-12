@@ -6,7 +6,7 @@
 /*   By: dkolodze <dkolodze@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/18 14:51:32 by dkolodze      #+#    #+#                 */
-/*   Updated: 2025/10/03 10:10:58 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 10:15:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Logger
 	static void warning(const std::string &msg);
 	static void info(const std::string &msg);
 	static void debug(const std::string &msg);
+	static void log(const std::string &msg);
 
 	static std::string join(const std::string &s1, const std::string &s2);
 

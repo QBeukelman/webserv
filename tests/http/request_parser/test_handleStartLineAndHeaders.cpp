@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 11:35:30 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 17:26:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:54:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 TEST_CASE("RequestParser: handleStartLineAndHeaders()")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	RequestParser p(HttpRequestLimits{});
 	ParseStep step;

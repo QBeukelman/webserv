@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 18:45:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 11:11:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,30 +40,15 @@ RequestHandler::RequestHandler(const Server &newServer) : server(newServer)
  * 	6) Error & Keep-Alive:
  * 		Keep alive or close based on request headers.
  */
-HttpResponse RequestHandler::handle(const HttpRequest &request)
+HttpResponse RequestHandler::handleStatic(const HttpRequest &request, const Location &location)
 {
+	// 1) Start request
 	std::cout << request << std::endl;
-
 	std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_OUT);
 
-	// 1) Validate location
-	Location location;
-	try
-	{
-		location = server.findLocation(request.path);
-	}
-	catch (Server::LocationNotFoundException &e)
-	{
-		Logger::error(Logger::join("RequestHandler::handle → ", e.what()));
-		return (makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found"));
-	}
-
-	if (std::chrono::steady_clock::now() > deadline)
-		return makeError(HttpStatus::STATUS_SERVICE_UNAVAILABLE, "Processing timeout");
-
-	// 2) Handle redirects
-	if (location.has_redirects)
-		return (generateRedirectResponse(location));
+	// TODO: Where to timeout?
+	// if (std::chrono::steady_clock::now() > deadline)
+	// 	return makeError(HttpStatus::STATUS_SERVICE_UNAVAILABLE, "Processing timeout");
 
 	switch (request.method)
 	{
@@ -105,6 +90,7 @@ HttpStatus RequestHandler::errorFromErrno(int error) const
 
 DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 {
+	// 1) Validate location
 	Location location;
 	try
 	{
@@ -116,15 +102,26 @@ DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 		return {DispatchResult::DISPACTH_STATIC, makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found")};
 	}
 
+	// 2) Handle redirects
+	if (location.has_redirects)
+		return {DispatchResult::DISPACTH_STATIC, generateRedirectResponse(location), {}, location};
+
+	// 3) Method
 	if (isMethodAllowed(request, location) == false)
 		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_METHOD_NOT_ALLOWED, "method not allowed")};
 
+	// 4) Limits
 	if (request.body.size() > location.getMaxBodySize())
 		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_PAYLOAD_TOO_LARGE, "request body is too long")};
 
-	if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))
-		return {DispatchResult::DISPACTH_CGI, HttpResponse{}, found_cgi.value(), location};
+	// 5) CGI
+	if (request.method == HttpMethod::POST)
+	{
+		if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))
+			return {DispatchResult::DISPACTH_CGI, HttpResponse{}, found_cgi.value(), location};
+	}
 
-	HttpResponse response = RequestHandler(this->server).handle(request);
+	// 6) Dispatch Static
+	HttpResponse response = RequestHandler(this->server).handleStatic(request, location);
 	return {DispatchResult::DISPACTH_STATIC, response, {}, location};
 }

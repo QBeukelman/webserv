@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 11:22:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 11:38:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ void EventLoop::run(void)
 			continue;
 		}
 
-		// 3) Dispatch fds that reported events
+		// 3) Dispatch fds that with events
 		int processed = 0;
 		for (size_t i = 0; i < pfds.size() && processed < n;)
 		{
@@ -280,23 +280,20 @@ void EventLoop::run(void)
 
 			// Dispatch
 			short re = entry.revents;
+			if (re & POLLIN)
+			{
+				Logger::info("EventLoop::run() → onReadable()");
+				h->onReadable();
+			}
+			if (re & POLLOUT)
+			{
+				Logger::info("EventLoop::run() → onWritable()");
+				h->onWritable();
+			}
 			if (re & (POLLERR | POLLHUP | POLLNVAL))
 			{
 				Logger::info("EventLoop::run() → onHangupOrError()");
 				h->onHangupOrError(re);
-			}
-			else
-			{
-				if (re & POLLIN)
-				{
-					Logger::info("EventLoop::run() → onReadable()");
-					h->onReadable();
-				}
-				if (re & POLLOUT)
-				{
-					Logger::info("EventLoop::run() → onWritable()");
-					h->onWritable();
-				}
 			}
 
 			// Refresh interest

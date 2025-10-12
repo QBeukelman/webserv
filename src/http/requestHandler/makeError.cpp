@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/30 14:52:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/03 11:19:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/08 08:36:30 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static std::string findErrorPage(const std::vector<ErrorPage> &errorPages, const
 		if (&e == &errorPages.back())
 		{
 			// No matching error page found
-			Logger::info("RequestHandler::makeError() → Did not find matching error page in Server");
+			Logger::info("RequestHandler::findErrorPage() → No matching error page in Server");
 			return ("");
 		}
 	}

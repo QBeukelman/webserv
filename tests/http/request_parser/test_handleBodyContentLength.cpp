@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 13:01:00 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 11:16:09 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:54:06 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ static ParseContext make_ctx(size_t content_len, size_t max_body = 1 << 20)
 
 TEST_CASE("handleBodyContentLength: zero Content-Length completes immediately")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	ParseContext ctx = make_ctx(0);
 	const char *data = "";
@@ -44,6 +46,8 @@ TEST_CASE("handleBodyContentLength: zero Content-Length completes immediately")
 
 TEST_CASE("handleBodyContentLength: no bytes available -> incomplete, need more")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	ParseContext ctx = make_ctx(5);
 
@@ -62,6 +66,8 @@ TEST_CASE("handleBodyContentLength: no bytes available -> incomplete, need more"
 
 TEST_CASE("handleBodyContentLength: partial copy respects remaining length")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	ParseContext ctx = make_ctx(10);
 	const char *data = "ABCDEFGHIJ";
@@ -92,6 +98,8 @@ TEST_CASE("handleBodyContentLength: partial copy respects remaining length")
 
 TEST_CASE("handleBodyContentLength: enforces max_body_size across calls")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	ParseContext ctx = make_ctx(10, 8);
 
@@ -110,6 +118,8 @@ TEST_CASE("handleBodyContentLength: enforces max_body_size across calls")
 
 TEST_CASE("handleBodyContentLength: does not read past current window (available)")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	ParseContext ctx = make_ctx(20);
 	const char *data = "0123456789";

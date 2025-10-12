@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 17:07:00 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/12 22:22:41 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:56:27 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ static unsigned short get_bound_port(int fd)
 
 TEST_CASE("Listener::Listener: bind and listen on ports")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	std::vector<unsigned short> ports;
 	ports.push_back(8080);
 	ports.push_back(8081);

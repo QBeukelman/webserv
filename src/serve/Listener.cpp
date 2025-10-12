@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/03 10:10:58 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 10:17:34 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ short Listener::interest() const
 
 // LOGGING
 // ____________________________________________________________________________
-static void logListnerCreated(const std::string &ip, unsigned int port)
+static void logListenerCreated(const std::string &ip, unsigned int port)
 {
 	std::ostringstream oss;
-	std::cout << LIGHT_GRAY << "====================================================\n";
-	oss << "Listner created → ";
+	Logger::log(LIGHT_GRAY + "====================================================\n");
+	oss << "Listener created → ";
 	oss << UNDERLINE << "http://" << ip << ":" << port << "/" << RESET_STYLE;
 	Logger::success(oss.str());
-	std::cout << LIGHT_GRAY << "====================================================\n";
+	Logger::log(LIGHT_GRAY + "====================================================\n");
 }
 
 // PRIVATE
@@ -137,7 +137,7 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
 	addr.sin_addr.s_addr = htonl(INADDR_ANY); // 0.0.0.0, all interfaces
 	addr.sin_port = htons(port);			  // Convert to network byte order
 
-	logListnerCreated(ip, port);
+	logListenerCreated(ip, port);
 
 	if (::bind(fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0)
 	{
@@ -219,7 +219,7 @@ void Listener::onReadable()
 }
 
 /*
- * Emply function: A Listner will not write.
+ * Emply function: A Listener will not write.
  */
 void Listener::onWritable()
 {

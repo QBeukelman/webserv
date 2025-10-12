@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpStatus.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 15:13:02 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 10:28:10 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpStatus.hpp                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/02 15:13:02 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/09 08:56:03 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ enum HttpStatus
 	STATUS_INTERNAL_ERROR = 500,
 	STATUS_NOT_IMPLEMENTED = 501,
 	STATUS_BAD_GATEWAY = 502,
-	STATUS_SERVICE_UNAVAILABLE = 503
+	STATUS_SERVICE_UNAVAILABLE = 503,
+	STATUS_HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
 const char *reasonPhrase(HttpStatus code);

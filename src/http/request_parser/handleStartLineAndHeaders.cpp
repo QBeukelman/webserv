@@ -6,11 +6,38 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 08:53:50 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/09 13:53:07 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/RequestParser.hpp"
+
+static std::string normalizePath(const std::string &path)
+{
+
+	std::string normalizedPath;
+	bool lastWasSlash = false;
+
+	for (char c : path)
+	{
+		if (c == '/')
+		{
+			if (!lastWasSlash)
+				normalizedPath.push_back('/');
+			lastWasSlash = true;
+		}
+		else
+		{
+			normalizedPath.push_back(c);
+			lastWasSlash = false;
+		}
+	}
+	if (normalizedPath.empty())
+		normalizedPath = "/";
+
+	Logger::info("RequestParser::normalizePath() → " + path + " → " + normalizedPath);
+	return (normalizedPath);
+}
 
 static bool find_header_end(const char *data, size_t len, size_t &header_end)
 {
@@ -205,9 +232,9 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 	size_t header_end = 0;
 
 	if (find_header_end(data, len, header_end) == false)
-		return (returnFailure(ctx, step, PARSE_INCOMPLETE, "Did not find header end"));
+		return (step);
 	if (find_start_line_end(data, header_end, sl_end) == false)
-		return (returnFailure(ctx, step, PARSE_INCOMPLETE, "Did not find end of start-line"));
+		return (step);
 
 	// 2) Check Start-Line and Header block size
 	if ((header_end + 4) > ctx.limits.max_header_size)
@@ -223,11 +250,20 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 	std::string startLine(data, data + sl_end);
 	std::string headerBlock(data + sl_end + 2, data + header_end);
 
-	RequestParseStatus st = PARSE_INCOMPLETE;
-	if (!parseStartLine(startLine, ctx.request, st))
-		return (returnFailure(ctx, step, PARSE_INCOMPLETE, "Invalid start-line"));
-	if (!parseHeaders(headerBlock, ctx.request.headers, st))
-		return (returnFailure(ctx, step, PARSE_INCOMPLETE, "Invalid headers"));
+	// Start-Line
+	if (!parseStartLine(startLine, ctx.request, step.status))
+	{
+		ctx.last_status = step.status;
+		return (returnFailure(ctx, step, step.status, "Invalid start-line"));
+	}
+	ctx.request.path = normalizePath(ctx.request.path);
+
+	// Headers
+	if (!parseHeaders(headerBlock, ctx.request.headers, step.status))
+	{
+		ctx.last_status = step.status;
+		return (returnFailure(ctx, step, step.status, "Invalid headers"));
+	}
 
 	const size_t consumed_headers = header_end + 4;
 	step.consumed = consumed_headers;

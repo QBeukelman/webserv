@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 17:01:33 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/03 14:08:30 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:55:02 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 
 TEST_CASE("RequestParser: parseStartLine() Success simple")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
@@ -34,6 +36,8 @@ TEST_CASE("RequestParser: parseStartLine() Success simple")
 
 TEST_CASE("RequestParser: parseStartLine() Success with path")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
@@ -48,18 +52,22 @@ TEST_CASE("RequestParser: parseStartLine() Success with path")
 
 TEST_CASE("RequestParser: parseStartLine() Invalid method")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
-	RequestParseStatus st = PARSE_INCOMPLETE;
+	RequestParseStatus st = PARSE_INVALID_METHOD;
 	HttpRequest request;
 
 	CHECK(p.parseStartLine("PUT / HTTP/1.1", request, st) == false);
 	CHECK(request.method == HttpMethod::UNKNOWN);
-	CHECK(st == PARSE_MALFORMED_REQUEST);
+	CHECK(st == PARSE_INVALID_METHOD);
 }
 
 TEST_CASE("RequestParser: parseStartLine() Invalid path")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
@@ -68,11 +76,13 @@ TEST_CASE("RequestParser: parseStartLine() Invalid path")
 	CHECK(p.parseStartLine("GET docs/My%20File.pdf HTTP/1.1", request, st) == false);
 	CHECK(request.method == HttpMethod::UNKNOWN);
 	CHECK(request.path == "");
-	CHECK(st == PARSE_MALFORMED_REQUEST);
+	CHECK(st == PARSE_INCOMPLETE);
 }
 
 TEST_CASE("RequestParser: parseStartLine() Invalid version")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	RequestParser p(HttpRequestLimits{});
 	std::string sl, hb, b;
 	RequestParseStatus st = PARSE_INCOMPLETE;
@@ -82,5 +92,5 @@ TEST_CASE("RequestParser: parseStartLine() Invalid version")
 	CHECK(request.method == HttpMethod::UNKNOWN);
 	CHECK(request.path == "");
 	CHECK(request.version == "");
-	CHECK(st == PARSE_MALFORMED_REQUEST);
+	CHECK(st == PARSE_INVALID_VERSION);
 }

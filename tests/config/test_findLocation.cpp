@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 14:05:59 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/28 12:03:56 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:56:18 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 TEST_CASE("ServerConfig: findLocation() basic matching")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	ServerConfig serverConfig;
 

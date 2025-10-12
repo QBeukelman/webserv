@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/14 13:11:08 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/14 18:20:00 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 10:18:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ struct TestConfigBuilder
 	// Build a ServerConfig
 	ServerConfig build()
 	{
+		Logger::setLogLevel(LOG_LEVEL_NONE);
+
 		// 1) listeners
 		server.setListens(listenEndpoints);
 

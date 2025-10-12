@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/27 08:43:28 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/09 11:41:50 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/09 08:39:32 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,13 @@ bool isValidTarget(const std::string &s)
 	return true;
 }
 
-bool isValidStartLine(const std::vector<std::string> &tokens)
+bool isValidStartLine(const std::vector<std::string> &tokens, RequestParseStatus &step_status)
 {
 	if (tokens.size() != 3)
 	{
 		Logger::error(
 			Logger::join("RequestParser::parseStartLine() → Invalid token count: ", std::to_string(tokens.size())));
+		step_status = PARSE_MALFORMED_REQUEST;
 		return (false);
 	}
 
@@ -83,6 +84,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	if (isSupported(method) == false)
 	{
 		Logger::error(Logger::join("RequestParser::parseStartLine() → Unsupported method: ", method));
+		step_status = PARSE_INVALID_METHOD;
 		return (false);
 	}
 
@@ -91,6 +93,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	if (isValidTarget(tokens[1]) == false)
 	{
 		Logger::error(Logger::join("RequestParser::parseStartLine() → Unsupported chars in request target ", target));
+		step_status = PARSE_MALFORMED_REQUEST;
 		return (false);
 	}
 	if (target[0] != '/')
@@ -104,6 +107,7 @@ bool isValidStartLine(const std::vector<std::string> &tokens)
 	if (version != "HTTP/1.1")
 	{
 		Logger::error(Logger::join("RequestParser::parseStartLine() → Unsupported HTTP version (HTTP/1.1) ", version));
+		step_status = PARSE_INVALID_VERSION;
 		return (false);
 	}
 	return (true);
@@ -124,7 +128,8 @@ void splitTarget(const std::string &target, std::string &path, std::string &quer
 	}
 }
 
-bool RequestParser::parseStartLine(const std::string &startLine, HttpRequest &out, RequestParseStatus &status) const
+bool RequestParser::parseStartLine(const std::string &startLine, HttpRequest &out,
+								   RequestParseStatus &step_status) const
 {
 	std::istringstream iss(startLine);
 	std::vector<std::string> tokens;
@@ -135,9 +140,8 @@ bool RequestParser::parseStartLine(const std::string &startLine, HttpRequest &ou
 		tokens.push_back(word);
 	}
 
-	if (isValidStartLine(tokens) == false)
+	if (isValidStartLine(tokens, step_status) == false)
 	{
-		status = PARSE_MALFORMED_REQUEST;
 		out.method = HttpMethod::UNKNOWN;
 		return (false);
 	}

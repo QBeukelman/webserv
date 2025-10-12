@@ -1,7 +1,7 @@
 # Testing Webserv
 
 
-### Build and run the unit tests
+# Unit Tests
 
 ```bash
 # Make test executable `unit_tests`
@@ -21,6 +21,28 @@ make test
 
 <br/>
 
+
+# Siege
+
+Test webserv under load using `siege`
+
+- **Mac** `brew install siege`
+- **Linux** `apt install siege`
+
+```bash
+# Uptime
+siege -c 50 -t 30s http://127.0.0.1:8080/
+
+# CGI uptime
+siege -c 50 -t 30s "http://127.0.0.1:8080/scripts/form.py POST name=homer&msg=doh"
+```
+
+---
+
+<br/>
+
+
+# Curl
 
 # 2xx
 
@@ -80,14 +102,32 @@ curl -X POST \
 
 ---
 
+
+# 3xx
+
+```bash
+curl -v http://127.0.0.1:8080/redirect
+```
+
 <br/>
-<br/>
+
+---
 
 
 # 4xx
 
 ### 400 Bad Request
 
+```bash
+# Invalid start line
+{ 
+  printf 'POST/upload HTTP/1.1\r\n'
+  printf 'Host: 127.0.0.1:8080\r\n'
+  printf 'Transfer-Encoding: chunked\r\n'
+  printf 'Content-Type: text/plain\r\n'
+  printf '\r\n'
+} | nc 127.0.0.1 8080
+```
 
 ### 401 Unauthorized
 
@@ -126,13 +166,9 @@ curl -v http://127.0.0.1:8080/uploads \
 
 ```
 
-
 <br/>
 
 ---
-
-<br/>
-<br/>
 
 
 # 5xx
@@ -142,7 +178,6 @@ curl -v http://127.0.0.1:8080/uploads \
 ```bash
 
 ```
-
 
 <br/>
 

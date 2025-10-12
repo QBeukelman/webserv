@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/06 13:14:33 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 16:02:53 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 11:30:43 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,18 @@ void CgiProcess::removeStdinFromLoop()
 bool CgiProcess::start()
 {
 	// 1) Script path
-	const std::string script = joinPaths(location.getRoot(), request.path);
+	std::string script = joinPaths(location.getRoot(), request.path);
+	Logger::info("CgiProcess::start() → script: " + script);
 
 	// 2) Access
 	if (::access(script.c_str(), R_OK) != 0)
-		return (false);
+	{
+		std::string rootAndScript = joinRootAndScript(location.getRoot(), script);
+		Logger::info("CgiProcess::start() → Mending scrip path: " + script + " → " + rootAndScript);
+		if (::access(rootAndScript.c_str(), R_OK) != 0)
+			return (false);
+		script = rootAndScript;
+	}
 	if (::access(cgiConfig.executable_path.c_str(), X_OK) != 0)
 		return (false);
 
@@ -120,7 +127,7 @@ bool CgiProcess::start()
 
 		// Execute
 		::execve(cgiConfig.executable_path.c_str(), argv, envp);
-		_exit(127); // Exe failed
+		_exit(127); // Execve failed
 	}
 
 	// ============== PARENT ==============
@@ -152,6 +159,7 @@ void CgiProcess::registerPollables()
 	{
 		loop->add(stdout_poll.get());
 		loop->add(stdin_poll.get());
+
 		stdout_reg_fd = stdout_poll->fd();
 		stdin_reg_fd = stdin_poll->fd();
 	}
@@ -213,6 +221,7 @@ void CgiProcess::writeToChild()
 {
 	if (stdin_fd < 0)
 		return;
+
 	while (in_buf.empty() == false)
 	{
 		ssize_t n = ::write(stdin_fd, in_buf.data(), in_buf.size());

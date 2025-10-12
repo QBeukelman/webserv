@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 16:10:12 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 11:44:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 	if (location.allow_uploads == false || location.upload_dir.empty())
 		return (makeError(STATUS_FORBIDDEN, "Uploads not allowed on this Location"));
 	if (location.hasUploadsDir(location.normalizeDirectory(location.upload_dir)) == false)
-	{
 		return (makeError(STATUS_INTERNAL_ERROR, "Upload directory missing, server misconfiguration"));
-	}
 
 	// Check body size
 	if (request.body.empty())
@@ -79,9 +77,7 @@ HttpResponse RequestHandler::handlePost(const HttpRequest &request, const Locati
 
 	// File Upload / Multipart
 	if (request.content_type.getType() == ContentTypeKind::MULTIPART)
-	{
 		return (handleMultipartPost(request, location));
-	}
 
 	// Do nothing with request
 	Logger::info("RequestHandler::handlePost() → Will do nothing with request [200]");
