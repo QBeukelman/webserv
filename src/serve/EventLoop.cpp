@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/10 11:38:47 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 18:16:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ EventLoop::EventLoop() : handlers(std::map<int, IOPollable *>())
 std::vector<pollfd> EventLoop::getPollFds(void) const
 {
 	return (this->pfds);
+}
+
+std::vector<IOPollable *> EventLoop::getPendingClose(void) const
+{
+	return (this->pendingClose);
 }
 
 // TIME OUT
@@ -57,6 +62,7 @@ int EventLoop::computePollTimeoutMs() const
  */
 void EventLoop::add(IOPollable *h)
 {
+	Logger::info("EventLoop::add() → Adding fd: " + std::to_string(h->fd()));
 	if (!h)
 		return;
 	const int fd = h->fd();
@@ -84,7 +90,7 @@ void EventLoop::add(IOPollable *h)
  *
  * Notes:
  * 	- With `poll()`, we decide per-fd which events are needed (`POLLIN`, `POLLOUT`, ...).
- * 	- Call this after a state change (e.g. `outbuf` became non-empty → want `POLLOUT).
+ * 	- Use after a state change (e.g. `outbuf` became non-empty → want `POLLOUT).
  */
 void EventLoop::update(IOPollable *handler)
 {
@@ -131,6 +137,7 @@ void EventLoop::update(IOPollable *handler)
 void EventLoop::remove(int fd)
 {
 	handlers.erase(fd);
+
 	size_t idx = findPfdIndex(fd);
 	if (idx != static_cast<size_t>(-1))
 	{
@@ -145,18 +152,7 @@ void EventLoop::remove(IOPollable *handler)
 {
 	if (!handler)
 		return;
-
-	int fd = -1;
-	for (std::map<int, IOPollable *>::iterator it = handlers.begin(); it != handlers.end(); ++it)
-	{
-		if (it->second == handler)
-		{
-			fd = it->first;
-			break;
-		}
-	}
-	if (fd != -1)
-		remove(fd);
+	remove(handler->fd());
 }
 
 size_t EventLoop::findPfdIndex(int fd) const
@@ -179,13 +175,11 @@ size_t EventLoop::findPfdIndex(int fd) const
  */
 void EventLoop::closeLater(IOPollable *handler)
 {
+	if (!handler)
+		return;
 	pendingClose.push_back(handler);
-}
+	pending_close_fds.insert(handler->fd());
 
-// UTILS
-// ____________________________________________________________________________
-void EventLoop::willClosePending()
-{
 	if (pendingClose.empty())
 		return;
 	else
@@ -215,11 +209,25 @@ void EventLoop::willClosePending()
 
 			// Close fd and destroy
 			::close(fd);
-			delete (handler);
+			// delete (handler);
 			pendingClose[i] = NULL;
 		}
 		pendingClose.clear();
 	}
+}
+
+// UTILS
+// ____________________________________________________________________________
+void EventLoop::willClosePending()
+{
+	if (pending_close_fds.empty())
+		return;
+
+	for (int fd : pending_close_fds)
+	{
+		remove(fd);
+	}
+	pending_close_fds.clear();
 }
 
 // MAIN LOOP
@@ -256,11 +264,13 @@ void EventLoop::run(void)
 			continue;
 		}
 
+		std::vector<pollfd> copy = pfds;
+
 		// 3) Dispatch fds that with events
 		int processed = 0;
-		for (size_t i = 0; i < pfds.size() && processed < n;)
+		for (size_t i = 0; i < copy.size() && processed < n;)
 		{
-			pollfd entry = pfds[i];
+			pollfd entry = copy[i];
 			if (entry.revents == 0)
 			{
 				// No entry
@@ -271,12 +281,17 @@ void EventLoop::run(void)
 
 			// Find handler
 			auto it = handlers.find(entry.fd);
-			if (it == handlers.end() || it->second == NULL)
+			if (it == handlers.end())
+				continue;
+			IOPollable *h = it->second;
+
+			// Skip closing
+			const auto &pending = getPendingCloseFds();
+			if (pending.count(entry.fd))
 			{
-				remove(entry.fd);
+				++i;
 				continue;
 			}
-			IOPollable *h = it->second;
 
 			// Dispatch
 			short re = entry.revents;
@@ -294,28 +309,31 @@ void EventLoop::run(void)
 			{
 				Logger::info("EventLoop::run() → onHangupOrError()");
 				h->onHangupOrError(re);
+				h->onHangupOrError(re);
+				++i;
+				continue;
 			}
 
 			// Refresh interest
-			auto it_after = handlers.find(entry.fd);
-			if (it_after == handlers.end())
-			{
-				continue;
-			}
+			// auto it_after = handlers.find(entry.fd);
+			// if (it_after == handlers.end())
+			// {
+			// 	continue;
+			// }
 
-			short next = h->interest();
-			const int current_fd = h->fd();
+			// short next = h->interest();
+			// const int current_fd = h->fd();
 
-			if (next == 0 || current_fd != entry.fd)
-			{
-				remove(entry.fd);
-				continue;
-			}
-			else
-			{
-				pfds[i].events = next;
-				++i;
-			}
+			// if (current_fd != entry.fd)
+			// {
+			// 	remove(entry.fd);
+			// 	continue;
+			// }
+			// else
+			// {
+			// 	copy[i].events = next;
+			// 	++i;
+			// }
 		}
 
 		checkTimeouts();

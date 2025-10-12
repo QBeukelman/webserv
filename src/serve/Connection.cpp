@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/10 11:48:32 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:07:17 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static bool parserStalled(const ParseStep &step)
 {
 	if (step.consumed == 0 && !step.need_more && !step.request_complete && step.status != PARSE_INVALID_METHOD &&
 		step.status != PARSE_INVALID_VERSION && step.status != PARSE_MALFORMED_REQUEST &&
-		step.status != PARSE_EXCEED_LIMIT)
+		step.status != PARSE_EXCEED_BODY_LIMIT)
 	{
 		return (true);
 	}
@@ -74,8 +74,10 @@ bool Connection::handleParseError(const ParseStep &step)
 	if (step.status != PARSE_INCOMPLETE && step.status != PARSE_OK)
 	{
 		HttpStatus httpStatus = HttpStatus::STATUS_BAD_REQUEST;
-		if (step.status == PARSE_EXCEED_LIMIT)
+		if (step.status == PARSE_EXCEED_BODY_LIMIT)
 			httpStatus = HttpStatus::STATUS_PAYLOAD_TOO_LARGE;
+		if (step.status == PARSE_EXCEED_STARTLINE_LIMIT)
+			httpStatus = HttpStatus::STATUS_URI_TOO_LARGE;
 		if (step.status == PARSE_INVALID_METHOD)
 			httpStatus = HttpStatus::STATUS_METHOD_NOT_ALLOWED;
 		if (step.status == PARSE_INVALID_VERSION)
@@ -139,6 +141,9 @@ void Connection::onTimeout()
 	// 1) Client started sending request, but never finished
 	if (connection_state == ConnectionState::READING && !keep_alive_pending)
 	{
+		if (cgi_)
+			cgi_->clientAborted();
+
 		// Request not fully received
 		HttpResponse response = RequestHandler(*server).makeError(STATUS_REQUEST_TIMEOUT, "Request timeout");
 		outBuf = response.serialize();
@@ -151,18 +156,26 @@ void Connection::onTimeout()
 	// 2) Idle between requests
 	if (connection_state == ConnectionState::READING && keep_alive_pending)
 	{
+		if (cgi_)
+			cgi_->clientAborted();
+
 		keep_alive = false;
 		connection_state = ConnectionState::CLOSING;
 		loop->closeLater(this);
+		Logger::info("Connection::onTimeout() → Closing fd: " + std::to_string(this->fd()));
 		return;
 	}
 
 	// 3) Timeout while writing response
 	if (connection_state == ConnectionState::WRITING)
 	{
+		if (cgi_)
+			cgi_->clientAborted();
+
 		keep_alive = false;
 		connection_state = ConnectionState::CLOSING;
 		loop->closeLater(this);
+		Logger::info("Connection::onTimeout() → Closing fd: " + std::to_string(this->fd()));
 		return;
 	}
 }
@@ -270,6 +283,8 @@ void Connection::feedParserFromBuffer()
  */
 void Connection::onReadable()
 {
+	if (isClosing())
+		return;
 	if (connection_state != ConnectionState::READING)
 		return;
 
@@ -291,12 +306,17 @@ void Connection::onReadable()
 		{
 			// Peer closed
 			keep_alive = false;
+			if (cgi_)
+				cgi_->clientAborted();
+
+			connection_state = ConnectionState::CLOSING;
+			Logger::info("Connection::onReadable() → Closing fd: " + std::to_string(this->fd()));
 			loop->closeLater(this);
-			Logger::info("Connection::onReadable() → recv read 0 bytes, returning early");
 			return;
 		}
 
 		connection_state = ConnectionState::CLOSING;
+		Logger::info("Connection::onReadable() → Closing fd: " + std::to_string(this->fd()));
 		loop->closeLater(this);
 		Logger::info("Connection::onReadable() → Reach end of recv");
 		return;
@@ -305,6 +325,8 @@ void Connection::onReadable()
 
 void Connection::onWritable()
 {
+	if (isClosing())
+		return;
 	if (connection_state != ConnectionState::WRITING)
 		return;
 
@@ -322,6 +344,7 @@ void Connection::onWritable()
 		else
 		{
 			connection_state = ConnectionState::CLOSING;
+			Logger::info("Connection::onWritable() → Closing fd: " + std::to_string(this->fd()));
 			loop->closeLater(this);
 		}
 	}
@@ -342,6 +365,7 @@ void Connection::onWritable()
 			if (keep_alive == false)
 			{
 				connection_state = ConnectionState::CLOSING;
+				Logger::info("Connection::onWritable() → Closing fd: " + std::to_string(this->fd()));
 				loop->closeLater(this);
 				return;
 			}
@@ -387,27 +411,33 @@ short Connection::interest() const
 
 void Connection::onHangupOrError(short revents)
 {
+	if (isClosing())
+		return;
+	if (cgi_)
+		cgi_->clientAborted();
+
 	if (revents & POLLHUP)
 	{
-		if (outBuf.empty() == false)
-		{
-			connection_state = ConnectionState::WRITING;
-			this->interest();
-		}
-
-		// Hang up
-		connection_state = ConnectionState::CLOSING;
 		Logger::info("Connection::onHangupOrError() → POLLHUP (peer closed)");
-		loop->closeLater(this);
+
+		if (outBuf.empty())
+		{
+			// connection_state = ConnectionState::WRITING;
+			connection_state = ConnectionState::CLOSING;
+			this->interest();
+			Logger::info("Connection::onHangupOrError() → Closing fd: " + std::to_string(this->fd()));
+			loop->closeLater(this);
+		}
+		return;
 	}
 
-	else if (revents & POLLERR)
+	if (revents & POLLERR)
 	{
-		int soerr = 0;
-		socklen_t sl = sizeof(soerr);
-		if (::getsockopt(fd(), SOL_SOCKET, SO_ERROR, &soerr, &sl) == 0 && soerr != 0)
+		int socket_error = 0;
+		socklen_t sl = sizeof(socket_error);
+		if (::getsockopt(fd(), SOL_SOCKET, SO_ERROR, &socket_error, &sl) == 0 && socket_error != 0)
 		{
-			Logger::error("Connection::onHangupOrError() → POLLERR: " + std::string(std::strerror(soerr)));
+			Logger::error("Connection::onHangupOrError() → POLLERR: " + std::string(std::strerror(socket_error)));
 		}
 		else
 		{
@@ -415,10 +445,10 @@ void Connection::onHangupOrError(short revents)
 		}
 	}
 
-	else if (revents & POLLNVAL)
+	if (revents & POLLNVAL)
 	{
 		// Fd was invalid for polling
-		Logger::error("Connection::onHangupOrError() → POLLNVAL (invalid fd)");
+		Logger::info("Connection::onHangupOrError() → Closing fd: " + std::to_string(this->fd()));
 		loop->closeLater(this);
 		return;
 	}

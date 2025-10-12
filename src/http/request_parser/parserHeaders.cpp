@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/27 16:37:38 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 17:22:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 19:03:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,12 @@ bool RequestParser::parseHeaders(const std::string &headerBlock, std::map<std::s
 
 		std::string name = toLower(line.substr(0, colon));
 		std::string value = trim(line.substr(colon + 1));
+
+		if (headers[name] != "")
+		{
+			status = PARSE_MALFORMED_REQUEST;
+			return (false);
+		}
 
 		headers[name] = value;
 	}

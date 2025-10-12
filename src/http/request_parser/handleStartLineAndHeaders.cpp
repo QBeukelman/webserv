@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/09 13:53:07 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:02:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ static ParseStep applyContentLength(ParseContext &ctx, std::string cl, size_t co
 		// Enforce body size limit
 		if (n > ctx.limits.max_body_size)
 		{
-			return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Body exceeds max_body_size"));
+			return (returnFailure(ctx, step, PARSE_EXCEED_BODY_LIMIT, "Body exceeds max_body_size"));
 		}
 	}
 
@@ -238,13 +238,13 @@ ParseStep RequestParser::handleStartLineAndHeaders(ParseContext &ctx, const char
 
 	// 2) Check Start-Line and Header block size
 	if ((header_end + 4) > ctx.limits.max_header_size)
-		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Header length exceeds limits"));
+		return (returnFailure(ctx, step, PARSE_EXCEED_BODY_LIMIT, "Header length exceeds limits"));
 	if (sl_end > ctx.limits.max_start_line)
-		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Start-line exceeds limits"));
+		return (returnFailure(ctx, step, PARSE_EXCEED_STARTLINE_LIMIT, "Start-line exceeds limits"));
 
 	// 3) Enforce single line header line limit
 	if (check_single_header_limit(data, header_end, sl_end, ctx.limits.max_header_line) == false)
-		return (returnFailure(ctx, step, PARSE_EXCEED_LIMIT, "Single header line exceeds limits"));
+		return (returnFailure(ctx, step, PARSE_EXCEED_BODY_LIMIT, "Single header line exceeds limits"));
 
 	// 4) Parse Start-Line and Headers
 	std::string startLine(data, data + sl_end);

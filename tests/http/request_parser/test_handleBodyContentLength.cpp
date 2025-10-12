@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 13:01:00 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/10 09:54:06 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:01:24 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ TEST_CASE("handleBodyContentLength: enforces max_body_size across calls")
 
 	const char *data2 = "BBBB";
 	ParseStep s2 = p.handleBodyContentLength(ctx, data2, 4);
-	CHECK(s2.status == PARSE_EXCEED_LIMIT);
+	CHECK(s2.status == PARSE_EXCEED_BODY_LIMIT);
 	CHECK(ctx.phase == ERROR_PHASE);
 }
 

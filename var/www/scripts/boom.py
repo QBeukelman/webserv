@@ -1,22 +1,15 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         ::::::::             #
-#    print.py                                           :+:    :+:             #
+#    boom.py                                            :+:    :+:             #
 #                                                      +:+                     #
 #    By: quentinbeukelman <quentinbeukelman@stud      +#+                      #
 #                                                    +#+                       #
-#    Created: 2025/10/07 11:06:59 by quentinbeuk   #+#    #+#                  #
-#    Updated: 2025/10/12 20:14:50 by quentinbeuk   ########   odam.nl          #
+#    Created: 2025/10/12 20:08:48 by quentinbeuk   #+#    #+#                  #
+#    Updated: 2025/10/12 20:13:24 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-import os
-import sys
+import sys;
 
-print("Status: 200 OK")
-print("Content-Type: text/plain; charset=utf-8")
-print()
-print("Hello from CGI!")
-print("Method:", os.environ.get("REQUEST_METHOD"))
-print("Content-length:", os.environ.get("CONTENT_LENGTH"))
-print("Body:", sys.stdin.read())
+sys.exit(1)

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/30 15:25:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 11:39:32 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:01:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 	if (ctx.total_body_bytes + to_copy > ctx.limits.max_body_size)
 	{
 		ctx.phase = ERROR_PHASE;
-		ctx.last_status = PARSE_EXCEED_LIMIT;
-		step.status = PARSE_EXCEED_LIMIT;
+		ctx.last_status = PARSE_EXCEED_BODY_LIMIT;
+		step.status = PARSE_EXCEED_BODY_LIMIT;
 		step.need_more = false;
 		step.request_complete = false;
 		Logger::error("handleBodyContentLength: Max body size");

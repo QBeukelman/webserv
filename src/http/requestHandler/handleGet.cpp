@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/23 08:26:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/10 09:43:39 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 19:39:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,17 @@ static std::string getFileExtension(const std::string &file_path)
 // ____________________________________________________________________________
 static std::string buildFilePath(const Location &location, const std::string &request_path)
 {
-	// 1) Substring path after prefix
 	std::string path_prefix = location.path_prefix;
+	std::string relative =
+		request_path.size() >= path_prefix.size() ? request_path.substr(path_prefix.size()) : request_path;
 
-	// if (path_prefix.back() != '/')
-	// 	path_prefix.push_back('/');
-	std::string relative = request_path.substr(path_prefix.size());
+	if (!relative.empty() && relative[0] == '/')
+		relative.erase(0, 1);
 
-	// 2) Join it with root
 	std::string root = location.getRoot();
-
-	if (root.empty() == false && root.back() != '/')
+	if (!root.empty() && root[root.size() - 1] != '/')
 		root.push_back('/');
+
 	return (root + relative);
 }
 
@@ -79,7 +78,7 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	// 2) If directory -> try indexes
 	if (isDirectory(file_path))
 	{
-		Logger::info("RequestHandler::handleGet → File path is Directory");
+		Logger::info("RequestHandler::handleGet → File path is Directory: " + file_path);
 
 		// 2.1) Search for indexes
 		std::string index_path = selectIndexFile(file_path, location.getIndexFiles());
@@ -98,8 +97,29 @@ HttpResponse RequestHandler::handleGet(const HttpRequest &request, const Locatio
 	const int fd = ::open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)
 	{
-		Logger::error("RequestHandler::handleGet() → Could not open file: " + file_path);
-		return (makeError(STATUS_NOT_FOUND, "Could not find file"));
+		int e = errno;
+		Logger::error("RequestHandler::handleGet() → open failed: " + file_path + " (" + std::strerror(e) + ")");
+
+		switch (e)
+		{
+		case EACCES: // permission denied
+		case EPERM:
+			return makeError(STATUS_FORBIDDEN, "Permission denied");
+
+		case ENOENT:  // no such file
+		case ENOTDIR: // part of path is not dir
+			return makeError(STATUS_NOT_FOUND, "Not found");
+
+		case EISDIR: // is directory
+			return makeError(STATUS_FORBIDDEN, "Is a directory");
+
+		case ENAMETOOLONG:
+		case ELOOP:
+			return makeError(STATUS_NOT_FOUND, "Not found");
+
+		default:
+			break;
+		}
 	}
 
 	// 4) Read file

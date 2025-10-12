@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/10 10:48:43 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 15:09:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define TIME_OUT 100
+#define TIME_OUT 10
 
 struct DispatchResult
 {

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:13:02 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/09 08:56:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:03:44 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ enum HttpStatus
 	STATUS_METHOD_NOT_ALLOWED = 405,
 	STATUS_REQUEST_TIMEOUT = 408,
 	STATUS_PAYLOAD_TOO_LARGE = 413,
+	STATUS_URI_TOO_LARGE = 414,
 
 	// 5xx Server errors
 	STATUS_INTERNAL_ERROR = 500,

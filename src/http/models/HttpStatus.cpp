@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 15:23:10 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/09 08:56:45 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:04:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ const char *reasonPhrase(HttpStatus code)
 		return "Request timeout";
 	case STATUS_PAYLOAD_TOO_LARGE:
 		return "Payload Too Large";
+	case STATUS_URI_TOO_LARGE:
+		return "URI Too Large";
 
 	// 5xx Server errors
 	case STATUS_INTERNAL_ERROR:
@@ -127,6 +129,8 @@ HttpStatus toHttpStatus(int code)
 		return STATUS_REQUEST_TIMEOUT;
 	case 413:
 		return STATUS_PAYLOAD_TOO_LARGE;
+	case 414:
+		return STATUS_URI_TOO_LARGE;
 
 	// 5xx Server errors
 	case 500:

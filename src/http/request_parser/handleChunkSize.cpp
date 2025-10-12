@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 09:17:41 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/30 09:08:50 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:01:15 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ ParseStep RequestParser::handleChunkSize(ParseContext &ctx, const char *data, si
 	{
 		// No full line yet
 		if (ctx.chunk_line_buf.size() > ctx.limits.max_header_line)
-			return (returnError(ctx, PARSE_EXCEED_LIMIT, "No full line found"));
+			return (returnError(ctx, PARSE_EXCEED_BODY_LIMIT, "No full line found"));
 		step.status = PARSE_INCOMPLETE;
 		step.need_more = true;
 		return (step);
@@ -129,7 +129,7 @@ ParseStep RequestParser::handleChunkSize(ParseContext &ctx, const char *data, si
 	// 3) Enforce body size limit (future payload + already copied)
 	if (exceedsBodyLimit(ctx, size_val))
 	{
-		return (returnError(ctx, PARSE_EXCEED_LIMIT, "Body size limits exceeded"));
+		return (returnError(ctx, PARSE_EXCEED_BODY_LIMIT, "Body size limits exceeded"));
 	}
 
 	// 4) Transition: zero-sized final chunk vs normal chunk

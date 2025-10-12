@@ -127,19 +127,48 @@ curl -v http://127.0.0.1:8080/redirect
   printf 'Content-Type: text/plain\r\n'
   printf '\r\n'
 } | nc 127.0.0.1 8080
+
+# invalid Content-Length
+{ printf 'POST / HTTP/1.1\r\nHost: 127.0.0.1:8080\r\nContent-Length: 10\r\n\r\nhi'; } | nc 127.0.0.1 8080
+
+# invalid Content-Length (chunked)
+{ printf 'POST /uploads HTTP/1.1\r\nHost: 127.0.0.1:8080\r\nTransfer-Encoding: chunked\r\n\r\n5\r\nABCD\r\n0\r\n\r\n'; } | nc 127.0.0.1 8080
+
+# Duplicate headers
+{ printf 'GET / HTTP/1.1\r\nHost: a\r\nHost: b\r\n\r\n'; } | nc 127.0.0.1 8080
 ```
 
 ### 401 Unauthorized
 
+```bash
+curl -v http://127.0.0.1:8080/test_files/secret.txt
+```
 
 ### 403 Forbidden
 
+```bash
+curl -v http://127.0.0.1:8080/test_files/secret.txt
+
+# Auto index
+# Make 000 folder
+curl -v http://127.0.0.1:8080/not_allowd/
+```
 
 ### 404 Not Found
 
+```bash
+curl -v http://127.0.0.1:8080/this_file_not_found.html
+```
 
 ### 405 Method Not Allowed
 
+```bash
+# Illegal PUT
+curl -v -X PUT http://127.0.0.1:8080/
+
+# Delete from /scripts
+curl -v -X DELETE http://127.0.0.1:8080/scripts/form.py
+```
 
 ## 408 Request Time-out
 
@@ -164,6 +193,33 @@ curl -v http://127.0.0.1:8080/uploads \
   printf '0\r\n\r\n'          # end of chunks
 } | nc 127.0.0.1 8080
 
+# CGI Timeout
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "name=John&age=30" \
+  http://127.0.0.1:8080/scripts/loop.py
+```
+
+## 411 Length is Required
+
+```bash
+{ printf 'POST /uploads HTTP/1.1\r\nHost: 127.0.0.1:8080\r\n\r\nHi'; } | nc 127.0.0.1 8080
+```
+
+## 413 Payload Too Large
+
+```bash
+# send ~12MiB
+head -c $((12*1024*1024)) </dev/zero | tr '\0' 'A' > /tmp/big.bin
+curl -v -X POST http://127.0.0.1:8080/test_files --data-binary @/tmp/big.bin \
+  -H "Content-Type: application/octet-stream"
+```
+
+## 414 URI Too Long
+
+```bash
+long=$(printf 'a%.0s' {1..9000})
+curl -v "http://127.0.0.1:8080/${long}"
 ```
 
 <br/>
@@ -173,7 +229,15 @@ curl -v http://127.0.0.1:8080/uploads \
 
 # 5xx
 
-### 503 Service Unavailable
+## 500
+
+```bash
+# Failing CGI process
+curl -v http://127.0.0.1:8080/scripts/boom.py
+```
+
+
+## 503 Service Unavailable
 
 ```bash
 

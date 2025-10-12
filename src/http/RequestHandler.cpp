@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/10 11:11:22 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:12:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,11 +115,8 @@ DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_PAYLOAD_TOO_LARGE, "request body is too long")};
 
 	// 5) CGI
-	if (request.method == HttpMethod::POST)
-	{
-		if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))
-			return {DispatchResult::DISPACTH_CGI, HttpResponse{}, found_cgi.value(), location};
-	}
+	if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))
+		return {DispatchResult::DISPACTH_CGI, HttpResponse{}, found_cgi.value(), location};
 
 	// 6) Dispatch Static
 	HttpResponse response = RequestHandler(this->server).handleStatic(request, location);
