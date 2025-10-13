@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 15:35:22 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 16:13:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,11 @@ bool Connection::getKeepAlivePending() const
 void Connection::setCgi(std::unique_ptr<CgiProcess> new_cgi)
 {
 	cgi_ = std::move(new_cgi);
+}
+
+bool Connection::isClosing() const
+{
+	return (connection_state == ConnectionState::CLOSING);
 }
 
 // PARSER
