@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/30 15:25:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 15:18:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 16:08:32 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,26 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 
 	// Mismatched Content-Length and Body len
 	const std::string content_length_header = ctx.request.searchHeader("Content-Length");
-	if (ctx.request.body.size() != stoi(content_length_header))
+	if (content_length_header != "")
 	{
-		Logger::info("RequestParser::handleBodyContentLength() → Mismatch body len");
-		ctx.mismatch_body_len = true;
-	}
-	else
-	{
-		Logger::info("RequestParser::handleBodyContentLength() → Matched body len");
-		ctx.mismatch_body_len = false;
+		int content_length;
+		try
+		{
+			content_length = stoi(content_length_header);
+			if (ctx.request.body.size() != content_length)
+			{
+				Logger::info("RequestParser::handleBodyContentLength() → Mismatch body len");
+				ctx.mismatch_body_len = true;
+			}
+			else
+			{
+				Logger::info("RequestParser::handleBodyContentLength() → Matched body len");
+				ctx.mismatch_body_len = false;
+			}
+		}
+		catch (...)
+		{
+		}
 	}
 
 	// Complete
