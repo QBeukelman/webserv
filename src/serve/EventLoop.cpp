@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 10:33:51 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 16:18:55 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,27 +313,6 @@ void EventLoop::run(void)
 				++i;
 				continue;
 			}
-
-			// Refresh interest
-			// auto it_after = handlers.find(entry.fd);
-			// if (it_after == handlers.end())
-			// {
-			// 	continue;
-			// }
-
-			// short next = h->interest();
-			// const int current_fd = h->fd();
-
-			// if (current_fd != entry.fd)
-			// {
-			// 	remove(entry.fd);
-			// 	continue;
-			// }
-			// else
-			// {
-			// 	copy[i].events = next;
-			// 	++i;
-			// }
 		}
 
 		checkTimeouts();

@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:07:10 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/09 15:52:32 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 16:17:45 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@
 
 static void catchWrongInput(std::string &token, TokenStream &tokenStream)
 {
-	// if (token.find('.') == std::string::npos)
-	// {
-	// 	tokenStream.throwError("Expected at least one dot [ . ] in filename but found none");
-	// }
 	if (token.front() == '.')
 	{
 		tokenStream.throwError(
