@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/12 18:16:01 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 09:43:38 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,14 +259,10 @@ void EventLoop::run(void)
 			continue;
 		}
 		if (n < 0)
-		{
-			Logger::error("EventLoop::run() → Poll returned error");
 			continue;
-		}
-
-		std::vector<pollfd> copy = pfds;
 
 		// 3) Dispatch fds that with events
+		std::vector<pollfd> copy = pfds;
 		int processed = 0;
 		for (size_t i = 0; i < copy.size() && processed < n;)
 		{
@@ -364,6 +360,26 @@ void EventLoop::checkTimeouts()
 
 void EventLoop::stop(void)
 {
-	// TODO: stop() → STOPPED
-	Logger::info("EventLoop → STOPPED");
+	Logger::info("EventLoop → STOPPED (begin)");
+
+	std::vector<int> all_fds;
+	all_fds.reserve(handlers.size());
+	for (std::map<int, IOPollable *>::const_iterator it = handlers.begin(); it != handlers.end(); ++it)
+		all_fds.push_back(it->first);
+
+	for (size_t i = 0; i < all_fds.size(); ++i)
+		pending_close_fds.insert(all_fds[i]);
+
+	pfds.clear();
+
+	for (std::unordered_set<int>::const_iterator it = pending_close_fds.begin(); it != pending_close_fds.end(); ++it)
+	{
+		::close(*it);
+	}
+
+	handlers.clear();
+	pending_close_fds.clear();
+	pendingClose.clear();
+
+	Logger::info("EventLoop → STOPPED (complete)");
 }

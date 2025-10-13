@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/12 18:00:41 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 09:36:36 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <iostream>
 #include <map>
 #include <poll.h>
+#include <set>
 #include <sys/time.h>
 #include <unistd.h>
 #include <unordered_set>
