@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/12 20:12:29 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 14:55:54 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 	}
 	catch (Server::LocationNotFoundException &e)
 	{
-		Logger::error(Logger::join("RequestHandler::handle → ", e.what()));
+		Logger::error(Logger::join("RequestHandler::handle() → ", e.what()));
 		return {DispatchResult::DISPACTH_STATIC, makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found")};
 	}
 

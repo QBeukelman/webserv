@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/13 08:32:35 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 09:22:46 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 11:01:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,11 @@ void ShutdownPollable::onSignal(int)
 	auto &s = ShutdownPollable::instance();
 	s.shutdown_requested.store(true, std::memory_order_relaxed);
 
-	(void)!::write(s.write_fd, "x", 1);
+	ssize_t n = ::write(s.write_fd, "x", 1);
+	// n > 0 	→ Wake poll()
+	// n == 0	→ Nothing to do
+	// n < 0 	→ Nothing to do
+	(void)n;
 }
 
 void ShutdownPollable::requestShutdown()
@@ -106,9 +110,17 @@ short ShutdownPollable::interest() const
 
 void ShutdownPollable::onReadable()
 {
-	char buf[100];
-	while (::read(read_fd, buf, sizeof(buf)) > 0)
+	for (;;)
 	{
+		char buf[256];
+		ssize_t n = ::read(read_fd, buf, sizeof(buf));
+
+		if (n > 0)
+			continue;
+		if (n == 0)
+			break;
+		// n < 0
+		break;
 	}
 
 	if (!draining.exchange(true, std::memory_order_relaxed))

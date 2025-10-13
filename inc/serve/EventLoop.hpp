@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 09:36:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 10:32:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,7 @@ class EventLoop
 	// Getters & Setters
 	std::vector<pollfd> getPollFds(void) const;
 	std::vector<IOPollable *> getPendingClose(void) const;
-
-	// TODO: Move
-	const std::unordered_set<int> &getPendingCloseFds() const
-	{
-		return pending_close_fds;
-	}
+	const std::unordered_set<int> &getPendingCloseFds() const;
 
 	// Registration
 	void add(IOPollable *handler);

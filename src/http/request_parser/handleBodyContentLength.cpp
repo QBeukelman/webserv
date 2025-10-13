@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/30 15:25:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/12 20:01:11 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 15:18:33 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 		step.status = PARSE_OK;
 		step.need_more = false;
 		step.request_complete = true;
-		step.consumed = 0; // nothing new consumed in this call
+		step.consumed = 0;
 		return (step);
 	}
 
@@ -38,11 +38,11 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 		return (step);
 	}
 
-	// Copy only what fits in the remaining body length
+	// Copy only what fits
 	const size_t available = len - ctx.read_offset;
 	size_t to_copy = std::min(available, ctx.content_length_remaining);
 
-	// Enforce max body size across calls
+	// Max body size
 	if (ctx.total_body_bytes + to_copy > ctx.limits.max_body_size)
 	{
 		ctx.phase = ERROR_PHASE;
@@ -50,11 +50,11 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 		step.status = PARSE_EXCEED_BODY_LIMIT;
 		step.need_more = false;
 		step.request_complete = false;
-		Logger::error("handleBodyContentLength: Max body size");
+		Logger::error("handleBodyContentLength() → Max body size");
 		return (step);
 	}
 
-	// Append the slice from beginning of this window
+	// Append from beginning of window
 	ctx.request.body.append(data + ctx.read_offset, to_copy);
 	ctx.total_body_bytes += to_copy;
 	ctx.content_length_remaining -= to_copy;
@@ -65,6 +65,20 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 	step.request_complete = (ctx.content_length_remaining == 0);
 	step.status = step.request_complete ? PARSE_OK : PARSE_INCOMPLETE;
 
+	// Mismatched Content-Length and Body len
+	const std::string content_length_header = ctx.request.searchHeader("Content-Length");
+	if (ctx.request.body.size() != stoi(content_length_header))
+	{
+		Logger::info("RequestParser::handleBodyContentLength() → Mismatch body len");
+		ctx.mismatch_body_len = true;
+	}
+	else
+	{
+		Logger::info("RequestParser::handleBodyContentLength() → Matched body len");
+		ctx.mismatch_body_len = false;
+	}
+
+	// Complete
 	if (step.request_complete)
 	{
 		ctx.phase = COMPLETE;

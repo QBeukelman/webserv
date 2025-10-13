@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/06 13:14:33 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/12 21:23:33 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 10:55:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,11 +205,10 @@ void CgiProcess::readFromChild()
 		}
 		if (n == 0)
 		{
-			// EOF → Child closed stdout
+			// Child finished → close
 			removeStdoutFromLoop();
 			Logger::info("CgiProcess::readFromChild() → Closing fd: " + std::to_string(stdout_poll.get()->fd()));
 			loop->closeLater(stdout_poll.get());
-			// ::close(stdout_fd);
 			stdout_fd = -1;
 			stdout_closed = true;
 			maybeFinish();
@@ -234,8 +233,19 @@ void CgiProcess::writeToChild()
 			in_buf.erase(0, static_cast<size_t>(n));
 			continue;
 		}
+		if (n == 0)
+		{
+			// No progress → Stop for now
+			return;
+		}
 
-		// (n < 0) → No progress
+		// (n < 0) → Child not accepting more
+		Logger::info("CgiProcess::writeToChild() → Closing fd: " + std::to_string(stdin_poll.get()->fd()));
+		removeStdinFromLoop();
+		loop->closeLater(stdin_poll.get());
+		stdin_fd = -1;
+		stdin_closed = true;
+		maybeFinish();
 		return;
 	}
 
@@ -243,7 +253,6 @@ void CgiProcess::writeToChild()
 	removeStdinFromLoop();
 	Logger::info("CgiProcess::writeToChild() → Closing fd: " + std::to_string(stdin_poll.get()->fd()));
 	loop->closeLater(stdin_poll.get());
-	// ::close(stdin_fd);
 	stdin_fd = -1;
 	stdin_closed = true;
 	maybeFinish();

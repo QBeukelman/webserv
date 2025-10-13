@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 09:43:38 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 10:33:51 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,11 @@ std::vector<IOPollable *> EventLoop::getPendingClose(void) const
 	return (this->pendingClose);
 }
 
+const std::unordered_set<int> &EventLoop::getPendingCloseFds() const
+{
+	return (pending_close_fds);
+}
+
 // TIME OUT
 // ____________________________________________________________________________
 int EventLoop::computePollTimeoutMs() const
@@ -39,16 +44,16 @@ int EventLoop::computePollTimeoutMs() const
 	for (std::map<int, IOPollable *>::const_iterator it = handlers.begin(); it != handlers.end(); ++it)
 	{
 		const IOPollable *h = it->second;
-		int ms = h->timeBudgetMs(now); // INT_MAX means "no timer"
+		int ms = h->timeBudgetMs(now); // INT_MAX is "no timer"
 		if (ms < min_ms)
 			min_ms = ms;
 	}
 
 	if (min_ms == INT_MAX)
-		return (-1); // block until an event arrives
+		return (-1); // Block until an event arrives
 
 	if (min_ms < 0)
-		min_ms = 0; // deadline already passed → fire ASAP
+		min_ms = 0; // Fire
 
 	return (min_ms);
 }
@@ -209,7 +214,6 @@ void EventLoop::closeLater(IOPollable *handler)
 
 			// Close fd and destroy
 			::close(fd);
-			// delete (handler);
 			pendingClose[i] = NULL;
 		}
 		pendingClose.clear();

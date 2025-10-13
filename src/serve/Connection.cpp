@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/12 20:07:17 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 15:35:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,7 +250,7 @@ void Connection::feedParserFromBuffer()
 				if (!cgi->start())
 				{
 					Logger::error("Connection::feedParserFromBuffer() → CGI failed to start [500]");
-					// TODO: Connection makeError() [500]
+					continue;
 				}
 				this->setCgi(std::move(cgi));
 			}
@@ -296,7 +296,7 @@ void Connection::onReadable()
 		ssize_t n = ::recv(fd_, buf, sizeof(buf), 0);
 		if (n > 0)
 		{
-			this->updateActivityNow(); // Made progress, update timer
+			this->updateActivityNow();
 
 			inBuf.append(buf, static_cast<size_t>(n));
 			feedParserFromBuffer();
@@ -315,6 +315,7 @@ void Connection::onReadable()
 			return;
 		}
 
+		// n < 0
 		connection_state = ConnectionState::CLOSING;
 		Logger::info("Connection::onReadable() → Closing fd: " + std::to_string(this->fd()));
 		loop->closeLater(this);
@@ -380,6 +381,14 @@ void Connection::onWritable()
 			}
 		}
 	}
+
+	if (n <= 0)
+	{
+		// Write error → Close
+		connection_state = ConnectionState::CLOSING;
+		loop->closeLater(this);
+		return;
+	}
 }
 
 /*
@@ -419,7 +428,15 @@ void Connection::onHangupOrError(short revents)
 	if (revents & POLLHUP)
 	{
 		Logger::info("Connection::onHangupOrError() → POLLHUP (peer closed)");
-
+		if (parse_context.mismatch_body_len == true)
+		{
+			HttpResponse response =
+				RequestHandler(*server).makeError(HttpStatus::STATUS_BAD_REQUEST, "Invalid content length");
+			outBuf = response.serialize();
+			keep_alive = false;
+			connection_state = ConnectionState::WRITING;
+			loop->update(this);
+		}
 		if (outBuf.empty())
 		{
 			// connection_state = ConnectionState::WRITING;

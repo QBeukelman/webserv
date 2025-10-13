@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 20:39:56 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/12 20:02:22 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 14:51:50 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,14 +171,14 @@ static ParseStep applyContentLength(ParseContext &ctx, std::string cl, size_t co
 			return (returnFailure(ctx, step, PARSE_MALFORMED_REQUEST, "Invalid Content-Length"));
 		}
 
-		// Enforce body size limit
+		// Body size limit
 		if (n > ctx.limits.max_body_size)
 		{
 			return (returnFailure(ctx, step, PARSE_EXCEED_BODY_LIMIT, "Body exceeds max_body_size"));
 		}
 	}
 
-	// Reset body context
+	// Reset body
 	ctx.is_chunked = false;
 	ctx.chunk_bytes_remaining = 0;
 	ctx.content_length_remaining = n;
@@ -205,7 +205,7 @@ static ParseStep applyContentLength(ParseContext &ctx, std::string cl, size_t co
 	step.status = PARSE_INCOMPLETE;
 	step.request_complete = false;
 	step.consumed = consumed_headers;
-	// If there are body bytes in the same buffer, next handler can consume immediately
+	// If there are body bytes in the same buffer, next handler can consume right away
 	step.need_more = (avail == 0);
 	return (step);
 }
