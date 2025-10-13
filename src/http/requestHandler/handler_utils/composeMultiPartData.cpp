@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/26 14:40:24 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 22:02:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 15:39:25 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ Mime classifyMime(const std::string &request_body)
 	size_t pos = request_body.find(key);
 	if (pos == std::string::npos)
 	{
-		Logger::info("RequestHandler::composeMultiPartData::classifyMime() → Did not find `" + key + "`");
+		Logger::info("RequestHandler::composeMultiPartData::classifyMime() → Did not find '" + key + "'");
 		return (Mime(""));
 	}
 
@@ -47,7 +47,7 @@ Mime classifyMime(const std::string &request_body)
 	// 4) Find end of value (up to next CRLF)
 	if (value_end == std::string::npos)
 	{
-		Logger::info("RequestHandler::composeMultiPartData::classifyMime() → Did not find `value_end`");
+		Logger::info("RequestHandler::composeMultiPartData::classifyMime() → Did not find 'value_end'");
 		return (Mime(""));
 	}
 
@@ -59,7 +59,7 @@ const std::string subString(const std::string &request_body, const std::string &
 	size_t pos = request_body.find(key);
 	if (pos == std::string::npos)
 	{
-		Logger::info("RequestHandler::composeMultiPartData::subString() → Did not find `" + key + "`");
+		Logger::info("RequestHandler::composeMultiPartData::subString() → Did not find '" + key + "'");
 		return ("");
 	}
 	size_t value_start = pos + key.size();
@@ -67,7 +67,7 @@ const std::string subString(const std::string &request_body, const std::string &
 	size_t value_end = request_body.find(end, value_start);
 	if (value_end == std::string::npos)
 	{
-		Logger::info("RequestHandler::composeMultiPartData::subString() → Did not find `value_end`");
+		Logger::info("RequestHandler::composeMultiPartData::subString() → Did not find 'value_end'");
 		return ("");
 	}
 	return (request_body.substr(value_start, (value_end - value_start)));

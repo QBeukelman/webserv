@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 18:51:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 15:09:57 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define TIME_OUT 30
+#define TIME_OUT 10
 
 struct DispatchResult
 {
@@ -58,7 +58,6 @@ class RequestHandler
 	const Server &server;
 
 	// Helpers
-	HttpResponse handleCgi(const HttpRequest &, const Location &, const CgiConfig &) const;
 	HttpResponse handleMultipartPost(const HttpRequest &, const Location &) const;
 	HttpResponse generateRedirectResponse(const Location &) const;
 	HttpResponse generateAutoIndexResponse(const std::string &) const;
@@ -85,7 +84,7 @@ class RequestHandler
 
 	// Handlers
 	DispatchResult dispatch(const HttpRequest &request) const;
-	HttpResponse handle(const HttpRequest &request);
+	HttpResponse handleStatic(const HttpRequest &request, const Location &location);
 	HttpResponse makeError(HttpStatus status, std::string detail) const;
 	std::string makeHtmlPageHeader(void) const;
 };

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   WebServer.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 12:22:05 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/09/15 12:00:30 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   WebServer.cpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/08 12:22:05 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/13 13:56:35 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,34 +21,52 @@ WebServer::WebServer(const ServerConfig &config) : config(config)
 
 void WebServer::initListeners()
 {
-	for (const auto &server : config.getServers())
+	size_t total = 0;
+	for (const auto &s : config.getServers())
+		total += s.getListens().size();
+	listeners.reserve(total);
+
+	for (const auto &s : config.getServers())
 	{
-		for (const auto &endpoint : server.getListens())
+		for (const auto &ep : s.getListens())
 		{
-			listeners.emplace_back(endpoint.host, endpoint.port, &server, &loop);
-			loop.add(&listeners.back());
-			fdToServer[listeners.back().fd()] = &server;
+			auto ptr = std::make_unique<Listener>(ep.host, ep.port, &s, &loop);
+			Listener *raw = ptr.get();
+			loop.add(raw);
+			fdToServer[raw->fd()] = &s;
+			listeners.push_back(std::move(ptr));
 		}
 	}
 }
 
 void WebServer::run()
 {
+	auto &shut = ShutdownPollable::instance();
+	shut.setOnBeginDrain([&]() {
+		loop.stop();
+		std::exit(1);
+	});
+	if (!shut.initialize())
+	{
+		std::exit(1);
+	}
+	loop.add(&ShutdownPollable::instance());
 	loop.run();
 }
 
-const std::vector<Listener> &WebServer::getListeners(void) const
+const std::vector<std::unique_ptr<Listener>> &WebServer::getListeners() const
 {
-	return (this->listeners);
+	return listeners;
 }
 
 // OVERLOAD
 // ____________________________________________________________________________
-static void printListeners(const std::vector<Listener> &listeners)
+static void printListeners(const std::vector<std::unique_ptr<Listener>> &listeners)
 {
-	for (const Listener &l : listeners)
+	for (const auto &lp : listeners)
 	{
-		std::cout << l << std::endl;
+		if (lp)
+			std::cout << *lp << '\n';
 	}
 }
 
@@ -69,6 +87,6 @@ unsigned short WebServer::primaryPort() const
 {
 	if (listeners.empty())
 		throw std::runtime_error("no listeners");
-	return (listeners.front().boundPort());
+	return (listeners.front()->boundPort());
 }
 #endif

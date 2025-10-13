@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:18 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/02 20:59:28 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 13:56:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,17 @@
 
 #include "EventLoop.hpp"
 #include "Listener.hpp"
+#include "ShutdownPollable.hpp"
 
 #include <map>
+#include <memory>
 
 class WebServer
 {
   private:
 	const ServerConfig config;
-	std::vector<Listener> listeners;
-	std::map<int, const Server *> fdToServer; // TODO: Remove
+	std::vector<std::unique_ptr<Listener>> listeners;
+	std::map<int, const Server *> fdToServer;
 	EventLoop loop;
 
 	void initListeners();
@@ -34,7 +36,7 @@ class WebServer
 	void run();
 
 	// Getters & Setters
-	const std::vector<Listener> &getListeners(void) const;
+	const std::vector<std::unique_ptr<Listener>> &getListeners() const;
 
 #ifdef UNIT_TEST
 	unsigned short primaryPort() const;

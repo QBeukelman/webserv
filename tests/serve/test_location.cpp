@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/18 14:57:40 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/18 15:09:52 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:56:35 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 TEST_CASE("Location::hasUploadsDir() success")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	Location location;
 	location.addUploadDirectory("tests");
 
@@ -25,6 +27,8 @@ TEST_CASE("Location::hasUploadsDir() success")
 
 TEST_CASE("Location::hasUploadsDir() failure")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	Location location;
 	location.addUploadDirectory("doesNotExist");
 

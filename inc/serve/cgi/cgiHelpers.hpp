@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/06 14:25:43 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 14:13:43 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/09 14:51:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,7 @@ char **makeArgv(const std::string &exc_path, const std::string &script, std::vec
 				std::vector<char *> &pointers);
 
 std::pair<std::map<std::string, std::string>, size_t> parseCgiHeaders(const std::string &data);
+
+std::string joinRootAndScript(const std::string &root, const std::string &script);
 
 #endif

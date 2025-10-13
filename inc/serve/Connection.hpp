@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 16:18:11 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 16:13:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ class Connection : public IOPollable
 	ConnectionState getConnectionState() const;
 	bool getKeepAlivePending() const;
 	void setCgi(std::unique_ptr<CgiProcess> new_cgi);
+	bool isClosing() const;
 
 	// Timeout
 	int timeBudgetMs(std::chrono::steady_clock::time_point now) const;

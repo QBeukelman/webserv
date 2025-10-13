@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/06 14:24:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 15:39:51 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/09 14:54:29 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,4 +234,13 @@ std::pair<std::map<std::string, std::string>, size_t> parseCgiHeaders(const std:
 	}
 
 	return {hdrs, pos};
+}
+
+std::string joinRootAndScript(const std::string &root, const std::string &script)
+{
+	size_t script_start = script.find_last_of('/');
+	std::string script_name = script.substr(script_start);
+
+	std::string normalizedRoot = root;
+	return (normalizedRoot + script_name);
 }

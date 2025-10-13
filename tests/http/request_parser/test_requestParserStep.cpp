@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 08:59:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 11:40:22 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:55:10 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 
 TEST_CASE("RequestParser: step() content length")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	RequestParser p(HttpRequestLimits{});
 	ParseStep step;
@@ -43,6 +45,8 @@ TEST_CASE("RequestParser: step() content length")
 
 TEST_CASE("RequestParser: step() chunked")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	RequestParser p(HttpRequestLimits{});
 	ParseContext context;

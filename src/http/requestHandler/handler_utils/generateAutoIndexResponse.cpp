@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/02 09:52:50 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/03 15:13:30 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 19:45:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,21 @@ HttpResponse RequestHandler::generateAutoIndexResponse(const std::string &file_p
 	DIR *directory = opendir(file_path.c_str());
 	if (!directory)
 	{
-		if (errno == ENOENT || ENOTDIR)
+		const int e = errno;
+		switch (e)
+		{
+		case ENOENT:
+		case ENOTDIR:
+		case ELOOP:
 			return (makeError(STATUS_NOT_FOUND, "Could not find auto index file"));
-		if (errno == EACCES || EPERM)
+
+		case EACCES:
+		case EPERM:
 			return (makeError(STATUS_FORBIDDEN, "Could not access auto index file"));
-		else
-			return (makeError(STATUS_INTERNAL_ERROR, "Could not open auto index file"));
+
+		default:
+			return (makeError(STATUS_FORBIDDEN, "Could not access auto index file"));
+		}
 	}
 
 	struct dirent *entry;

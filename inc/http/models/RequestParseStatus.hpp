@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:19:11 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 11:30:03 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:01:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ enum RequestParseStatus
 	PARSE_INVALID_METHOD,
 	PARSE_INVALID_VERSION,
 	PARSE_MALFORMED_REQUEST,
-	PARSE_EXCEED_LIMIT,
+	PARSE_EXCEED_BODY_LIMIT,
+	PARSE_EXCEED_STARTLINE_LIMIT,
 	PARSE_INCOMPLETE
 };
 

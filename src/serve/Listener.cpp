@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/03 10:10:58 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 10:37:48 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ short Listener::interest() const
 
 // LOGGING
 // ____________________________________________________________________________
-static void logListnerCreated(const std::string &ip, unsigned int port)
+static void logListenerCreated(const std::string &ip, unsigned int port)
 {
 	std::ostringstream oss;
-	std::cout << LIGHT_GRAY << "====================================================\n";
-	oss << "Listner created → ";
+	Logger::log(LIGHT_GRAY + "====================================================\n");
+	oss << "Listener created → ";
 	oss << UNDERLINE << "http://" << ip << ":" << port << "/" << RESET_STYLE;
 	Logger::success(oss.str());
-	std::cout << LIGHT_GRAY << "====================================================\n";
+	Logger::log(LIGHT_GRAY + "====================================================\n");
 }
 
 // PRIVATE
@@ -137,7 +137,7 @@ void Listener::bindAndListen(const std::string &ip, unsigned short port)
 	addr.sin_addr.s_addr = htonl(INADDR_ANY); // 0.0.0.0, all interfaces
 	addr.sin_port = htons(port);			  // Convert to network byte order
 
-	logListnerCreated(ip, port);
+	logListenerCreated(ip, port);
 
 	if (::bind(fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0)
 	{
@@ -195,9 +195,9 @@ void Listener::onReadable()
 		sockaddr_in address;
 		socklen_t adrs_len = sizeof(address);
 
-		int cfd = ::accept(fd_, reinterpret_cast<sockaddr *>(&address), &adrs_len);
+		int accepted_fd = ::accept(fd_, reinterpret_cast<sockaddr *>(&address), &adrs_len);
 
-		if (cfd < 0)
+		if (accepted_fd < 0)
 		{
 			// Non-blocking accept: nothing more to accept now.
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -206,20 +206,19 @@ void Listener::onReadable()
 			Logger::error("Listener::onReadable() failed → " + std::string(std::strerror(errno)));
 			break;
 		}
-		Logger::info("Listener::onReadable() → Connection accepted: " + std::to_string(cfd));
+		Logger::info("Listener::onReadable() → Connection accepted: " + std::to_string(accepted_fd));
 
-		// TODO: Set non blocking for (fd).
-		setNonBlocking(cfd);
+		setNonBlocking(accepted_fd);
 
 		// Create a Connection for this client and register it.
-		unsigned short localPort = getLocalPort(cfd);
-		Connection *connection = new Connection(cfd, server, loop, localPort);
+		unsigned short localPort = getLocalPort(accepted_fd);
+		Connection *connection = new Connection(accepted_fd, server, loop, localPort);
 		loop->add(connection);
 	}
 }
 
 /*
- * Emply function: A Listner will not write.
+ * Emply function: A Listener will not write.
  */
 void Listener::onWritable()
 {

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/25 09:20:19 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/09/26 11:30:26 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 20:02:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,10 @@ std::string toStringStatus(RequestParseStatus status)
 		return "Invalid version";
 	case PARSE_MALFORMED_REQUEST:
 		return "Malformed request";
-	case PARSE_EXCEED_LIMIT:
-		return "Request exceeds limit";
+	case PARSE_EXCEED_BODY_LIMIT:
+		return "Request exceeds body limit";
+	case PARSE_EXCEED_STARTLINE_LIMIT:
+		return "Request exceeds start-line limit";
 	case PARSE_INCOMPLETE:
 		return "Parse incomplete";
 	default:

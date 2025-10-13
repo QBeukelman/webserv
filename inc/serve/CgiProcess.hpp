@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/06 11:54:18 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 16:18:04 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/12 21:23:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <memory>
+#include <signal.h>
 #include <sstream>
 #include <string>
 #include <sys/wait.h>
@@ -48,13 +49,15 @@ class CgiProcess
 	void writeToChild();  // inBuf → stdin
 	void stdoutHangup(short revents);
 	void stdinHangup(short revents);
+	void clientAborted();
 
   private:
-	void registerPollables();
+	void registerPollables(bool);
 	void unregisterPollables();
 	void maybeFinish();
 	void makeCgiResponse();
 	bool extractAndWaitChild(int &status);
+	void terminateChild();
 
 	void removeStdinFromLoop();
 	void removeStdoutFromLoop();

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 11:22:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 16:18:55 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,16 @@ std::vector<pollfd> EventLoop::getPollFds(void) const
 	return (this->pfds);
 }
 
+std::vector<IOPollable *> EventLoop::getPendingClose(void) const
+{
+	return (this->pendingClose);
+}
+
+const std::unordered_set<int> &EventLoop::getPendingCloseFds() const
+{
+	return (pending_close_fds);
+}
+
 // TIME OUT
 // ____________________________________________________________________________
 int EventLoop::computePollTimeoutMs() const
@@ -34,16 +44,16 @@ int EventLoop::computePollTimeoutMs() const
 	for (std::map<int, IOPollable *>::const_iterator it = handlers.begin(); it != handlers.end(); ++it)
 	{
 		const IOPollable *h = it->second;
-		int ms = h->timeBudgetMs(now); // INT_MAX means "no timer"
+		int ms = h->timeBudgetMs(now); // INT_MAX is "no timer"
 		if (ms < min_ms)
 			min_ms = ms;
 	}
 
 	if (min_ms == INT_MAX)
-		return (-1); // block until an event arrives
+		return (-1); // Block until an event arrives
 
 	if (min_ms < 0)
-		min_ms = 0; // deadline already passed → fire ASAP
+		min_ms = 0; // Fire
 
 	return (min_ms);
 }
@@ -57,6 +67,7 @@ int EventLoop::computePollTimeoutMs() const
  */
 void EventLoop::add(IOPollable *h)
 {
+	Logger::info("EventLoop::add() → Adding fd: " + std::to_string(h->fd()));
 	if (!h)
 		return;
 	const int fd = h->fd();
@@ -84,7 +95,7 @@ void EventLoop::add(IOPollable *h)
  *
  * Notes:
  * 	- With `poll()`, we decide per-fd which events are needed (`POLLIN`, `POLLOUT`, ...).
- * 	- Call this after a state change (e.g. `outbuf` became non-empty → want `POLLOUT).
+ * 	- Use after a state change (e.g. `outbuf` became non-empty → want `POLLOUT).
  */
 void EventLoop::update(IOPollable *handler)
 {
@@ -131,6 +142,7 @@ void EventLoop::update(IOPollable *handler)
 void EventLoop::remove(int fd)
 {
 	handlers.erase(fd);
+
 	size_t idx = findPfdIndex(fd);
 	if (idx != static_cast<size_t>(-1))
 	{
@@ -145,18 +157,7 @@ void EventLoop::remove(IOPollable *handler)
 {
 	if (!handler)
 		return;
-
-	int fd = -1;
-	for (std::map<int, IOPollable *>::iterator it = handlers.begin(); it != handlers.end(); ++it)
-	{
-		if (it->second == handler)
-		{
-			fd = it->first;
-			break;
-		}
-	}
-	if (fd != -1)
-		remove(fd);
+	remove(handler->fd());
 }
 
 size_t EventLoop::findPfdIndex(int fd) const
@@ -179,13 +180,11 @@ size_t EventLoop::findPfdIndex(int fd) const
  */
 void EventLoop::closeLater(IOPollable *handler)
 {
+	if (!handler)
+		return;
 	pendingClose.push_back(handler);
-}
+	pending_close_fds.insert(handler->fd());
 
-// UTILS
-// ____________________________________________________________________________
-void EventLoop::willClosePending()
-{
 	if (pendingClose.empty())
 		return;
 	else
@@ -215,11 +214,24 @@ void EventLoop::willClosePending()
 
 			// Close fd and destroy
 			::close(fd);
-			delete (handler);
 			pendingClose[i] = NULL;
 		}
 		pendingClose.clear();
 	}
+}
+
+// UTILS
+// ____________________________________________________________________________
+void EventLoop::willClosePending()
+{
+	if (pending_close_fds.empty())
+		return;
+
+	for (int fd : pending_close_fds)
+	{
+		remove(fd);
+	}
+	pending_close_fds.clear();
 }
 
 // MAIN LOOP
@@ -251,16 +263,14 @@ void EventLoop::run(void)
 			continue;
 		}
 		if (n < 0)
-		{
-			Logger::error("EventLoop::run() → Poll returned error");
 			continue;
-		}
 
-		// 3) Dispatch fds that reported events
+		// 3) Dispatch fds that with events
+		std::vector<pollfd> copy = pfds;
 		int processed = 0;
-		for (size_t i = 0; i < pfds.size() && processed < n;)
+		for (size_t i = 0; i < copy.size() && processed < n;)
 		{
-			pollfd entry = pfds[i];
+			pollfd entry = copy[i];
 			if (entry.revents == 0)
 			{
 				// No entry
@@ -271,53 +281,37 @@ void EventLoop::run(void)
 
 			// Find handler
 			auto it = handlers.find(entry.fd);
-			if (it == handlers.end() || it->second == NULL)
+			if (it == handlers.end())
+				continue;
+			IOPollable *h = it->second;
+
+			// Skip closing
+			const auto &pending = getPendingCloseFds();
+			if (pending.count(entry.fd))
 			{
-				remove(entry.fd);
+				++i;
 				continue;
 			}
-			IOPollable *h = it->second;
 
 			// Dispatch
 			short re = entry.revents;
+			if (re & POLLIN)
+			{
+				Logger::info("EventLoop::run() → onReadable()");
+				h->onReadable();
+			}
+			if (re & POLLOUT)
+			{
+				Logger::info("EventLoop::run() → onWritable()");
+				h->onWritable();
+			}
 			if (re & (POLLERR | POLLHUP | POLLNVAL))
 			{
 				Logger::info("EventLoop::run() → onHangupOrError()");
 				h->onHangupOrError(re);
-			}
-			else
-			{
-				if (re & POLLIN)
-				{
-					Logger::info("EventLoop::run() → onReadable()");
-					h->onReadable();
-				}
-				if (re & POLLOUT)
-				{
-					Logger::info("EventLoop::run() → onWritable()");
-					h->onWritable();
-				}
-			}
-
-			// Refresh interest
-			auto it_after = handlers.find(entry.fd);
-			if (it_after == handlers.end())
-			{
-				continue;
-			}
-
-			short next = h->interest();
-			const int current_fd = h->fd();
-
-			if (next == 0 || current_fd != entry.fd)
-			{
-				remove(entry.fd);
-				continue;
-			}
-			else
-			{
-				pfds[i].events = next;
+				h->onHangupOrError(re);
 				++i;
+				continue;
 			}
 		}
 
@@ -349,6 +343,26 @@ void EventLoop::checkTimeouts()
 
 void EventLoop::stop(void)
 {
-	// TODO: stop() → STOPPED
-	Logger::info("EventLoop → STOPPED");
+	Logger::info("EventLoop → STOPPED (begin)");
+
+	std::vector<int> all_fds;
+	all_fds.reserve(handlers.size());
+	for (std::map<int, IOPollable *>::const_iterator it = handlers.begin(); it != handlers.end(); ++it)
+		all_fds.push_back(it->first);
+
+	for (size_t i = 0; i < all_fds.size(); ++i)
+		pending_close_fds.insert(all_fds[i]);
+
+	pfds.clear();
+
+	for (std::unordered_set<int>::const_iterator it = pending_close_fds.begin(); it != pending_close_fds.end(); ++it)
+	{
+		::close(*it);
+	}
+
+	handlers.clear();
+	pending_close_fds.clear();
+	pendingClose.clear();
+
+	Logger::info("EventLoop → STOPPED (complete)");
 }

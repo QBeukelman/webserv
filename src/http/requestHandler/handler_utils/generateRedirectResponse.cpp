@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   generateRedirectResponse.cpp                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/02 09:22:20 by qbeukelm          #+#    #+#             */
-/*   Updated: 2025/10/02 10:23:19 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   generateRedirectResponse.cpp                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/10/02 09:22:20 by qbeukelm      #+#    #+#                 */
+/*   Updated: 2025/10/10 10:53:23 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ static std::string makeHtmlBody(const std::string &htmlHeader, HttpStatus status
 HttpResponse RequestHandler::generateRedirectResponse(const Location &location) const
 {
 	HttpResponse response;
+
+	response.httpStatus = location.getRedirect().httpStatus;
 
 	response.headers["Location"] = location.getRedirect().path;
 	response.headers["Content-Type"] = "text/html; charset=UTF-8";

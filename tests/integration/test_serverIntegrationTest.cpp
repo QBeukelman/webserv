@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/15 09:06:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 15:27:27 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:55:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 
 TEST_CASE("Server Integration Test: Connect to Listener")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	TestConfigBuilder builder;
 	ServerConfig config =
@@ -47,6 +49,8 @@ TEST_CASE("Server Integration Test: Connect to Listener")
 
 TEST_CASE("Server Integration Test: All")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	TestConfigBuilder builder;
 	Logger::setLogLevel(LOG_LEVEL_DEBUG);
 	Logger::setUseColors(true);
@@ -96,9 +100,6 @@ TEST_CASE("Server Integration Test: All")
 	// Check port
 	unsigned short port = webServer.primaryPort();
 	CHECK(port > 0);
-
-	// std::cout << "=================================================================\n";
-	// std::cout << "WebServer running on http://127.0.0.1:" << port << "/" << std::endl;
 
 	// webServer.run();
 }

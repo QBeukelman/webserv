@@ -80,6 +80,14 @@ void Logger::debug(const std::string &msg)
 	}
 }
 
+void Logger::log(const std::string &msg)
+{
+	if (Logger::_level >= LOG_LEVEL_INFO)
+	{
+		std::cerr << msg;
+	}
+}
+
 std::string Logger::join(const std::string &s1, const std::string &s2)
 {
 	std::ostringstream oss;

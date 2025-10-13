@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/26 11:35:30 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 17:26:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 09:48:32 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 TEST_CASE("RequestParser: handleStartLineAndHeaders()")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	RequestParser p(HttpRequestLimits{});
 	ParseStep step;
@@ -35,7 +37,6 @@ TEST_CASE("RequestParser: handleStartLineAndHeaders()")
 	CHECK(context.request.version == "HTTP/1.1");
 
 	// Headers
-	// CHECK(p.searchHeader(context.request.headers, "transfer-encoding") == "none"); // TODO: Should throw error
 	CHECK(context.request.searchHeader("content-length") == "26");
 	CHECK(context.request.searchHeader("content-type") == "application/x-www-form-urlencoded");
 	CHECK(context.request.searchHeader("host") == "www.example.com");

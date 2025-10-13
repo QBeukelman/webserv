@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpStatus.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 15:23:10 by quentinbeuk       #+#    #+#             */
-/*   Updated: 2025/10/02 10:29:04 by qbeukelm         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpStatus.cpp                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/09/02 15:23:10 by quentinbeuk   #+#    #+#                 */
+/*   Updated: 2025/10/12 20:04:09 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ const char *reasonPhrase(HttpStatus code)
 		return "Request timeout";
 	case STATUS_PAYLOAD_TOO_LARGE:
 		return "Payload Too Large";
+	case STATUS_URI_TOO_LARGE:
+		return "URI Too Large";
 
 	// 5xx Server errors
 	case STATUS_INTERNAL_ERROR:
@@ -71,6 +73,8 @@ const char *reasonPhrase(HttpStatus code)
 		return "Bad Gateway";
 	case STATUS_SERVICE_UNAVAILABLE:
 		return "Service Unavailable";
+	case STATUS_HTTP_VERSION_NOT_SUPPORTED:
+		return "Http Version Not Supported";
 
 	default:
 		return "Unknown Status";
@@ -125,6 +129,8 @@ HttpStatus toHttpStatus(int code)
 		return STATUS_REQUEST_TIMEOUT;
 	case 413:
 		return STATUS_PAYLOAD_TOO_LARGE;
+	case 414:
+		return STATUS_URI_TOO_LARGE;
 
 	// 5xx Server errors
 	case 500:
@@ -135,6 +141,8 @@ HttpStatus toHttpStatus(int code)
 		return STATUS_BAD_GATEWAY;
 	case 503:
 		return STATUS_SERVICE_UNAVAILABLE;
+	case 505:
+		return STATUS_HTTP_VERSION_NOT_SUPPORTED;
 
 	default:
 		// Fallback:

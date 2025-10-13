@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/01 16:29:15 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/26 11:16:40 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/10 09:54:20 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 TEST_CASE("RequestParser: handleChunkedData()")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	RequestParser p(HttpRequestLimits{});
 	ParseStep step;
@@ -39,6 +41,8 @@ TEST_CASE("RequestParser: handleChunkedData()")
 
 TEST_CASE("RequestParser: handleChunkedData() with loop")
 {
+	Logger::setLogLevel(LOG_LEVEL_NONE);
+
 	// Given
 	RequestParser p(HttpRequestLimits{});
 	ParseContext context;
