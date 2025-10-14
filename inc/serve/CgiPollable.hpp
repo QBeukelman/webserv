@@ -69,8 +69,8 @@ class CgiPollable
 	// IO
 	class CgiStdoutPollable;
 	class CgiStdinPollable;
-	CgiStdoutPollable *stdout_poll;
-	CgiStdinPollable *stdin_poll;
+	std::unique_ptr<CgiStdoutPollable> stdout_poll;
+	std::unique_ptr<CgiStdinPollable> stdin_poll;
 
 	// States
 	bool stdout_closed = false;

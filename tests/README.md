@@ -46,12 +46,19 @@ siege -c 50 -t 30s "http://127.0.0.1:8080/scripts/form.py POST name=homer&msg=do
 
 # 2xx
 
+## Hostname
+
+```bash
+curl -i --resolve example.com:8080:127.0.0.1 http://example.com:8080/
+curl -i --resolve test.com:8081:127.0.0.1 http://test.com:8081/
+```
+
 ## Uploads
 
 ```bash
 # POST → 201
 curl -v -X POST http://127.0.0.1:8080/uploads \
-  -F "file=@tests/test_files/document.pdf;type=application/pdf" \
+  -F "file=@var/www/test_files/document.pdf;type=application/pdf" \
   -F "title=Quarterly Report"
 ```
 
@@ -59,7 +66,7 @@ curl -v -X POST http://127.0.0.1:8080/uploads \
 # POST → 201 
 curl -v -X POST http://127.0.0.1:8080/uploads \
   -H "Transfer-Encoding: chunked" \
-  -F "file=@tests/test_files/cat.png;type=image/png" \
+  -F "file=@var/www/test_files/cat.png;type=image/png" \
   -F "title=Image_1" \
   --no-buffer
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.cpp                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/08/11 09:26:29 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/07 15:39:23 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/11 09:26:29 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/14 09:11:49 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,15 @@ int main(int argc, char **argv)
 	}
 
 	// Run server
-	WebServer webServer(serverConfig);
-	webServer.run();
+	try
+	{
+		WebServer webServer(serverConfig);
+		webServer.run();
+	}
+	catch (std::exception &e)
+	{
+		return (0);
+	}
 
 	return (0);
 }

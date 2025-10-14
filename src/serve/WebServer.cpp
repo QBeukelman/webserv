@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   WebServer.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/08 12:22:05 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 23:22:28 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   WebServer.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/08 12:22:05 by qbeukelm          #+#    #+#             */
+/*   Updated: 2025/10/14 09:10:53 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,14 @@
 // ____________________________________________________________________________
 WebServer::WebServer(const ServerConfig &config) : config(config)
 {
-	initListeners();
+	try
+	{
+		initListeners();
+	}
+	catch (std::exception &e)
+	{
+		throw;
+	}
 }
 
 void WebServer::initListeners()
@@ -30,11 +37,18 @@ void WebServer::initListeners()
 	{
 		for (const auto &ep : s.getListens())
 		{
-			auto ptr = std::make_unique<Listener>(ep.host, ep.port, &s, &loop);
-			Listener *raw = ptr.get();
-			loop.add(raw);
-			fdToServer[raw->fd()] = &s;
-			listeners.push_back(std::move(ptr));
+			try
+			{
+				auto ptr = std::make_unique<Listener>(ep.host, ep.port, &s, &loop);
+				Listener *raw = ptr.get();
+				loop.add(raw);
+				fdToServer[raw->fd()] = &s;
+				listeners.push_back(std::move(ptr));
+			}
+			catch (std::exception &e)
+			{
+				throw;
+			}
 		}
 	}
 }
