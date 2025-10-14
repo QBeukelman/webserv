@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:49:07 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 16:18:55 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:10:40 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,43 @@ void EventLoop::remove(int fd)
 	}
 }
 
+void EventLoop::removeAndDelete(int fd)
+{
+	if (fd < 0)
+		return;
+
+	auto it = handlers.find(fd);
+	if (it == handlers.end())
+	{
+		const size_t idx = findPfdIndex(fd);
+		if (idx != static_cast<size_t>(-1) && idx < pfds.size())
+		{
+			if (!pfds.empty())
+			{
+				if (idx != pfds.size() - 1)
+					std::swap(pfds[idx], pfds.back());
+				pfds.pop_back();
+			}
+		}
+		return;
+	}
+
+	const size_t idx = findPfdIndex(fd);
+	if (idx != static_cast<size_t>(-1) && idx < pfds.size())
+	{
+		if (!pfds.empty())
+		{
+			if (idx != pfds.size() - 1)
+				std::swap(pfds[idx], pfds.back());
+			pfds.pop_back();
+		}
+	}
+
+	IOPollable *obj = it->second;
+	handlers.erase(it);
+	delete obj;
+}
+
 void EventLoop::remove(IOPollable *handler)
 {
 	if (!handler)
@@ -217,6 +254,16 @@ void EventLoop::closeLater(IOPollable *handler)
 			pendingClose[i] = NULL;
 		}
 		pendingClose.clear();
+	}
+}
+
+void EventLoop::closeLater(int fd)
+{
+	if (fd < 0)
+		return;
+	if (pending_close_fds.insert(fd).second)
+	{
+		pending_close_fds.insert(fd);
 	}
 }
 
@@ -341,26 +388,27 @@ void EventLoop::checkTimeouts()
 		to_timeout[i]->onTimeout();
 }
 
-void EventLoop::stop(void)
+void EventLoop::stop()
 {
 	Logger::info("EventLoop → STOPPED (begin)");
 
-	std::vector<int> all_fds;
-	all_fds.reserve(handlers.size());
-	for (std::map<int, IOPollable *>::const_iterator it = handlers.begin(); it != handlers.end(); ++it)
-		all_fds.push_back(it->first);
-
-	for (size_t i = 0; i < all_fds.size(); ++i)
-		pending_close_fds.insert(all_fds[i]);
-
-	pfds.clear();
-
-	for (std::unordered_set<int>::const_iterator it = pending_close_fds.begin(); it != pending_close_fds.end(); ++it)
+	for (auto it = handlers.begin(); it != handlers.end();)
 	{
-		::close(*it);
+		const int fd = it->first;
+		const size_t idx = findPfdIndex(fd);
+		if (idx != static_cast<size_t>(-1) && idx < pfds.size())
+		{
+			if (idx != pfds.size() - 1)
+				std::swap(pfds[idx], pfds.back());
+			pfds.pop_back();
+		}
+
+		IOPollable *obj = it->second;
+		it = handlers.erase(it);
+		delete (obj);
 	}
 
-	handlers.clear();
+	pfds.clear();
 	pending_close_fds.clear();
 	pendingClose.clear();
 

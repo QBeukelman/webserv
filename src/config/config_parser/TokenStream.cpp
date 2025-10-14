@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 23:05:56 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/16 13:51:38 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/14 01:39:35 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ void TokenStream::removeValidSemicolon(void)
 
 std::size_t TokenStream::validateMinimumArguments(int n)
 {
-	std::size_t argumentCount = tokenStream.size() - 1;
+	int argumentCount = tokenStream.size() - 1;
 
 	if (argumentCount < n)
 	{
@@ -174,7 +174,7 @@ std::size_t TokenStream::validateMinimumArguments(int n)
 	return (argumentCount);
 }
 
-void TokenStream::validateExpectedArguments(int n)
+void TokenStream::validateExpectedArguments(unsigned int n)
 {
 	if (tokenStream.size() - 1 != n)
 	{

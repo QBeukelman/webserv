@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/28 14:56:11 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 15:13:25 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:58:22 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ struct ParseContext
 	ParseContext()
 		: phase(READ_START_LINE), limits(HttpRequestLimits{}), is_chunked(false), chunk_bytes_remaining(0),
 		  trailer_crlfs(0), read_offset(0), content_length_remaining(0), total_body_bytes(0), saw_final_zero(false),
-		  last_status(PARSE_INCOMPLETE), mismatch_body_len(false)
+		  mismatch_body_len(false), last_status(PARSE_INCOMPLETE)
 	{
 	}
 };

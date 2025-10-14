@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/13 08:32:35 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 11:01:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 23:26:49 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,33 +22,27 @@ static void setNonBlocking_(int fd)
 	fcntl(fd, F_SETFD, FD_CLOEXEC);
 }
 
+static std::atomic<ShutdownPollable *> g_active{nullptr};
+
 // INIT
 // ____________________________________________________________________________
-ShutdownPollable &ShutdownPollable::instance()
+ShutdownPollable::~ShutdownPollable()
 {
-	static ShutdownPollable singleton;
-	return (singleton);
+	unregisterActive(this);
+	uninstallSignals();
+	if (read_fd >= 0)
+		::close(read_fd);
+	if (write_fd >= 0)
+		::close(write_fd);
 }
 
 bool ShutdownPollable::initialize()
 {
-	if (read_fd != -1)
-		return (true);
-
 	openPipe();
-
-	if (read_fd == -1 || write_fd == -1)
-		return (false);
-
 	installSignals();
+	registerActive(this);
 
-	return (true);
-}
-
-void ShutdownPollable::installSignals()
-{
-	std::signal(SIGINT, &ShutdownPollable::onSignal);
-	std::signal(SIGTERM, &ShutdownPollable::onSignal);
+	return (read_fd >= 0 && write_fd >= 0);
 }
 
 void ShutdownPollable::openPipe()
@@ -63,22 +57,48 @@ void ShutdownPollable::openPipe()
 	setNonBlocking_(write_fd);
 }
 
-ShutdownPollable::~ShutdownPollable()
+void ShutdownPollable::installSignals()
 {
-	if (read_fd != -1)
-		::close(read_fd);
-	if (write_fd != -1)
-		::close(write_fd);
+	sigset_t set;
+	sigemptyset(&set);
+	struct sigaction sa;
+	sa.sa_handler = &ShutdownPollable::onSignal;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	::sigaction(SIGINT, &sa, nullptr);
+	::sigaction(SIGTERM, &sa, nullptr);
+}
+
+void ShutdownPollable::uninstallSignals()
+{
+	struct sigaction sa;
+	sa.sa_handler = SIG_DFL;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	::sigaction(SIGINT, &sa, nullptr);
+	::sigaction(SIGTERM, &sa, nullptr);
 }
 
 // CONTROL
 // ____________________________________________________________________________
-void ShutdownPollable::onSignal(int)
+void ShutdownPollable::registerActive(ShutdownPollable *p) noexcept
 {
-	auto &s = ShutdownPollable::instance();
-	s.shutdown_requested.store(true, std::memory_order_relaxed);
+	g_active.store(p, std::memory_order_relaxed);
+}
 
-	ssize_t n = ::write(s.write_fd, "x", 1);
+void ShutdownPollable::unregisterActive(ShutdownPollable *p) noexcept
+{
+	g_active.compare_exchange_strong(p, nullptr, std::memory_order_relaxed);
+}
+
+void ShutdownPollable::onSignal(int) noexcept
+{
+	ShutdownPollable *shutdown = g_active.load(std::memory_order_relaxed);
+	if (!shutdown)
+		return;
+
+	// Wake poll()
+	ssize_t n = ::write(shutdown->write_fd, "x", 1);
 	// n > 0 	→ Wake poll()
 	// n == 0	→ Nothing to do
 	// n < 0 	→ Nothing to do
@@ -112,18 +132,17 @@ void ShutdownPollable::onReadable()
 {
 	for (;;)
 	{
-		char buf[256];
+		char buf[100];
 		ssize_t n = ::read(read_fd, buf, sizeof(buf));
 
-		if (n > 0)
-			continue;
-		if (n == 0)
+		if (n <= 0)
 			break;
-		// n < 0
-		break;
 	}
+	shutdown_requested.store(true, std::memory_order_relaxed);
 
-	if (!draining.exchange(true, std::memory_order_relaxed))
+	// Drain
+	bool expected = false;
+	if (draining.compare_exchange_strong(expected, true, std::memory_order_acq_rel))
 	{
 		if (on_begin_drain)
 			on_begin_drain();

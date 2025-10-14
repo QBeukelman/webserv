@@ -6,11 +6,9 @@
 #    By: qbeukelm <qbeukelm@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2025/08/11 09:30:12 by qbeukelm      #+#    #+#                  #
-#    Updated: 2025/10/03 10:46:30 by quentinbeuk   ########   odam.nl          #
+#    Updated: 2025/10/14 01:35:47 by quentinbeuk   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
-
-# TODO: Explicitly name sources, avoid wildcards
 
 BOLD				:= \033[1m
 RED					:= \033[31;1m
@@ -21,7 +19,7 @@ RESET				:= \033[0m
 
 # ---------------- Compiler ----------------
 CXX       := c++
-CXXFLAGS  := -std=c++17 -MMD -MP -Iinc -Itests
+CXXFLAGS  := -std=c++17 -MMD -MP -Iinc -Itests -Werror -Wextra -Wall
 
 # ---------------- Targets -----------------
 NAME				:= webserv
@@ -30,31 +28,119 @@ UPLOADS_DIRECTORY	:= var/www/uploads
 
 # ---------------- Dirs --------------------
 DIR_OBJ   := obj
-SRC_DIRS  := src
-TEST_DIRS := tests
 
 # ---------------- Sources -----------------
-SOURCES    := $(sort $(shell find $(SRC_DIRS) -type f -name '*.cpp'))
-OBJECTS    := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(SOURCES))
-DEPENDS    := $(OBJECTS:.o=.d)
+LIB_SRCS := \
+src/config/config_parser/ConfigParser.cpp \
+src/config/config_parser/ConfigParserUtils.cpp \
+src/config/config_parser/parseAllowMethods.cpp \
+src/config/config_parser/parseAutoIndex.cpp \
+src/config/config_parser/parseCgi.cpp \
+src/config/config_parser/parseErrorPage.cpp \
+src/config/config_parser/parseIndex.cpp \
+src/config/config_parser/parseListen.cpp \
+src/config/config_parser/parseMaxBody.cpp \
+src/config/config_parser/parseName.cpp \
+src/config/config_parser/parseRedirect.cpp \
+src/config/config_parser/parseRoot.cpp \
+src/config/config_parser/parseUpload.cpp \
+src/config/config_parser/TokenStream.cpp \
+\
+src/config/location_helpers/findLocation.cpp \
+src/config/location_helpers/getCgiByExtension.cpp \
+\
+src/config/models/CGI.cpp \
+\
+src/config/Location.cpp \
+src/config/Server.cpp \
+src/config/ServerConfig.cpp \
+\
+src/http/models/ContentType.cpp \
+src/http/models/File.cpp \
+src/http/models/HttpMethod.cpp \
+src/http/models/HttpRequest.cpp \
+src/http/models/HttpResponse.cpp \
+src/http/models/HttpStatus.cpp \
+src/http/models/Mime.cpp \
+src/http/models/MultipartFile.cpp \
+src/http/models/ParseContext.cpp \
+src/http/models/RequestParseStatus.cpp \
+\
+src/http/request_parser/handleBodyContentLength.cpp \
+src/http/request_parser/handleChunkData.cpp \
+src/http/request_parser/handleChunkSize.cpp \
+src/http/request_parser/handleComplete.cpp \
+src/http/request_parser/handleStartLineAndHeaders.cpp \
+src/http/request_parser/parserHeaders.cpp \
+src/http/request_parser/parserStartLine.cpp \
+src/http/request_parser/parserUtils.cpp \
+\
+src/http/requestHandler/handler_utils/composeMultiPartData.cpp \
+src/http/requestHandler/handler_utils/generateAutoIndexResponse.cpp \
+src/http/requestHandler/handler_utils/generateRedirectResponse.cpp \
+src/http/requestHandler/handler_utils/generateUploadFile.cpp \
+src/http/requestHandler/handler_utils/makeHtmlPageHeader.cpp \
+\
+src/http/requestHandler/handleDelete.cpp \
+src/http/requestHandler/handleGet.cpp \
+src/http/requestHandler/handlePost.cpp \
+src/http/requestHandler/makeError.cpp \
+\
+src/http/RequestHandler.cpp \
+src/http/RequestParser.cpp \
+\
+src/log/Logger.cpp \
+src/log/printUtils.cpp \
+\
+src/serve/cgi/cgiHelpers.cpp \
+src/serve/cgi/CgiStdinPollable.cpp \
+src/serve/cgi/CgiStdoutPollable.cpp \
+\
+src/serve/CgiPollable.cpp \
+src/serve/Connection.cpp \
+src/serve/EventLoop.cpp \
+src/serve/IOPollable.cpp \
+src/serve/Listener.cpp \
+src/serve/ShutdownPollable.cpp \
+src/serve/WebServer.cpp \
+\
+src/utils/utils.cpp \
 
-# Any main*.cpp anywhere under src/ is excluded from the test link
-MAIN_SRCS  := $(sort $(shell find $(SRC_DIRS) -type f -name 'main*.cpp'))
-MAIN_OBJS  := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(MAIN_SRCS))
+# ---------------- Main -----------------
+APP_SRCS := $(LIB_SRCS) src/main.cpp
 
-LIB_OBJECTS  := $(filter-out $(MAIN_OBJS),$(OBJECTS))
+# ---------------- Tests -----------------
+TEST_SRCS := \
+tests/config/test_findLocation.cpp \
+\
+tests/http/request_handler/test_generateUploadFile.cpp \
+\
+tests/http/request_parser/test_handleBodyContentLength.cpp \
+tests/http/request_parser/test_handleChunkedData.cpp \
+tests/http/request_parser/test_handleChunkedSize.cpp \
+tests/http/request_parser/test_handleStartLineAndHeaders.cpp \
+tests/http/request_parser/test_httpMethod.cpp \
+tests/http/request_parser/test_parserStartLine.cpp \
+tests/http/request_parser/test_requestParserStep.cpp \
+\
+tests/integration/test_serverIntegrationTest.cpp \
+\
+tests/serve/test_listener.cpp \
+tests/serve/test_location.cpp \
 
-# Test sources (any tests/**/test_*.cpp)
-TEST_SOURCES := $(sort $(shell find $(TEST_DIRS) -type f -name 'test_*.cpp'))
-TEST_OBJECTS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_SOURCES))
-TEST_DEPENDS := $(TEST_OBJECTS:.o=.d)
+# ---------------- Derived -----------------
+APP_OBJS  := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(APP_SRCS))
+LIB_OBJS  := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(LIB_SRCS))
+TEST_OBJS := $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(TEST_SRCS))
+
+DEPENDS   := $(APP_OBJS:.o=.d) $(TEST_OBJS:.o=.d)
 
 # ---------------- Rules -------------------
 all: $(NAME)
 
-$(NAME): $(OBJECTS)
+$(NAME): $(APP_OBJS)
 	@echo "$(BLUE)\nLinking $(NAME)...$(RESET)"
-	@$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
+	@$(CXX) $(APP_OBJS) $(LDFLAGS) -o $@
 	@mkdir -p $(UPLOADS_DIRECTORY)
 	@echo "$(GREEN)\nDone\n$(RESET)"
 
@@ -62,9 +148,9 @@ $(NAME): $(OBJECTS)
 test: $(TEST_BIN)
 	@./$(TEST_BIN)
 
-$(TEST_BIN): $(LIB_OBJECTS) $(TEST_OBJECTS)
+$(TEST_BIN): $(LIB_OBJS) $(TEST_OBJS)
 	@echo "$(BLUE)\nLinking $(TEST_BIN)...$(RESET)"
-	@$(CXX) $^ $(LDFLAGS) -o $@
+	@$(CXX) $(LIB_OBJS) $(TEST_OBJS) $(LDFLAGS) -o $@
 	@echo "$(GREEN)\nUnit tests ready\n$(RESET)"
 
 # Generic compile rule (app + tests)
@@ -83,6 +169,6 @@ fclean: clean
 
 re: fclean all
 
--include $(DEPENDS) $(TEST_DEPENDS)
+-include $(DEPENDS)
 
 .PHONY: all clean fclean re test

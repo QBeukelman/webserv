@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:14:45 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 10:32:29 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 00:50:05 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "log/Logger.hpp"
 #include "serve/IOPollable.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <climits>
 #include <iostream>
@@ -54,7 +55,9 @@ class EventLoop
 	void update(IOPollable *handler);
 	void remove(int fd);
 	void remove(IOPollable *handler);
+	void removeAndDelete(int fd);
 	void closeLater(IOPollable *handler);
+	void closeLater(int fd);
 
 	// Main loop
 	void run(void);

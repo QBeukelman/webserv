@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 10:37:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 02:10:39 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ const Server *Listener::getServer(void) const
 	return (this->server);
 }
 
-const bool Listener::hasEventLoop(void) const
+bool Listener::hasEventLoop(void) const
 {
 	if (this->server)
 		return (true);

@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 16:19:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 16:13:01 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 02:10:01 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // CONSTRUCTOR
 // ____________________________________________________________________________
 Connection::Connection(int clientFd, const Server *server, EventLoop *loop, unsigned short port)
-	: fd_(clientFd), port(port), parser(parse_context.limits), keep_alive(false), loop(loop), server(server),
+	: fd_(clientFd), parser(parse_context.limits), keep_alive(false), port(port), server(server), loop(loop),
 	  last_activity(std::chrono::steady_clock::now()), keep_alive_pending(false)
 {
 	Logger::info("Connection::Connection(" + std::to_string(clientFd) + ")");
@@ -51,7 +51,7 @@ bool Connection::getKeepAlivePending() const
 	return (this->keep_alive_pending);
 }
 
-void Connection::setCgi(std::unique_ptr<CgiProcess> new_cgi)
+void Connection::setCgi(std::unique_ptr<CgiPollable> new_cgi)
 {
 	cgi_ = std::move(new_cgi);
 }
@@ -251,7 +251,7 @@ void Connection::feedParserFromBuffer()
 				Logger::info("Connection::feedParserFromBuffer() → Dispatch CGI");
 
 				auto cgi =
-					std::make_unique<CgiProcess>(loop, this, parse_context.request, dispatch.location, dispatch.cgi);
+					std::make_unique<CgiPollable>(loop, this, parse_context.request, dispatch.location, dispatch.cgi);
 				if (!cgi->start())
 				{
 					Logger::error("Connection::feedParserFromBuffer() → CGI failed to start [500]");
@@ -403,8 +403,6 @@ void Connection::onWritable()
  */
 short Connection::interest() const
 {
-	short interest = 0;
-
 	switch (connection_state)
 	{
 	case ConnectionState::READING: {

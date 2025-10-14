@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/24 10:06:33 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/24 11:29:51 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:55:47 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ ContentTypeKind ContentType::classifyContentType(const std::string &raw)
 	return (UNKONOWN);
 }
 
-const ContentTypeKind ContentType::getType(void) const
+ContentTypeKind ContentType::getType(void) const
 {
 	return (this->type);
 }

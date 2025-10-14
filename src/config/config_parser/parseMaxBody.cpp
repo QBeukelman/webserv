@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/29 12:23:45 by hein          #+#    #+#                 */
-/*   Updated: 2025/10/07 18:48:36 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:36:15 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #define MIN_BODY_SIZE 1
 #define MAX_BODY_SIZE 1ULL * 1024 * 1024 * 1024
 
-static const std::size_t findMultiplier(std::string &token, TokenStream &tokenStream)
+static std::size_t findMultiplier(std::string &token, TokenStream &tokenStream)
 {
 	std::size_t multiplier = 1;
 

@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/09 14:27:52 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 16:13:11 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 23:40:02 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "http/models/HttpResponse.hpp"
 #include "http/models/ParseContext.hpp"
 #include "log/Logger.hpp"
-#include "serve/CgiProcess.hpp"
+#include "serve/CgiPollable.hpp"
 #include "serve/EventLoop.hpp"
 #include "serve/IOPollable.hpp"
 
@@ -54,7 +54,7 @@ class Connection : public IOPollable
 {
   private:
 	int fd_;
-	std::unique_ptr<CgiProcess> cgi_;
+	std::unique_ptr<CgiPollable> cgi_;
 
 	ParseContext parse_context;
 	RequestParser parser;
@@ -88,7 +88,7 @@ class Connection : public IOPollable
 	unsigned short getPort() const;
 	ConnectionState getConnectionState() const;
 	bool getKeepAlivePending() const;
-	void setCgi(std::unique_ptr<CgiProcess> new_cgi);
+	void setCgi(std::unique_ptr<CgiPollable> new_cgi);
 	bool isClosing() const;
 
 	// Timeout
