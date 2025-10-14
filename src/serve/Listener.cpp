@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Listener.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/09/04 09:21:09 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/14 02:10:39 by quentinbeuk   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Listener.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbeukelm <qbeukelm@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 09:21:09 by quentinbeuk       #+#    #+#             */
+/*   Updated: 2025/10/14 09:09:05 by qbeukelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,19 @@ Listener::Listener(const std::string &ip, unsigned short port, const Server *ser
 	setNonBlocking(fd_);
 
 	// 4) Bind & Listen
-	bindAndListen(ip, port);
+	try
+	{
+		bindAndListen(ip, port);
+	}
+	catch (std::exception &e)
+	{
+		if (fd_ >= 0)
+		{
+			::close(fd_);
+			fd_ = -1;
+		}
+		throw;
+	}
 }
 
 Listener::Listener(Listener &&other) noexcept : fd_(other.fd_)

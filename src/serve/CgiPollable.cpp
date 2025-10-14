@@ -43,7 +43,7 @@ void CgiPollable::removeStdoutFromLoop()
 {
 	if (loop && stdout_reg_fd >= 0)
 	{
-		loop->closeLater(stdout_reg_fd);
+		loop->remove(stdout_reg_fd);
 		stdout_reg_fd = -1;
 	}
 }
@@ -51,7 +51,7 @@ void CgiPollable::removeStdinFromLoop()
 {
 	if (loop && stdin_reg_fd >= 0)
 	{
-		loop->closeLater(stdin_reg_fd);
+		loop->remove(stdin_reg_fd);
 		stdin_reg_fd = -1;
 	}
 }
@@ -155,15 +155,17 @@ bool CgiPollable::start()
 // ____________________________________________________________________________
 void CgiPollable::registerPollables(bool has_body)
 {
-	auto *out = new CgiStdoutPollable(*this);
-	loop->add(out);
-	stdout_reg_fd = out->fd();
+	stdout_poll = std::make_unique<CgiStdoutPollable>(*this);
+	if (loop)
+		loop->add(stdout_poll.get());
+	stdout_reg_fd = stdout_poll->fd();
 
 	if (has_body)
 	{
-		auto *in = new CgiStdinPollable(*this);
-		loop->add(in);
-		stdin_reg_fd = in->fd();
+		stdin_poll = std::make_unique<CgiStdinPollable>(*this);
+		if (loop)
+			loop->add(stdin_poll.get());
+		stdin_reg_fd = stdin_poll->fd();
 	}
 }
 
@@ -171,12 +173,12 @@ void CgiPollable::unregisterPollables()
 {
 	if (stdout_reg_fd >= 0)
 	{
-		loop->closeLater(stdout_reg_fd);
+		loop->remove(stdout_reg_fd);
 		stdout_reg_fd = -1;
 	}
 	if (stdin_reg_fd >= 0)
 	{
-		loop->closeLater(stdin_reg_fd);
+		loop->remove(stdin_reg_fd);
 		stdin_reg_fd = -1;
 	}
 }
@@ -204,12 +206,9 @@ void CgiPollable::readFromChild()
 		if (n == 0)
 		{
 			// Child finished → close
-			if (stdout_reg_fd >= 0)
-			{
-				Logger::info("CgiPollable::readFromChild() → Closing fd: " + std::to_string(stdout_reg_fd));
-				loop->closeLater(stdout_reg_fd);
-				stdout_reg_fd = -1;
-			}
+			removeStdoutFromLoop();
+			Logger::info("CgiProcess::readFromChild() → Closing fd: " + std::to_string(stdout_poll.get()->fd()));
+			loop->closeLater(stdout_poll.get());
 			stdout_fd = -1;
 			stdout_closed = true;
 			maybeFinish();
@@ -241,13 +240,9 @@ void CgiPollable::writeToChild()
 		}
 
 		// (n < 0) → Child not accepting more
-		if (stdin_reg_fd >= 0)
-		{
-			Logger::info("CgiPollable::writeToChild() → Closing fd: " + std::to_string(stdin_reg_fd));
-			removeStdinFromLoop();
-			loop->closeLater(stdin_reg_fd);
-			stdin_reg_fd = -1;
-		}
+		Logger::info("CgiProcess::writeToChild() → Closing fd: " + std::to_string(stdin_poll.get()->fd()));
+		removeStdinFromLoop();
+		loop->closeLater(stdin_poll.get());
 		stdin_fd = -1;
 		stdin_closed = true;
 		maybeFinish();
@@ -255,13 +250,9 @@ void CgiPollable::writeToChild()
 	}
 
 	// Finished Sending
-	if (stdin_reg_fd >= 0)
-	{
-		removeStdinFromLoop();
-		Logger::info("CgiPollable::writeToChild() → Closing fd: " + std::to_string(stdin_reg_fd));
-		loop->closeLater(stdin_reg_fd);
-		stdin_reg_fd = -1;
-	}
+	removeStdinFromLoop();
+	Logger::info("CgiProcess::writeToChild() → Closing fd: " + std::to_string(stdin_poll.get()->fd()));
+	loop->closeLater(stdin_poll.get());
 	stdin_fd = -1;
 	stdin_closed = true;
 	maybeFinish();
@@ -272,12 +263,8 @@ void CgiPollable::stdoutHangup(short /*revents*/)
 	if (stdout_fd >= 0)
 	{
 		removeStdoutFromLoop();
-		Logger::info("CgiPollable::stdoutHangup() → Closing fd: " + std::to_string(stdout_reg_fd));
-		if (stdout_reg_fd >= 0)
-		{
-			loop->closeLater(stdout_reg_fd);
-			stdout_reg_fd = -1;
-		}
+		Logger::info("CgiProcess::stdoutHangup() → Closing fd: " + std::to_string(stdout_poll.get()->fd()));
+		loop->closeLater(stdout_poll.get());
 		stdout_fd = -1;
 	}
 	stdout_closed = true;
@@ -289,12 +276,8 @@ void CgiPollable::stdinHangup(short /*revents*/)
 	if (stdin_fd >= 0)
 	{
 		removeStdinFromLoop();
-		Logger::info("CgiPollable::stdinHangup() → Closing fd: " + std::to_string(stdin_reg_fd));
-		if (stdin_reg_fd >= 0)
-		{
-			loop->closeLater(stdin_reg_fd);
-			stdin_reg_fd = -1;
-		}
+		Logger::info("CgiProcess::stdinHangup() → Closing fd: " + std::to_string(stdin_poll.get()->fd()));
+		loop->closeLater(stdin_poll.get());
 		stdin_fd = -1;
 	}
 	stdin_closed = true;
@@ -351,24 +334,14 @@ void CgiPollable::clientAborted()
 
 	if (stdin_fd >= 0)
 	{
-		if (stdin_reg_fd >= 0)
-		{
-			Logger::info("CgiPollable::clientAborted() → Closing fd: " + std::to_string(stdin_reg_fd));
-			loop->closeLater(stdin_reg_fd);
-			loop->closeLater(stdin_poll);
-			stdin_reg_fd = -1;
-		}
+		Logger::info("CgiProcess::clientAborted() → Closing fd: " + std::to_string(stdin_poll.get()->fd()));
+		loop->closeLater(stdin_poll.get());
 		stdin_fd = -1;
 	}
 	if (stdout_fd >= 0)
 	{
-		if (stdout_reg_fd >= 0)
-		{
-			Logger::info("CgiPollable::clientAborted() → Closing fd: " + std::to_string(stdout_reg_fd));
-			loop->closeLater(stdout_reg_fd);
-			loop->closeLater(stdin_poll);
-			stdout_reg_fd = -1;
-		}
+		Logger::info("CgiProcess::clientAborted() → Closing fd: " + std::to_string(stdout_poll.get()->fd()));
+		loop->closeLater(stdout_poll.get());
 		stdout_fd = -1;
 	}
 	terminateChild();
@@ -380,9 +353,6 @@ void CgiPollable::terminateChild()
 	{
 		Logger::info("CgiPollable::terminateChild() → Killing process: " + std::to_string(pid));
 		::kill(pid, SIGTERM);
-		int st;
-		(void)::waitpid(pid, &st, 0);
-		pid = -1;
 	}
 }
 
