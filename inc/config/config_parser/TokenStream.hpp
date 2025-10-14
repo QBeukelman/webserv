@@ -6,7 +6,7 @@
 /*   By: hein <hein@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/03 22:45:34 by hein          #+#    #+#                 */
-/*   Updated: 2025/09/15 11:29:28 by hein          ########   odam.nl         */
+/*   Updated: 2025/10/14 01:39:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class TokenStream
 	std::vector<std::string> tokenStream;
 	std::ifstream file;
 	int lineCount;
-	int tokenIndex;
+	unsigned int tokenIndex;
 
 	void nextValidLine(std::stringstream &ss);
 
@@ -48,7 +48,7 @@ class TokenStream
 	const std::string getLineCount(void);
 	const std::string &getCurrentToken(void);
 	std::size_t validateMinimumArguments(int n);
-	void validateExpectedArguments(int n);
+	void validateExpectedArguments(unsigned int n);
 	void removeValidSemicolon(void);
 
 	void throwError(const std::string &error);

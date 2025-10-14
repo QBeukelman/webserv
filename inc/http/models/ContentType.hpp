@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/24 10:04:55 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/24 11:29:44 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:55:11 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class ContentType
 	ContentType();
 	ContentType(const std::string &raw);
 
-	const ContentTypeKind getType(void) const;
+	ContentTypeKind getType(void) const;
 
 	const Mime getMime(void) const;
 

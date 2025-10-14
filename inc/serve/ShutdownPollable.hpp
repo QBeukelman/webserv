@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/10/13 08:26:27 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 09:22:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 23:23:00 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,23 @@ class ShutdownPollable : public IOPollable
 
 	std::atomic<bool> shutdown_requested{false};
 	std::atomic<bool> draining{false};
-
 	std::function<void()> on_begin_drain;
 
-	ShutdownPollable() = default;
-	~ShutdownPollable();
+	static void registerActive(ShutdownPollable *p) noexcept;
+	static void unregisterActive(ShutdownPollable *p) noexcept;
+	static void onSignal(int signo) noexcept;
 
-	static void onSignal(int);
 	void openPipe();
 	void installSignals();
+	void uninstallSignals();
 
   public:
-	static ShutdownPollable &instance();
 	bool initialize();
 	void requestShutdown();
 	void setOnBeginDrain(std::function<void()> cb);
+
+	ShutdownPollable() = default;
+	~ShutdownPollable();
 
 	// IOPollable
 	int fd() const override;

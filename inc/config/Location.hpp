@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/02 14:49:13 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/07 18:43:48 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:53:49 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ class Location : public IConfigBlock
 	std::vector<std::string> index_files;
 	Redirect redirect;
 	bool autoindex;
-
 	HttpRequestLimits limits;
 
 	const std::string getFileExtenstion(const std::string &request_path) const;

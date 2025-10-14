@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/30 15:25:36 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 16:08:32 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:59:06 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ ParseStep RequestParser::handleBodyContentLength(ParseContext &ctx, const char *
 	const std::string content_length_header = ctx.request.searchHeader("Content-Length");
 	if (content_length_header != "")
 	{
-		int content_length;
+		unsigned int content_length;
 		try
 		{
 			content_length = stoi(content_length_header);

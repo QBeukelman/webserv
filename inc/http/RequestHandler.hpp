@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 12:25:32 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/12 15:09:57 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:59:42 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #include "http/models/MultipartFile.hpp"
 #include "http/models/RequestParseStatus.hpp"
 #include "log/Logger.hpp"
-#include "serve/CgiProcess.hpp"
+#include "serve/CgiPollable.hpp"
 
 #include <cerrno>
 #include <chrono>
@@ -76,7 +76,7 @@ class RequestHandler
 #endif
 	const MultipartFile composeMultiPartData(const HttpRequest &request) const;
 	const File generateUploadFile(const std::string &upload_dir, const std::string file_name) const;
-	const bool isMethodAllowed(const HttpRequest &request, const Location &location) const;
+	bool isMethodAllowed(const HttpRequest &request, const Location &location) const;
 
   public:
 	// Constructors

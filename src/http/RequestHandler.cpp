@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/08/19 13:13:04 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 14:55:54 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 02:05:53 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,11 @@ HttpResponse RequestHandler::handleStatic(const HttpRequest &request, const Loca
 {
 	// 1) Start request
 	std::cout << request << std::endl;
-	std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_OUT);
 
 	// TODO: Where to timeout?
+	// std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::now() +
+	// std::chrono::seconds(TIME_OUT);
+
 	// if (std::chrono::steady_clock::now() > deadline)
 	// 	return makeError(HttpStatus::STATUS_SERVICE_UNAVAILABLE, "Processing timeout");
 
@@ -69,7 +71,7 @@ HttpResponse RequestHandler::handleStatic(const HttpRequest &request, const Loca
 /*
  * Search locations for allowed methods.
  */
-const bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
+bool RequestHandler::isMethodAllowed(const HttpRequest &request, const Location &location) const
 {
 	return (location.allowed_methods.find(request.method) != location.allowed_methods.end());
 }
@@ -99,7 +101,10 @@ DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 	catch (Server::LocationNotFoundException &e)
 	{
 		Logger::error(Logger::join("RequestHandler::handle() → ", e.what()));
-		return {DispatchResult::DISPACTH_STATIC, makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found")};
+		return {DispatchResult::DISPACTH_STATIC,
+				makeError(HttpStatus::STATUS_NOT_FOUND, "Location not found"),
+				{},
+				location};
 	}
 
 	// 2) Handle redirects
@@ -108,11 +113,15 @@ DispatchResult RequestHandler::dispatch(const HttpRequest &request) const
 
 	// 3) Method
 	if (isMethodAllowed(request, location) == false)
-		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_METHOD_NOT_ALLOWED, "method not allowed")};
+		return {
+			DispatchResult::DISPACTH_STATIC, makeError(STATUS_METHOD_NOT_ALLOWED, "method not allowed"), {}, location};
 
 	// 4) Limits
 	if (request.body.size() > location.getMaxBodySize())
-		return {DispatchResult::DISPACTH_STATIC, makeError(STATUS_PAYLOAD_TOO_LARGE, "request body is too long")};
+		return {DispatchResult::DISPACTH_STATIC,
+				makeError(STATUS_PAYLOAD_TOO_LARGE, "request body is too long"),
+				{},
+				location};
 
 	// 5) CGI
 	if (std::optional<CgiConfig> found_cgi = location.getCgiByExtension(request.path))

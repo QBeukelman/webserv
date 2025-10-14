@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/08 12:22:05 by qbeukelm      #+#    #+#                 */
-/*   Updated: 2025/10/13 13:56:35 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/13 23:22:28 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,18 @@ void WebServer::initListeners()
 
 void WebServer::run()
 {
-	auto &shut = ShutdownPollable::instance();
-	shut.setOnBeginDrain([&]() {
-		loop.stop();
-		std::exit(1);
-	});
-	if (!shut.initialize())
+	ShutdownPollable *shutdown = new ShutdownPollable();
+	if (shutdown->initialize())
 	{
-		std::exit(1);
+		loop.add(shutdown);
+		shutdown->setOnBeginDrain([&]() {
+			loop.stop();
+			std::exit(1);
+		});
 	}
-	loop.add(&ShutdownPollable::instance());
+	else
+		delete (shutdown);
+
 	loop.run();
 }
 

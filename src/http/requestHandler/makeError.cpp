@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/30 14:52:51 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/10/13 10:35:37 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 02:01:37 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static std::string findErrorPage(const std::vector<ErrorPage> &errorPages, const
 	char buf[4096];
 	for (;;)
 	{
-		size_t n = ::read(fd, buf, sizeof(buf));
+		ssize_t n = ::read(fd, buf, sizeof(buf));
 
 		if (n > 0)
 			errorPageBody.append(buf, n);

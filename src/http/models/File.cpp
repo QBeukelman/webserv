@@ -6,7 +6,7 @@
 /*   By: quentinbeukelman <quentinbeukelman@stud      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/22 09:48:17 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/23 13:20:27 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 01:56:39 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ const std::string File::getName() const
 	return (this->name);
 }
 
-const int File::getFd() const
+int File::getFd() const
 {
 	return (this->fd);
 }

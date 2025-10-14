@@ -6,7 +6,7 @@
 /*   By: qbeukelm <qbeukelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/09/04 09:13:07 by quentinbeuk   #+#    #+#                 */
-/*   Updated: 2025/09/27 21:39:13 by quentinbeuk   ########   odam.nl         */
+/*   Updated: 2025/10/14 02:10:33 by quentinbeuk   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ class Listener : public IOPollable
 	void onHangupOrError(short revents);
 
 	const Server *getServer(void) const;
-	const bool hasEventLoop(void) const;
+	bool hasEventLoop(void) const;
 
 #ifdef UNIT_TEST
 	unsigned short boundPort() const;
