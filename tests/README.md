@@ -20,6 +20,7 @@ make test
 ---
 
 <br/>
+<br/>
 
 
 # Siege
@@ -39,6 +40,7 @@ siege -c 50 -t 30s "http://127.0.0.1:8080/scripts/form.py POST name=homer&msg=do
 
 ---
 
+<br/>
 <br/>
 
 
@@ -105,9 +107,10 @@ curl -X POST \
 
 ```
 
-<br/>
-
 ---
+
+<br/>
+<br/>
 
 
 # 3xx
@@ -116,9 +119,10 @@ curl -X POST \
 curl -v http://127.0.0.1:8080/redirect
 ```
 
-<br/>
-
 ---
+
+<br/>
+<br/>
 
 
 # 4xx
@@ -229,9 +233,11 @@ long=$(printf 'a%.0s' {1..9000})
 curl -v "http://127.0.0.1:8080/${long}"
 ```
 
+---
+
+<br/>
 <br/>
 
----
 
 
 # 5xx
@@ -244,12 +250,5 @@ curl -v http://127.0.0.1:8080/scripts/boom.py
 ```
 
 
-## 503 Service Unavailable
-
-```bash
-
-```
-
 <br/>
-
----
+<br/>
